@@ -1,0 +1,65 @@
+[
+      {
+        "id": 1,
+        "name": "Unisex Casual T-Shirt",
+        "price": 14.00,
+        "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A comfortable and stylish t-shirt for everyday wear."
+      },
+      {
+        "id": 2,
+        "name": "Fitted T-Shirt",
+        "price": 15.00,
+        "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A fitted t-shirt that accentuates your figure."
+      },
+      {
+        "id": 3,
+        "name": "Leather Handbag",
+        "price": 49.00,
+        "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A stylish and durable leather handbag."
+      },
+      {
+        "id": 4,
+        "name": "Sling Hand Bag",
+        "price": 35.00,
+        "image": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A convenient and fashionable sling handbag."
+      },
+      {
+        "id": 5,
+        "name": "Summer Suit",
+        "price": 89.00,
+        "image": "https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A lightweight and stylish suit for summer."
+      },
+      {
+        "id": 6,
+        "name": "Denim Shorts",
+        "price": 45.00,
+        "image": "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "Classic denim shorts for a casual look."
+      },
+      {
+        "id": 7,
+        "name": "Denim Shirt",
+        "price": 65.00,
+        "image": "https://images.unsplash.com/photo-1596755094514-f87e3f96b47c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A versatile denim shirt that can be dressed up or down."
+      },
+      {
+        "id": 8,
+        "name": "Clutch Hand Bag",
+        "price": 79.00,
+        "image": "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A chic clutch handbag for evening events."
+      },
+      {
+        "id": 9,
+        "name": "Full Sleeve T-Shirt",
+        "price": 49.00,
+        "image": "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        "description": "A comfortable full sleeve t-shirt for cooler days."
+      }
+    ]
