@@ -14,6 +14,7 @@ import Home from './pages/Home';
 import Wishlist from './pages/Wishlist';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import ForgotPassword from './pages/ForgotPassword';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 
@@ -30,6 +31,8 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ForgotPassword />} />
           <Route path="/404" element={
             <div className="min-h-screen flex items-center justify-center">
               <h1 className="text-3xl font-bold">404 - Page Not Found</h1>
