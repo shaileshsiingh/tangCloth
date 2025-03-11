@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,44 +9,133 @@ export function CartProvider({ children }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
 
-  const addToCart = (product, quantity, size) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(
-        item => item.id === product.id && item.size === size
-      );
+  const fetchCartItems = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('http://91.203.135.152:2001/api/cart/get-item', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-      if (existingItem) {
-        return prevCart.map(item =>
-          item.id === product.id && item.size === size
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart items');
       }
 
-      return [...prevCart, { ...product, quantity, size }];
-    });
+      const data = await response.json();
+      setCart(data.data.map(item => ({
+        _id: item._id,
+        selectedSize: item.size,
+        quantity: item.quantity,
+        price: item.price,
+        name: item.product.product_name,
+        image: item.product.images[0],
+      })));
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+    }
+  }, []);
 
-    setIsCartOpen(true);
+  useEffect(() => {
+    fetchCartItems();
+  }, [fetchCartItems]);
+
+  const addToCart = async (product) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('http://91.203.135.152:2001/api/cart/add-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          product_id: product._id,
+          size_id: product.selectedSize,
+          quantity: product.quantity,
+          price: product.price,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to add item to cart');
+      }
+  
+      const result = await response.json();
+      console.log('Item added to cart:', result);
+  
+      // Update cart state immediately
+      setCart(prevCart => {
+        const existingItemIndex = prevCart.findIndex(
+          item => item._id === product._id && item.selectedSize === product.selectedSize
+        );
+  
+        if (existingItemIndex !== -1) {
+          // Update quantity if item already exists
+          const updatedCart = [...prevCart];
+          updatedCart[existingItemIndex].quantity += product.quantity;
+          return updatedCart;
+        }
+  
+        // Add new item to cart
+        return [
+          ...prevCart,
+          {
+            _id: product._id,
+            selectedSize: product.selectedSize,
+            quantity: product.quantity,
+            price: product.price,
+            name: product.name,
+            image: product.image,
+          }
+        ];
+      });
+  
+      // Optionally fetch updated cart items
+      await fetchCartItems();
+      setIsCartOpen(true);
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+    }
   };
 
-  const removeFromCart = (productId, size) => {
-    setCart(prevCart => 
-      prevCart.filter(item => !(item.id === productId && item.size === size))
-    );
+  const removeFromCart = async (productId, selectedSize) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`http://91.203.135.152:2001/api/cart/remove-item/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to remove item from cart');
+      }
+
+      // Update cart state after successful removal
+      setCart(prevCart => 
+        prevCart.filter(item => !(item._id === productId && item.selectedSize === selectedSize))
+      );
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
   };
 
-  const updateQuantity = (productId, size, newQuantity) => {
+  const updateQuantity = (productId, selectedSize, newQuantity) => {
+    if (newQuantity < 1) return;
+    
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === productId && item.size === size
-          ? { ...item, quantity: newQuantity }
+        item._id === productId && item.selectedSize === selectedSize
+          ? { ...item, quantity: newQuantity, totalPrice: item.price * newQuantity }
           : item
       )
     );
   };
 
   const cartTotal = cart.reduce(
-    (total, item) => total + item.price.min * item.quantity,
+    (total, item) => total + (item.price * item.quantity),
     0
   );
 
@@ -63,6 +152,7 @@ export function CartProvider({ children }) {
         cartCount,
         isCartOpen,
         setIsCartOpen,
+        fetchCartItems,
       }}
     >
       {children}
@@ -84,6 +174,8 @@ export function CartProvider({ children }) {
                   ✕
                 </button>
               </div>
+              {console.log(cart)}
+
               {cart.length === 0 ? (
                 <p className="text-gray-500">Your cart is empty</p>
               ) : (
@@ -91,7 +183,7 @@ export function CartProvider({ children }) {
                   <div className="space-y-4">
                     {cart.map((item) => (
                       <motion.div
-                        key={`${item.id}-${item.size}`}
+                        key={`${item?._id}-${item.selectedSize}`}
                         layout
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -99,23 +191,23 @@ export function CartProvider({ children }) {
                         className="flex gap-4 border-b pb-4"
                       >
                         <img
-                          src={item.images[0]}
-                          alt={item.name}
+                          src={item?.image}
+                          alt={item?.name}
                           className="w-20 h-20 object-cover"
                         />
                         <div className="flex-1">
-                          <h3 className="font-medium">{item.name}</h3>
-                          <p className="text-sm text-gray-500">Size: {item.size}</p>
+                          <h3 className="font-medium">{item?.name}</h3>
+                          <p className="text-sm text-gray-500">Size: {item?.selectedSize}</p>
                           <div className="flex items-center gap-2 mt-2">
                             <button
-                              onClick={() => updateQuantity(item.id, item.size, Math.max(0, item.quantity - 1))}
+                              onClick={() => updateQuantity(item?._id, item?.selectedSize, Math.max(0, item?.quantity - 1))}
                               className="w-6 h-6 border flex items-center justify-center"
                             >
                               -
                             </button>
                             <span>{item.quantity}</span>
                             <button
-                              onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
+                              onClick={() => updateQuantity(item?._id, item?.selectedSize, item?.quantity + 1)}
                               className="w-6 h-6 border flex items-center justify-center"
                             >
                               +
@@ -123,9 +215,9 @@ export function CartProvider({ children }) {
                           </div>
                         </div>
                         <div className="flex flex-col items-end">
-                          <p>${(item.price.min * item.quantity).toFixed(2)}</p>
+                          <p>${(item.price * item.quantity).toFixed(2)}</p>
                           <button
-                            onClick={() => removeFromCart(item.id, item.size)}
+                            onClick={() => removeFromCart(item._id, item.selectedSize)}
                             className="text-sm text-red-500 hover:text-red-700"
                           >
                             Remove

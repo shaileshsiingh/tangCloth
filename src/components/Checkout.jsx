@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 function Checkout() {
-  const { cart, cartTotal } = useCart();
+  const { cart, cartTotal, fetchCartItems } = useCart();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,12 +15,29 @@ function Checkout() {
     zipCode: '',
     paymentMethod: 'credit-card'
   });
+  const [couponCode, setCouponCode] = useState('');
+  const [couponMessage, setCouponMessage] = useState('');
+
+  useEffect(() => {
+    fetchCartItems(); // Fetch cart items to ensure the order summary is up-to-date
+  }, [fetchCartItems]);
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleApplyCoupon = () => {
+    if (!couponCode) {
+      setCouponMessage('Please enter a coupon code.');
+      return;
+    }
+    // Placeholder for coupon API call
+    // Assume a successful coupon application for demonstration
+    setCouponMessage('Coupon applied successfully!');
+    // Adjust prices based on coupon logic here
   };
 
   return (
@@ -180,15 +197,32 @@ function Checkout() {
             <h2 className="text-xl font-bold mb-6">Order Summary</h2>
             <div className="space-y-4">
               {cart.map((item) => (
-                <div key={`${item.id}-${item.size}`} className="flex justify-between">
+                <div key={`${item?._id}-${item?.selectedSize}`} className="flex justify-between">
                   <div>
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-600">Size: {item.size}</p>
-                    <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                    <p className="font-medium">{item?.name}</p>
+                    <p className="text-sm text-gray-600">Size: {item?.selectedSize}</p>
+                    <p className="text-sm text-gray-600">Quantity: {item?.quantity}</p>
                   </div>
-                  <p className="font-medium">${(item.price.min * item.quantity).toFixed(2)}</p>
+                  <p className="font-medium">${(item?.price * item?.quantity).toFixed(2)}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Enter coupon code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded mb-2"
+              />
+              <button
+                onClick={handleApplyCoupon}
+                className="w-full bg-black text-white py-2 hover:bg-gray-900 transition-colors"
+              >
+                Apply Coupon
+              </button>
+              {couponMessage && <p className="text-sm mt-2 text-red-500">{couponMessage}</p>}
             </div>
 
             <div className="border-t border-gray-200 mt-6 pt-6 space-y-4">

@@ -26,10 +26,35 @@ function SignUp() {
       setError('Passwords do not match');
       return;
     }
-    // Add your signup logic here
     try {
-      // API call to register user
-      navigate('/login');
+      const response = await fetch('http://91.203.135.152:2001/api/user/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create account');
+      }
+
+      const result = await response.json();
+      console.log('User signed up:', result);
+
+      // Store token and user information
+      localStorage.setItem('authToken', result.data.token);
+      localStorage.setItem('userId', result.data.user._id);
+      console.log(result.data.user._id);
+      localStorage.setItem('user', JSON.stringify(result.data.user._id));
+
+      navigate('/signup-success');
     } catch (err) {
       setError('Failed to create account');
     }

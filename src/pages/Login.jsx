@@ -20,7 +20,28 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Add your login logic here
+      const response = await fetch('http://91.203.135.152:2001/api/user/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid email or password');
+      }
+
+
+      const result = await response.json();
+      console.log('User signed in:', result);
+
+   
+
+      // Store token and user information
+      localStorage.setItem('authToken', result.data.token);
+      localStorage.setItem('user', JSON.stringify(result.data.user._id));
+      localStorage.setItem('userId', result.data.user._id);
       navigate('/');
     } catch (err) {
       setError('Invalid email or password');
