@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ShoppingBag } from 'lucide-react';
 
 function ProductList() {
   const navigate = useNavigate();
@@ -78,6 +79,7 @@ function ProductList() {
     navigate(`/product/${product._id}`, { state: { product } });
   };
 
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -138,9 +140,8 @@ function ProductList() {
         {sortedProducts.map((product) => (
           <motion.div
             key={product._id}
-            className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+            className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer relative"
             whileHover={{ y: -5 }}
-            onClick={() => handleProductClick(product)}
           >
             <div className="relative pb-[100%]">
               <img
@@ -151,6 +152,21 @@ function ProductList() {
                   e.target.src = 'https://via.placeholder.com/400';
                 }}
               />
+              <motion.div
+                className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-end justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <motion.button
+                className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300"
+                whileHover={{ scale: 1.1, backgroundColor: '#333' }}
+                  onMouseEnter={(e) => e.currentTarget.innerHTML = '<svg class=\"w-5 h-5\"><use xlink:href=\"#shopping-bag\"></use></svg>'}
+                  onMouseLeave={(e) => e.currentTarget.innerHTML = 'Select Option'}
+                  onClick={() => handleProductClick(product)}
+                >
+                  Select Option
+                </motion.button>
+              </motion.div>
             </div>
             <div className="p-4">
               <h2 className="text-lg font-semibold mb-2 line-clamp-2">{product.product_name}</h2>

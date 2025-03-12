@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 function Checkout() {
+  const navigate = useNavigate();
   const { cart, cartTotal, fetchCartItems } = useCart();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -242,6 +243,7 @@ function Checkout() {
 
             <button
               type="submit"
+              onClick={() => navigate('/order')}
               className="w-full bg-black text-white py-3 px-6 mt-6 hover:bg-gray-900 transition-colors"
             >
               PLACE ORDER

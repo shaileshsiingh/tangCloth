@@ -20,6 +20,7 @@ import UserDetails from './pages/UserDetails';
 import ProductList from './components/ProductList';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
+import OrderConfirmation from './pages/OrderConfirmation';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/reset-password" element={<ForgotPassword />} />
           <Route path="/signup-success" element={<SignUpSuccess />} />
           <Route path="/user-details" element={<UserDetails />} />
+          <Route path="/order" element={<OrderConfirmation />} />
           <Route path="/404" element={
             <div className="min-h-screen flex items-center justify-center">
               <h1 className="text-3xl font-bold">404 - Page Not Found</h1>
