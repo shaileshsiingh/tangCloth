@@ -4,6 +4,8 @@ import { Search as SearchIcon, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { allProducts } from '../data/allProducts';
 
+const API_URL = process.env.REACT_APP_API_URL || "/api";
+
 function Search() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,11 +15,19 @@ function Search() {
 
   useEffect(() => {
     if (searchQuery.length > 2) {
-      const results = allProducts.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSearchResults(results);
+      const fetchSearchResults = async () => {
+        try {
+          const response = await fetch(`${API_URL}/product/list?search=${searchQuery}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch search results');
+          }
+          const data = await response.json();
+          setSearchResults(data.data.products || []);
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+        }
+      };
+      fetchSearchResults();
     } else {
       setSearchResults([]);
     }
@@ -67,23 +77,23 @@ function Search() {
               <div className="space-y-4 max-h-[60vh] overflow-y-auto">
                 {searchResults.map((product) => (
                   <div
-                    key={product.id}
+                    key={product._id}
                     className="flex gap-4 cursor-pointer hover:bg-gray-50 p-2"
                     onClick={() => {
-                      navigate(`/product/${product.id}`);
+                      navigate(`/product/${product._id}`);
                       setIsOpen(false);
                       setSearchQuery('');
                     }}
                   >
                     <img
                       src={product.images[0]}
-                      alt={product.name}
+                      alt={product.product_name}
                       className="w-16 h-16 object-cover"
                     />
                     <div>
-                      <h4 className="font-medium">{product.name}</h4>
+                      <h4 className="font-medium">{product.product_name}</h4>
                       <p className="text-sm text-gray-600">
-                        ${product.price.min.toFixed(2)} - ${product.price.max.toFixed(2)}
+                        ${product.price.toFixed(2)}
                       </p>
                     </div>
                   </div>
