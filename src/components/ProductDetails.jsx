@@ -4,6 +4,7 @@ import { Tab } from '@headlessui/react';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 function ProductDetails() {
   const { id } = useParams();
@@ -78,12 +79,15 @@ function ProductDetails() {
   const API_URL = "/api";
 
   const handleAddToCart = async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      toast.error('Please login to add the item in the cart');
+      return;
+    }
     if (product && selectedSize) {
       const selectedSizeObj = product.sizes.find(s => s.size === selectedSize);
       if (selectedSizeObj && selectedSizeObj.quantity >= quantity) {
         try {
-          const token = localStorage.getItem('authToken'); // Retrieve the token from local storage
-
           const response = await fetch(`${API_URL}/cart/add-item`, {
             method: 'POST',
             headers: {
@@ -112,6 +116,15 @@ function ProductDetails() {
         }
       }
     }
+  };
+
+  const handleBuyNow = () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      toast.error('Please login to buy the item');
+      return;
+    }
+    navigate('/checkout');
   };
 
   const handleRelatedProductClick = (relatedProduct) => {
@@ -250,7 +263,7 @@ function ProductDetails() {
               <button 
                 className="w-full border border-black py-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!selectedSize || quantity < 1}
-                onClick={() => navigate('/checkout')}
+                onClick={handleBuyNow}
               >
                 BUY IT NOW
               </button>
