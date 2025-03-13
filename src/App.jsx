@@ -21,6 +21,8 @@ import ProductList from './components/ProductList';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import OrderConfirmation from './pages/OrderConfirmation';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -47,6 +49,7 @@ function App() {
           } />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
+        <ToastContainer />
       </Layout>
     </CartProvider>
   );

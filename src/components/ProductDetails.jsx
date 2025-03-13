@@ -80,8 +80,18 @@ function ProductDetails() {
 
   const handleAddToCart = async () => {
     const token = localStorage.getItem('authToken');
+    console.log(token);
     if (!token) {
-      toast.error('Please login to add the item in the cart');
+      toast.error('Please login to add the item in the cart', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+      });
       return;
     }
     if (product && selectedSize) {
@@ -121,7 +131,16 @@ function ProductDetails() {
   const handleBuyNow = () => {
     const token = localStorage.getItem('authToken');
     if (!token) {
-      toast.error('Please login to buy the item');
+      toast.error('Please login to add the item in the cart', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+      });
       return;
     }
     navigate('/checkout');
