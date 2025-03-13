@@ -4,7 +4,7 @@ import { Search as SearchIcon, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { allProducts } from '../data/allProducts';
 
-const API_URL = process.env.REACT_APP_API_URL || "/api";
+const API_URL =  "/api";
 
 function Search() {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,7 +80,7 @@ function Search() {
                     key={product._id}
                     className="flex gap-4 cursor-pointer hover:bg-gray-50 p-2"
                     onClick={() => {
-                      navigate(`/product/${product._id}`, { state: { product } });
+                      navigate(`/product/${product._id}`, { state: { product:product } });
                       setIsOpen(false);
                       setSearchQuery('');
                     }}
