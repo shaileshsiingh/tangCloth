@@ -75,6 +75,7 @@ function ProductDetails() {
       }
     }
   };
+  const API_URL = "/api";
 
   const handleAddToCart = async () => {
     if (product && selectedSize) {
@@ -83,7 +84,7 @@ function ProductDetails() {
         try {
           const token = localStorage.getItem('authToken'); // Retrieve the token from local storage
 
-          const response = await fetch('http://91.203.135.152:2001/api/cart/add-item', {
+          const response = await fetch(`${API_URL}/api/cart/add-item`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

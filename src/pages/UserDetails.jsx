@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 function UserDetails() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const API_URL = "/api";
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -12,7 +12,7 @@ function UserDetails() {
         console.log(userId); // Example: Adjust based on your storage method
         const token = localStorage.getItem('authToken'); // Example: Adjust based on your storage method
         console.log(token);
-        const response = await fetch(`http://91.203.135.152:2001/api/user/details/${userId}`, {
+        const response = await fetch(`${API_URL}/api/user/details/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
