@@ -24,9 +24,9 @@ function ProductList() {
     try {
         setLoading(true);
         const url = `${API_URL}/product/list`;
-        url.searchParams.append('page', page);
+        url.searchParams?.append('page', page);
         if (search) {
-            url.searchParams.append('search', search);
+            url.searchParams?.append('search', search);
         }
 
         const response = await fetch(url.toString());
