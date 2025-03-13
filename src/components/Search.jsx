@@ -80,7 +80,7 @@ function Search() {
                     key={product._id}
                     className="flex gap-4 cursor-pointer hover:bg-gray-50 p-2"
                     onClick={() => {
-                      navigate(`/product/${product._id}`);
+                      navigate(`/product/${product._id}`, { state: { product } });
                       setIsOpen(false);
                       setSearchQuery('');
                     }}
