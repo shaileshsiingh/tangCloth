@@ -84,7 +84,7 @@ function ProductDetails() {
         try {
           const token = localStorage.getItem('authToken'); // Retrieve the token from local storage
 
-          const response = await fetch(`${API_URL}/api/cart/add-item`, {
+          const response = await fetch(`${API_URL}/cart/add-item`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
