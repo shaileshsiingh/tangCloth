@@ -23,7 +23,8 @@ function ProductList() {
   const fetchProducts = useCallback(async (page, search = '') => {
     try {
         setLoading(true);
-        const url = `${API_URL}/product/list`;
+        // const url = `${API_URL}/product/list`;
+        const url = "http://91.203.135.152:2001/api/product/list"
         url.searchParams?.append('page', page);
         if (search) {
             url.searchParams?.append('search', search);
@@ -142,8 +143,9 @@ function ProductList() {
         {sortedProducts.map((product) => (
           <motion.div
             key={product._id}
-            className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer relative"
+            className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer relative group"
             whileHover={{ y: -5 }}
+            onClick={() => handleProductClick(product)}
           >
             <div className="relative pb-[100%]">
               <img
@@ -156,15 +158,14 @@ function ProductList() {
               />
               <motion.div
                 className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-end justify-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
               >
                 <motion.button
-                className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300"
-                whileHover={{ scale: 1.1, backgroundColor: '#333' }}
-                  onMouseEnter={(e) => e.currentTarget.innerHTML = '<svg class=\"w-5 h-5\"><use xlink:href=\"#shopping-bag\"></use></svg>'}
-                  onMouseLeave={(e) => e.currentTarget.innerHTML = 'Select Option'}
-                  onClick={() => handleProductClick(product)}
+                  className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300 opacity-0 group-hover:opacity-100"
+                  whileHover={{ scale: 1.1, backgroundColor: '#333' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleProductClick(product);
+                  }}
                 >
                   Select Option
                 </motion.button>
