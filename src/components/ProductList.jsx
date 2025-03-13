@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_API_URL || "http://91.203.135.152:2001/api";
+const API_URL = process.env.REACT_APP_API_URL || "https://91.203.135.152:2001/api";
 
 function ProductList() {
   const navigate = useNavigate();
