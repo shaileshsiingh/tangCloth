@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
+import { toast } from 'react-toastify';
 function SignUp() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -47,6 +47,16 @@ function SignUp() {
       }
 
       const result = await response.json();
+      toast.success('User signed up successfully', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+      });
       console.log('User signed up:', result);
 
       // Store token and user information

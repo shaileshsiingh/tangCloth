@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -35,6 +36,16 @@ function Login() {
 
 
       const result = await response.json();
+      toast.success('User signed in successfully', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+      });
       console.log('User signed in:', result);
 
    
