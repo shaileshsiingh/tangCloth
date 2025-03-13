@@ -23,7 +23,7 @@ function ProductList() {
   const fetchProducts = useCallback(async (page, search = '') => {
     try {
         setLoading(true);
-        const url = new URL(`${API_URL}/product/list`);
+        const url = `${API_URL}/product/list`;
         url.searchParams.append('page', page);
         if (search) {
             url.searchParams.append('search', search);
