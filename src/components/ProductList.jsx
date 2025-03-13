@@ -21,7 +21,7 @@ function ProductList() {
   const fetchProducts = useCallback(async (page, search = '') => {
     try {
         setLoading(true);
-        const url = new URL('http://91.203.135.152:2001/api/product/list');
+        const url = new URL('https://91.203.135.152:2001/api/product/list');
         url.searchParams.append('page', page);
         if (search) {
             url.searchParams.append('search', search);

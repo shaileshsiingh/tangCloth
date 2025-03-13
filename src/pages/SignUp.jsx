@@ -27,7 +27,7 @@ function SignUp() {
       return;
     }
     try {
-      const response = await fetch('http://91.203.135.152:2001/api/user/signup', {
+      const response = await fetch('https://91.203.135.152:2001/api/user/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
