@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 
+const API_URL = process.env.REACT_APP_API_URL || "http://91.203.135.152:2001/api";
+
 function ProductList() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -21,7 +23,7 @@ function ProductList() {
   const fetchProducts = useCallback(async (page, search = '') => {
     try {
         setLoading(true);
-        const url = new URL('https://91.203.135.152:2001/api/product/list');
+        const url = new URL(`${API_URL}/product/list`);
         url.searchParams.append('page', page);
         if (search) {
             url.searchParams.append('search', search);
