@@ -44,7 +44,7 @@ function Checkout() {
   const handlePlaceOrder = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const address_id = '2'; // Replace with actual address ID logic
+      const address_id = '67c970bf49a2ab0ce7857d98'; // Replace with actual address ID logic
       const shipping = 'standard'; // Replace with actual shipping logic
   
       // Check if cart has items
@@ -87,7 +87,7 @@ function Checkout() {
   
       const result = JSON.parse(responseText);
       console.log('Order placed:', result);
-      navigate('/order-confirmation');
+      navigate('/order');
     } catch (error) {
       console.error('Error placing order:', error);
       // Show error to user

@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 
 // const API_URL = process.env.REACT_APP_API_URL || "https://91.203.135.152:2001/api";
-const API_URL = "/api";
+const API_URL = "http://91.203.135.152:2001/api";
+
 function ProductList() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -22,46 +23,69 @@ function ProductList() {
 
   const fetchProducts = useCallback(async (page, search = '') => {
     try {
-        setLoading(true);
-        // const url = `${API_URL}/product/list`;
-        const url = "http://91.203.135.152:2001/api/product/list"
-        url.searchParams?.append('page', page);
-        if (search) {
-            url.searchParams?.append('search', search);
-        }
+      setLoading(true);
+      
+      // Create URL with URLSearchParams for proper query string handling
+      const baseUrl = `${API_URL}/product/list`;
+      const params = new URLSearchParams();
+      params.append('page', page);
+      
+      if (search && search.trim() !== '') {
+        params.append('search', search.trim());
+      }
+      
+      const url = `${baseUrl}?${params.toString()}`;
+      console.log('Fetching products from:', url);
 
-        const response = await fetch(url.toString());
-        if (!response.ok) {
-            throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
-        
-        setProducts(data.data.products || []);
-        setCurrentPage(data.data.pagination.currentPage);
-        setTotalPages(data.data.pagination.totalPages);
-        setTotalProducts(data.data.pagination.totalProducts);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to fetch products');
+      }
+      
+      setProducts(data.data.products || []);
+      setCurrentPage(data.data.pagination.currentPage);
+      setTotalPages(data.data.pagination.totalPages);
+      setTotalProducts(data.data.pagination.totalProducts);
 
-        console.log('API Response:', data);
-        console.log('Current Page:', data.data.pagination.currentPage);
-        console.log('Total Pages:', data.data.pagination.totalPages);
-        console.log('Total Products:', data.data.pagination.totalProducts);
+      console.log('API Response:', data);
+      console.log('Current Page:', data.data.pagination.currentPage);
+      console.log('Total Pages:', data.data.pagination.totalPages);
+      console.log('Total Products:', data.data.pagination.totalProducts);
     } catch (err) {
-        setError(err.message);
+      console.error('Error fetching products:', err);
+      setError(err.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-}, []);
+  }, []);
 
   useEffect(() => {
-    if (searchTimeout) {
-        clearTimeout(searchTimeout);
-    }
-    setSearchTimeout(setTimeout(() => {
-        fetchProducts(1, searchTerm);
-    }, 500)); // Fetch after 500ms delay
+    // Initial fetch
+    fetchProducts(1, '');
+  }, [fetchProducts]);
 
+  useEffect(() => {
+    // Debounce search input
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    const timeoutId = setTimeout(() => {
+      // Reset to first page when searching
+      setCurrentPage(1);
+      fetchProducts(1, searchTerm);
+    }, 500); // 500ms debounce delay
+    
+    setSearchTimeout(timeoutId);
+    
     return () => {
-        clearTimeout(searchTimeout);
+      clearTimeout(timeoutId);
     };
   }, [searchTerm, fetchProducts]);
 
@@ -88,8 +112,15 @@ function ProductList() {
     navigate(`/product/${product._id}`, { state: { product } });
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
-  if (loading) {
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+  };
+
+  if (loading && products.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
@@ -97,7 +128,7 @@ function ProductList() {
     );
   }
 
-  if (error) {
+  if (error && products.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-red-600 text-center">
@@ -126,12 +157,14 @@ function ProductList() {
             placeholder="Search products..."
             className="w-full md:w-64 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
+            aria-label="Search products"
           />
           <select
             className="w-full md:w-auto border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-black"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={handleSortChange}
+            aria-label="Sort products"
           >
             <option value="default">Default sorting</option>
             <option value="price-asc">Price: Low to High</option>
@@ -139,6 +172,12 @@ function ProductList() {
           </select>
         </div>
       </div>
+
+      {loading && products.length > 0 && (
+        <div className="flex justify-center py-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black"></div>
+        </div>
+      )}
 
       <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
@@ -166,7 +205,7 @@ function ProductList() {
                 className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-end justify-center"
               >
                 <motion.button
-                  className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300 opacity-0 group-hover:opacity-100"
+                  className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300 opacity-0 group-hover:opacity-100 mb-4"
                   whileHover={{ scale: 1.1, backgroundColor: '#333' }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -182,7 +221,7 @@ function ProductList() {
               <p className="text-gray-600 mb-2 line-clamp-2">{product.description}</p>
               <div className="flex justify-between items-center">
                 <p className="text-lg font-bold">${product.price}</p>
-                {product.sizes.reduce((total, size) => total + size.quantity, 0) > 0 ? (
+                {product.sizes && product.sizes.reduce((total, size) => total + size.quantity, 0) > 0 ? (
                   <span className="text-green-600 text-sm">In Stock</span>
                 ) : (
                   <span className="text-red-600 text-sm">Out of Stock</span>
@@ -193,7 +232,7 @@ function ProductList() {
         ))}
       </motion.div>
 
-      {sortedProducts.length === 0 && (
+      {sortedProducts.length === 0 && !loading && (
         <div className="text-center py-12">
           <h3 className="text-xl font-semibold text-gray-600">No products found</h3>
           <p className="text-gray-500 mt-2">Try adjusting your search criteria</p>
@@ -201,25 +240,27 @@ function ProductList() {
       )}
 
       {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-8 space-x-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Previous
-        </button>
-        <span className="text-gray-600">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Next
-        </button>
-      </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-8 space-x-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1 || loading}
+            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || loading}
+            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
