@@ -49,12 +49,14 @@ function ProductList() {
       }
       
       setProducts(data.data.products || []);
-      setCurrentPage(data.data.pagination.currentPage);
+      
+      // Force the currentPage to match our requested page regardless of what the API returns
+      setCurrentPage(page);
       setTotalPages(data.data.pagination.totalPages);
       setTotalProducts(data.data.pagination.totalProducts);
 
       console.log('API Response:', data);
-      console.log('Current Page:', data.data.pagination.currentPage);
+      console.log('Forcing display of page:', page);
       console.log('Total Pages:', data.data.pagination.totalPages);
       console.log('Total Products:', data.data.pagination.totalProducts);
     } catch (err) {
@@ -78,7 +80,6 @@ function ProductList() {
     
     const timeoutId = setTimeout(() => {
       // Reset to first page when searching
-      setCurrentPage(1);
       fetchProducts(1, searchTerm);
     }, 500); // 500ms debounce delay
     
@@ -103,8 +104,13 @@ function ProductList() {
 
   const handlePageChange = useCallback((newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
       fetchProducts(newPage, searchTerm);
+      
+      // Scroll to top of the product list
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   }, [fetchProducts, totalPages, searchTerm]);
 
@@ -145,11 +151,21 @@ function ProductList() {
     );
   }
 
+  // Calculate the start and end product numbers for the current page
+  // Use items per page as the actual number of returned products
+  const itemsPerPage = products.length || 1; // Avoid division by zero
+  const startProduct = (currentPage - 1) * itemsPerPage + 1;
+  const endProduct = Math.min(startProduct + products.length - 1, totalProducts);
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <p className="text-gray-600">
-          Showing {sortedProducts.length} of {totalProducts} {totalProducts === 1 ? 'product' : 'products'}
+          {totalProducts > 0 ? (
+            `Showing ${startProduct}-${endProduct} of ${totalProducts} ${totalProducts === 1 ? 'product' : 'products'}`
+          ) : (
+            'No products found'
+          )}
         </p>
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
           <input
@@ -206,7 +222,7 @@ function ProductList() {
               >
                 <motion.button
                   className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300 opacity-0 group-hover:opacity-100 mb-4"
-                  whileHover={{ scale: 1.1, backgroundColor: '#333' }}
+                  whileHover={{ scale: 1.1 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleProductClick(product);
@@ -241,24 +257,98 @@ function ProductList() {
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-8 space-x-4">
+        <div className="flex justify-center items-center mt-8 space-x-2">
+          <button
+            onClick={() => handlePageChange(1)}
+            disabled={currentPage === 1 || loading}
+            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="First page"
+          >
+            &laquo;
+          </button>
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1 || loading}
-            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Previous page"
           >
-            Previous
+            &lsaquo;
           </button>
-          <span className="text-gray-600">
-            Page {currentPage} of {totalPages}
-          </span>
+          
+          {/* Page number buttons */}
+          <div className="flex space-x-1">
+            {[...Array(totalPages)].map((_, index) => {
+              const pageNumber = index + 1;
+              // Show limited page numbers with ellipsis for better UX
+              if (
+                pageNumber === 1 ||
+                pageNumber === totalPages ||
+                (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+              ) {
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => handlePageChange(pageNumber)}
+                    disabled={loading}
+                    className={`w-10 h-10 flex items-center justify-center rounded
+                      ${currentPage === pageNumber 
+                        ? 'bg-black text-white' 
+                        : 'border hover:bg-gray-100'}`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              } else if (
+                pageNumber === currentPage - 2 ||
+                pageNumber === currentPage + 2
+              ) {
+                return <span key={pageNumber} className="px-2 self-end">...</span>;
+              }
+              return null;
+            })}
+          </div>
+          
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages || loading}
-            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Next page"
           >
-            Next
+            &rsaquo;
           </button>
+          <button
+            onClick={() => handlePageChange(totalPages)}
+            disabled={currentPage === totalPages || loading}
+            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Last page"
+          >
+            &raquo;
+          </button>
+        </div>
+      )}
+      
+      {/* Direct Page Navigation */}
+      {totalPages > 2 && (
+        <div className="mt-4 flex justify-center items-center">
+          <span className="text-gray-600 mr-2">Jump to:</span>
+          <div className="flex flex-wrap justify-center gap-2 max-w-md">
+            {[...Array(totalPages)].map((_, index) => {
+              const pageNumber = index + 1;
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  disabled={loading || currentPage === pageNumber}
+                  className={`w-8 h-8 flex items-center justify-center text-sm
+                    ${currentPage === pageNumber 
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                      : 'border hover:bg-gray-100'}`}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

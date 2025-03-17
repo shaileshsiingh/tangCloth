@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { toast } from 'react-toastify';
 
 function Checkout() {
   const navigate = useNavigate();
-  const { cart, cartTotal, fetchCartItems } = useCart();
+  const { cart, cartTotal, fetchCartItems, removeFromCart } = useCart();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -42,6 +43,24 @@ function Checkout() {
   };
 
   const handlePlaceOrder = async () => {
+    // Validate form fields
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'country', 'zipCode'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+
+    if (missingFields.length > 0) {
+      toast.error('Please fill in all required fields.', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+      });
+      return;
+    }
+
     try {
       const token = localStorage.getItem('authToken');
       const address_id = '67c970bf49a2ab0ce7857d98'; // Replace with actual address ID logic
@@ -87,6 +106,10 @@ function Checkout() {
   
       const result = JSON.parse(responseText);
       console.log('Order placed:', result);
+      
+      // Remove the item from the cart
+      removeFromCart(cart[0]._id, cart[0].selectedSize);
+      
       navigate('/order');
     } catch (error) {
       console.error('Error placing order:', error);
