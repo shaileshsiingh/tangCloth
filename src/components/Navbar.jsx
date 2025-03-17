@@ -169,11 +169,13 @@ console.log(isLoggedIn);
         animate={{ y: 0 }}
         className="bg-white border-b sticky top-0 z-50"
       >
+
         <div className="container mx-auto px-4">
+          
           <div className="flex items-center h-20">
             {/* Logo - Left Side */}
             <div className="flex-1 flex items-center">
-              <Link to="/" className="text-2xl font-bold mr-4">
+              <Link to="/" className="text-2xl font-bold mr-4 cursor-pointer">
                 Tangerine
               </Link>
               {/* Search - Next to Logo */}
