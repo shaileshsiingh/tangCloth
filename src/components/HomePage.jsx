@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
   const [showCard, setShowCard] = useState(false);
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,6 +30,10 @@ function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleProductClick = (product) => {
+    navigate(`/product/${product._id}`, { state: { product } });
+  };
+
   return (
     <>
       <div className="container mx-auto px-4 py-8">
@@ -35,7 +41,7 @@ function HomePage() {
           <h2 className="text-2xl font-bold mb-4">Casual Outfits</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.slice(0, 4).map((product) => (
-              <div key={product._id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div key={product._id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer" onClick={() => handleProductClick(product)}>
                 <img src={product.images[0]} alt={product.product_name} className="w-full h-48 object-cover" />
                 <div className="p-4">
                   <h3 className="text-lg font-bold">{product.product_name}</h3>
@@ -49,7 +55,7 @@ function HomePage() {
           <h2 className="text-2xl font-bold mb-4">Trending Apparels</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.slice(4, 8).map((product) => (
-              <div key={product._id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div key={product._id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer" onClick={() => handleProductClick(product)}>
                 <img src={product.images[0]} alt={product.product_name} className="w-full h-48 object-cover" />
                 <div className="p-4">
                   <h3 className="text-lg font-bold">{product.product_name}</h3>

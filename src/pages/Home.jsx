@@ -69,14 +69,15 @@ function Home() {
       {/* Main content */}
       <div className={showPopup ? "" : ""}>
         <Banner />
+        <HomePage />
         <FeaturedProducts />
         <CategoryBanner />
         <BrandsSale />
+        
         <PopularProducts />
         <VersatileClothing />
         <Testimonials />
         <FashionBlog />
-        <HomePage />
         <Newsletter />
       </div>
     </div>
