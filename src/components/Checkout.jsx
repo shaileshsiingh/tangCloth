@@ -41,6 +41,32 @@ function Checkout() {
     // Adjust prices based on coupon logic here
   };
 
+  const handlePlaceOrder = async () => {
+    try {
+      const response = await fetch('http://91.203.135.152:2001/api/order/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cart,
+          total: cartTotal,
+          customer: formData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to place order');
+      }
+
+      const result = await response.json();
+      console.log('Order placed:', result);
+      navigate('/order-confirmation');
+    } catch (error) {
+      console.error('Error placing order:', error);
+    }
+  };
+
   return (
     <div className="bg-white">
       {/* Breadcrumb */}
@@ -243,7 +269,7 @@ function Checkout() {
 
             <button
               type="submit"
-              onClick={() => navigate('/order')}
+              onClick={handlePlaceOrder}
               className="w-full bg-black text-white py-3 px-6 mt-6 hover:bg-gray-900 transition-colors"
             >
               PLACE ORDER

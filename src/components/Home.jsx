@@ -10,9 +10,15 @@ import React from 'react';
     import FashionBlog from './FashionBlog';
     import Newsletter from './Newsletter';
     import Footer from './Footer';
+    import HomePage from './HomePage';
+    import LoadingScreen from './LoadingScreen';
+    import Popup from './Popup';
 
     function Home() {
       return (
+        <>
+        <LoadingScreen/>
+        <Popup/>
         <div className="min-h-screen bg-white">
           <Navbar />
           <Hero />
@@ -20,12 +26,14 @@ import React from 'react';
           <CategoryBanner />
           <BrandsSale />
           <PopularProducts />
+          <HomePage/>
           <VersatileClothing />
           <Testimonials />
           <FashionBlog />
           <Newsletter />
           <Footer />
         </div>
+        </>
       );
     }
 

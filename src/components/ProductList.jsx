@@ -23,8 +23,8 @@ function ProductList() {
   const fetchProducts = useCallback(async (page, search = '') => {
     try {
         setLoading(true);
-        const url = `${API_URL}/product/list`;
-        // const url = "http://91.203.135.152:2001/api/product/list"
+        // const url = `${API_URL}/product/list`;
+        const url = "http://91.203.135.152:2001/api/product/list"
         url.searchParams?.append('page', page);
         if (search) {
             url.searchParams?.append('search', search);
@@ -40,6 +40,11 @@ function ProductList() {
         setCurrentPage(data.data.pagination.currentPage);
         setTotalPages(data.data.pagination.totalPages);
         setTotalProducts(data.data.pagination.totalProducts);
+
+        console.log('API Response:', data);
+        console.log('Current Page:', data.data.pagination.currentPage);
+        console.log('Total Pages:', data.data.pagination.totalPages);
+        console.log('Total Products:', data.data.pagination.totalProducts);
     } catch (err) {
         setError(err.message);
     } finally {
@@ -74,6 +79,7 @@ function ProductList() {
 
   const handlePageChange = useCallback((newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
       fetchProducts(newPage, searchTerm);
     }
   }, [fetchProducts, totalPages, searchTerm]);
