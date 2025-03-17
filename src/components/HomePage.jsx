@@ -66,9 +66,9 @@ function HomePage() {
         <div className="fixed bottom-4 left-4 bg-white shadow-lg p-4 rounded-lg w-64 h-64 flex flex-col justify-between">
           <img src="https://wamani.vercel.app/wp-content/uploads/2023/05/Home-1-Slider-1-2.jpg" alt="Product" className="w-full h-32 object-cover rounded" />
           <div className="mt-2">
-            <h3 className="text-lg font-bold">Product Name</h3>
+            <h3 className="text-lg font-bold">Coat</h3>
             <p className="text-sm text-gray-600">$99.99</p>
-            <p className="text-sm text-gray-500">Just purchased!</p>
+            <p className="text-lg font-bold text-black-500">Just purchased!</p>
           </div>
         </div>
       )}

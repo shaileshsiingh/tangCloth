@@ -12,7 +12,8 @@ function UserDetails() {
         console.log(userId); // Example: Adjust based on your storage method
         const token = localStorage.getItem('authToken'); // Example: Adjust based on your storage method
         console.log(token);
-        const response = await fetch(`${API_URL}/user/details/${userId}`, {
+        // const response = await fetch(`${API_URL}/user/details/${userId}`, {
+        const response = await fetch(`http://91.203.135.152:2001/api/user/details/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

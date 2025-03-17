@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 function Checkout() {
@@ -43,27 +43,54 @@ function Checkout() {
 
   const handlePlaceOrder = async () => {
     try {
+      const token = localStorage.getItem('authToken');
+      const address_id = '2'; // Replace with actual address ID logic
+      const shipping = 'standard'; // Replace with actual shipping logic
+  
+      // Check if cart has items
+      if (!cart || cart.length === 0) {
+        console.error('Cart is empty');
+        return;
+      }
+  
+      // Format the order exactly as the API expects
+      const order = {
+        item_id: [cart[0]._id], // Array of item IDs as specified
+        quantity: cart[0].quantity,
+        size: cart[0].selectedSize,
+        total_price: String(cart[0].price * cart[0].quantity), // Convert to string
+        address_id: String(address_id), // Ensure it's a string
+        shipping
+      };
+  
+      // Log the exact payload for debugging
+      console.log('Request payload:', JSON.stringify(order));
+  
       const response = await fetch('http://91.203.135.152:2001/api/order/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          cart,
-          total: cartTotal,
-          customer: formData,
-        }),
+        body: JSON.stringify(order),
       });
-
+  
+      // Log the full response for debugging
+      console.log('Response status:', response.status);
+      
+      const responseText = await response.text();
+      console.log('Response body:', responseText);
+      
       if (!response.ok) {
-        throw new Error('Failed to place order');
+        throw new Error(`Failed to place order: ${responseText}`);
       }
-
-      const result = await response.json();
+  
+      const result = JSON.parse(responseText);
       console.log('Order placed:', result);
       navigate('/order-confirmation');
     } catch (error) {
       console.error('Error placing order:', error);
+      // Show error to user
     }
   };
 
@@ -281,4 +308,4 @@ function Checkout() {
   );
 }
 
-export default Checkout; 
+export default Checkout;

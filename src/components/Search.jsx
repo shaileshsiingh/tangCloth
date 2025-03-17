@@ -17,7 +17,8 @@ function Search() {
     if (searchQuery.length > 2) {
       const fetchSearchResults = async () => {
         try {
-          const response = await fetch(`${API_URL}/product/list?search=${searchQuery}`);
+          // const response = await fetch(`${API_URL}/product/list?search=${searchQuery}`);
+          const response = await fetch(`http://91.203.135.152:2001/api/product/list?search=${searchQuery}`);
           if (!response.ok) {
             throw new Error('Failed to fetch search results');
           }
