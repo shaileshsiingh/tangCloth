@@ -31,6 +31,12 @@ function OrderConfirmation() {
           >
             Continue Shopping
           </Link>
+          <Link
+            to="/order-and-return"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black mt-4"
+          >
+            View Orders and Returns
+          </Link>
         </div>
       </motion.div>
     </div>

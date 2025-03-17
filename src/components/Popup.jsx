@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Popup({ isOpen, onClose }) {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
   // Handler to prevent event bubbling
   const handlePopupClick = (e) => {
-    // Stop click from bubbling to parent elements
     e.stopPropagation();
   };
 
   // Handle clicks on the overlay
   const handleOverlayClick = () => {
     onClose();
+  };
+
+  const handleSubscribe = () => {
+    if (email.trim() !== '') {
+      setSubscribed(true);
+    }
   };
 
   return (
@@ -28,7 +36,6 @@ function Popup({ isOpen, onClose }) {
             touchAction: "auto"
           }}
           onClick={handleOverlayClick}
-          // Add data attribute for easier selection in cleanup
           data-popup-element="true"
         >
           <div className="fixed inset-0 bg-black bg-opacity-50 popup-overlay" data-popup-element="true"></div>
@@ -38,23 +45,51 @@ function Popup({ isOpen, onClose }) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-white shadow-lg rounded-lg flex w-full max-w-4xl mx-4 relative z-50 popup-content"
+            className="bg-white shadow-lg rounded-lg w-full max-w-5xl mx-4 relative z-50 popup-content"
+            style={{ height: "500px" }}
             onClick={handlePopupClick}
             data-popup-element="true"
           >
-            <div className="w-1/2 bg-cover bg-center" style={{ backgroundImage: 'url(https://wamani.vercel.app/wp-content/uploads/2023/05/Home-1-Slider-1-2.jpg)' }}></div>
-            <div className="w-1/2 p-8 relative">
-              <motion.h1 
-                className="text-4xl font-bold font-serif mb-2" 
-                animate={{ x: [0, 10, 0] }} 
-                transition={{ repeat: Infinity, duration: 2 }}
-              >
-                Tangerine..
-              </motion.h1>
-              <p className="text-lg font-bold mb-4">Always First.</p>
-              <div className="flex items-center">
-                <input type="email" placeholder="Enter your email" className="border p-2 mr-2 flex-1" />
-                <button className="bg-black text-white px-4 py-2">Subscribe</button>
+            {/* Single div with background image and content overlay */}
+            <div 
+              className="w-full h-full flex bg-cover bg-left rounded-lg relative"
+              style={{ 
+                backgroundImage: 'url(https://wamani.vercel.app/wp-content/uploads/2023/05/Home-1-Slider-1-2.jpg)'
+              }}
+            >
+              {/* Content overlay on the right side */}
+              <div className="w-1/2 ml-auto p-8 bg-white rounded-r-lg flex flex-col justify-center">
+                <motion.h1 
+                  className="text-4xl font-bold font-serif mb-2" 
+                  animate={{ x: [0, 10, 0] }} 
+                  transition={{ repeat: Infinity, duration: 2 }}
+                >
+                  Tangerine..
+                </motion.h1>
+                <p className="text-lg font-bold mb-6">Always First.</p>
+                
+                <div className="mb-4">
+                  <p className="text-gray-600 mb-6">
+                    Join our newsletter for exclusive offers and updates.
+                  </p>
+                </div>
+                
+                <div className="flex flex-col space-y-4">
+                  <input 
+                    type="email" 
+                    placeholder="Enter your email" 
+                    className="border border-gray-300 p-3 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-black" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <button 
+                    className="bg-black text-white px-4 py-3 rounded-md hover:bg-gray-800 transition-colors duration-300 w-full"
+                    onClick={handleSubscribe}
+                  >
+                    Subscribe
+                  </button>
+                </div>
+                {subscribed && <p className="text-green-600 mt-2">Subscribed successfully!</p>}
               </div>
               
               <button 

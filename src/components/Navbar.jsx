@@ -263,6 +263,7 @@ console.log(isLoggedIn);
 
             {/* Navigation & Icons - Right Side */}
             <div className="flex items-center justify-end space-x-6">
+              <Link to="/wishlist">
               <motion.button 
                 whileHover={{ scale: 1.1 }}
                 className="p-2 hover:text-gray-600 relative"
@@ -272,6 +273,7 @@ console.log(isLoggedIn);
                   0
                 </span>
               </motion.button>
+              </Link>
               <motion.button 
                 whileHover={{ scale: 1.1 }}
                 onClick={() => setIsCartOpen(true)}
