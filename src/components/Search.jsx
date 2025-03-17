@@ -55,7 +55,7 @@ function Search() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
-          className="w-64 pl-10 pr-4 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black transition-colors"
+          className="w-56 pl-10 pr-4 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black transition-colors"
         />
         <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
       </div>

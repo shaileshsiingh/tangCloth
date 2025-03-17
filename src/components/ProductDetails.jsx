@@ -98,8 +98,8 @@ function ProductDetails() {
       const selectedSizeObj = product.sizes.find(s => s.size === selectedSize);
       if (selectedSizeObj && selectedSizeObj.quantity >= quantity) {
         try {
-          // const response = await fetch(`${API_URL}/cart/add-item`, {
-          const response = await fetch(`http://91.203.135.152:2001/api/cart/add-item`, {
+          const response = await fetch(`${API_URL}/cart/add-item`, {
+          // const response = await fetch(`http://91.203.135.152:2001/api/cart/add-item`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

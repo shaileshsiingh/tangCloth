@@ -182,84 +182,88 @@ console.log(isLoggedIn);
 
 {/* Navigation Menu - Below */}
 <div className="flex justify-center space-x-8 py-4 mr-32">
-            <Link to="/" className="text-gray-700 hover:text-black">
-              Home
-            </Link>
-            {Object.entries(menuItems).map(([key, menu]) => (
-              <div
-                key={key}
-                className="relative group"
-                onMouseEnter={() => setActiveDropdown(key)}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center text-gray-700 hover:text-black gap-1"
-                >
-                  {menu.title}
-                  <ChevronDown size={16} />
-                </motion.button>
+  <Link to="/" className="text-gray-700 hover:text-black text-sm">
+    Home
+  </Link>
+  {Object.entries(menuItems).map(([key, menu], index) => (
+    <React.Fragment key={key}>
+      <div
+        className="relative group"
+        onMouseEnter={() => setActiveDropdown(key)}
+        onMouseLeave={() => setActiveDropdown(null)}
+      >
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          className="flex items-center text-gray-700 hover:text-black gap-1 text-sm"
+        >
+          {menu.title}
+          <ChevronDown size={16} />
+        </motion.button>
 
-                <AnimatePresence>
-                  {activeDropdown === key && (
-                    <motion.div
-                      variants={dropdownVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className="absolute top-full left-1/2 transform -translate-x-1/2 w-[800px] bg-white shadow-lg p-6 grid grid-cols-3 gap-8"
-                    >
-                      {menu.sections.map((section, idx) => (
-                        <div key={idx}>
-                          <h3 className="font-semibold mb-4">{section.title}</h3>
-                          <ul className="space-y-4">
-                            {section.items.map((item, itemIdx) => (
-                              <motion.li
-                                key={itemIdx}
-                                variants={itemVariants}
-                                className="overflow-hidden rounded-lg"
-                              >
-                                {item.image ? (
-                                  <div
-                                    onClick={() => handleItemClick(item.id)}
-                                    className="relative cursor-pointer group overflow-hidden"
-                                  >
-                                    <img
-                                      src={item.image}
-                                      alt={item.name}
-                                      className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
-                                      onError={(e) => {
-                                        e.target.src = 'https://via.placeholder.com/400';
-                                      }}
-                                    />
-                                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center transition-opacity duration-300 group-hover:bg-opacity-60">
-                                      <span className="text-white font-medium text-sm">
-                                        {item.name}
-                                      </span>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <button
-                                    onClick={() => handleItemClick(item.id)}
-                                    className="text-gray-600 hover:text-black transition-colors w-full text-left"
-                                  >
-                                    {item.name}
-                                  </button>
-                                )}
-                              </motion.li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-            <Link to="/contact" className="text-gray-700 hover:text-black">
-              Contact
-            </Link>
-          </div>
+        <AnimatePresence>
+          {activeDropdown === key && (
+            <motion.div
+              variants={dropdownVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="absolute top-full left-1/2 transform -translate-x-1/2 w-[800px] bg-white shadow-lg p-6 grid grid-cols-3 gap-8"
+            >
+              {menu.sections.map((section, idx) => (
+                <div key={idx}>
+                  <h3 className="font-semibold mb-4">{section.title}</h3>
+                  <ul className="space-y-4">
+                    {section.items.map((item, itemIdx) => (
+                      <motion.li
+                        key={itemIdx}
+                        variants={itemVariants}
+                        className="overflow-hidden rounded-lg"
+                      >
+                        {item.image ? (
+                          <div
+                            onClick={() => handleItemClick(item.id)}
+                            className="relative cursor-pointer group overflow-hidden"
+                          >
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
+                              onError={(e) => {
+                                e.target.src = 'https://via.placeholder.com/400';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center transition-opacity duration-300 group-hover:bg-opacity-60">
+                              <span className="text-white font-medium text-sm">
+                                {item.name}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleItemClick(item.id)}
+                            className="text-gray-600 hover:text-black transition-colors w-full text-left"
+                          >
+                            {item.name}
+                          </button>
+                        )}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      {index === 1 && (
+        <img src="https://wamani.vercel.app/wp-content/uploads/2023/05/Logo.svg" alt="Logo" className="h-8 mx-4" />
+      )}
+    </React.Fragment>
+  ))}
+  <Link to="/contact" className="text-gray-700 hover:text-black text-sm">
+    Contact
+  </Link>
+</div>
 
             {/* Navigation & Icons - Right Side */}
             <div className="flex items-center justify-end space-x-6">
