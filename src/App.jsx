@@ -24,6 +24,8 @@ import OrderConfirmation from './pages/OrderConfirmation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import OrderAndReturn from './pages/OrderAndReturn';
+import About from './components/About';
+
 
 function App() {
   return (
@@ -44,6 +46,7 @@ function App() {
           <Route path="/user-details" element={<UserDetails />} />
           <Route path="/order" element={<OrderConfirmation />} />
           <Route path="/order-and-return" element={<OrderAndReturn/>} />
+          <Route path="/about" element={<About/>} />
           <Route path="/404" element={
             <div className="min-h-screen flex items-center justify-center">
               <h1 className="text-3xl font-bold">404 - Page Not Found</h1>
