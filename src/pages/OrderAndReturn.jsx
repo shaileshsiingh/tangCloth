@@ -6,7 +6,6 @@ function OrderAndReturn() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const [productDetails, setProductDetails] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -34,29 +33,6 @@ function OrderAndReturn() {
     fetchOrders();
   }, []);
 
-  const fetchProductDetails = async (itemId) => {
-    try {
-      const response = await fetch(`http://91.203.135.152:2001/api/product/${itemId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch product details');
-      }
-      const data = await response.json();
-      setProductDetails(prevDetails => ({ ...prevDetails, [itemId]: data }));
-    } catch (error) {
-      console.error('Error fetching product details:', error);
-    }
-  };
-
-  useEffect(() => {
-    orders.forEach(order => {
-      order.order_items.forEach(item => {
-        if (!productDetails[item.item_id]) {
-          fetchProductDetails(item.item_id);
-        }
-      });
-    });
-  }, [orders]);
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -73,27 +49,17 @@ function OrderAndReturn() {
               <p className="text-sm text-gray-600 mb-4">Created At: {order.createdAt || 'N/A'}</p>
               <h3 className="text-md font-medium mb-2">Items:</h3>
               <ul className="space-y-2">
-                {order.order_items.map(item => {
-                  const product = productDetails[item.item_id]?.product || {};
-                  return (
-                    <li key={item._id} className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <img 
-                          src={product.images?.[0] || 'https://via.placeholder.com/400'} 
-                          alt={product.product_name || 'Product Image'} 
-                          className="w-16 h-16 object-cover mr-4"
-                        />
-                        <span>{product.product_name || 'Item ID: ' + item.item_id}</span>
-                      </div>
-                      <button 
-                        className="text-blue-500 hover:underline"
-                        onClick={() => navigate(`/product/${item.item_id}`)}
-                      >
-                        View Product
-                      </button>
-                    </li>
-                  );
-                })}
+                {order.order_items.map(item => (
+                  <li key={item._id} className="flex justify-between items-center">
+                    <span>Item ID: {item.item_id}</span>
+                    <button 
+                      className="text-blue-500 hover:underline"
+                      onClick={() => navigate(`/product/${item.item_id}`)}
+                    >
+                      View Product
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
           ))}

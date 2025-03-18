@@ -7,9 +7,9 @@ import React from 'react';
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="col-span-1 md:col-span-2">
-                <h3 className="text-2xl font-bold mb-4">wamani</h3>
+                <h3 className="text-2xl font-bold mb-4">Tangerine</h3>
                 <p className="text-gray-600 mb-4">
-                  Building innovative software solutions for businesses worldwide.
+                Tangerine is a platform that allows you to buy and sell products online.
                 </p>
                 <div className="flex space-x-4">
                   <a href="#" className="text-gray-600 hover:text-black transition">
@@ -38,7 +38,7 @@ import React from 'react';
               <div>
                 <h4 className="text-lg font-semibold mb-4">Useful Links</h4>
                 <ul className="space-y-2">
-                  <li><a href="#" className="text-gray-600 hover:text-black transition">Orders & Returns</a></li>
+                  <li><a href="/order-and-return" className="text-gray-600 hover:text-black transition">Orders & Returns</a></li>
                   <li><a href="#" className="text-gray-600 hover:text-black transition">Promote Your Product</a></li>
                   <li><a href="#" className="text-gray-600 hover:text-black transition">Order Tracking</a></li>
                   <li><a href="#" className="text-gray-600 hover:text-black transition">Your Account</a></li>
