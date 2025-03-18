@@ -256,7 +256,9 @@ console.log(isLoggedIn);
         </AnimatePresence>
       </div>
       {index === 1 && (
-        <img src="https://wamani.vercel.app/wp-content/uploads/2023/05/Logo.svg" alt="Logo" className="h-8 mx-4" />
+        <Link to="/">
+          <img src="https://wamani.vercel.app/wp-content/uploads/2023/05/Logo.svg" alt="Logo" className="h-8 mx-4 mr-24" />
+        </Link>
       )}
     </React.Fragment>
   ))}
