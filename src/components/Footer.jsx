@@ -27,10 +27,10 @@ import React from 'react';
               <div>
                 <h4 className="text-lg font-semibold mb-4">Know Us</h4>
                 <ul className="space-y-2">
-                  <li><a href="#" className="text-gray-600 hover:text-black transition">About Store</a></li>
-                  <li><a href="#" className="text-gray-600 hover:text-black transition">Store Location</a></li>
+                  <li><a href="/about" className="text-gray-600 hover:text-black transition">About Store</a></li>
+                  <li><a href="/about" className="text-gray-600 hover:text-black transition">Store Location</a></li>
                   <li><a href="#" className="text-gray-600 hover:text-black transition">FAQ</a></li>
-                  <li><a href="#" className="text-gray-600 hover:text-black transition">Contact Us</a></li>
+                  <li><a href="/contact" className="text-gray-600 hover:text-black transition">Contact Us</a></li>
                   <li><a href="#" className="text-gray-600 hover:text-black transition">Awards</a></li>
                 </ul>
               </div>
@@ -40,8 +40,8 @@ import React from 'react';
                 <ul className="space-y-2">
                   <li><a href="/order-and-return" className="text-gray-600 hover:text-black transition">Orders & Returns</a></li>
                   <li><a href="#" className="text-gray-600 hover:text-black transition">Promote Your Product</a></li>
-                  <li><a href="#" className="text-gray-600 hover:text-black transition">Order Tracking</a></li>
-                  <li><a href="#" className="text-gray-600 hover:text-black transition">Your Account</a></li>
+                  <li><a href="/order-and-return" className="text-gray-600 hover:text-black transition">Order Tracking</a></li>
+                  <li><a href="/user-details" className="text-gray-600 hover:text-black transition">Your Account</a></li>
                   <li><a href="#" className="text-gray-600 hover:text-black transition">Press Release</a></li>
                 </ul>
               </div>
