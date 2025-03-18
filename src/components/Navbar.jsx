@@ -174,17 +174,15 @@ console.log(isLoggedIn);
           
           <div className="flex items-center h-20">
             {/* Logo - Left Side */}
-            <div className="flex-1 flex items-center">
-              <Link to="/" className="text-2xl font-bold mr-4 cursor-pointer">
-                Tangerine
-              </Link>
+            <div className="flex-1 flex items-center ml-10">
+           
               {/* Search - Next to Logo */}
               <Search />
             </div>
 
 {/* Navigation Menu - Below */}
 <div className="flex justify-center space-x-8 py-4 mr-32">
-  <Link to="/" className="text-gray-700 hover:text-black text-sm">
+  <Link to="/" className="text-gray-700 hover:text-black text-lg">
     Home
   </Link>
   {Object.entries(menuItems).map(([key, menu], index) => (
@@ -196,7 +194,7 @@ console.log(isLoggedIn);
       >
         <motion.button
           whileHover={{ scale: 1.05 }}
-          className="flex items-center text-gray-700 hover:text-black gap-1 text-sm"
+          className="flex items-center text-gray-700 hover:text-black gap-1 text-lg"
         >
           {menu.title}
           <ChevronDown size={16} />
@@ -262,7 +260,7 @@ console.log(isLoggedIn);
       )}
     </React.Fragment>
   ))}
-  <Link to="/contact" className="text-gray-700 hover:text-black text-sm">
+  <Link to="/contact" className="text-gray-700 hover:text-black text-lg">
     Contact
   </Link>
 </div>
