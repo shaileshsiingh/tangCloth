@@ -12,8 +12,8 @@ export function CartProvider({ children }) {
   const fetchCartItems = useCallback(async () => {
     try {
       const token = localStorage.getItem('authToken');
-      // const response = await fetch(`${API_URL}/cart/get-item`, {
-      const response = await fetch(`http://91.203.135.152:2001/api/cart/get-item`, {
+      const response = await fetch(`${API_URL}/cart/get-item`, {
+      // const response = await fetch(`http://91.203.135.152:2001/api/cart/get-item`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -44,8 +44,8 @@ export function CartProvider({ children }) {
   const addToCart = async (product) => {
     try {
       const token = localStorage.getItem('authToken');
-      // const response = await fetch(`${API_URL}/cart/add-item`, {
-      const response = await fetch(`http://91.203.135.152:2001/api/cart/add-item`, {
+      const response = await fetch(`${API_URL}/cart/add-item`, {
+      // const response = await fetch(`http://91.203.135.152:2001/api/cart/add-item`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,8 +104,8 @@ export function CartProvider({ children }) {
   const removeFromCart = async (productId, selectedSize) => {
     try {
       const token = localStorage.getItem('authToken');
-      // const response = await fetch(`${API_URL}/cart/remove-item/${productId}`, {
-      const response = await fetch(`http://91.203.135.152:2001/api/cart/remove-item/${productId}`, {
+      const response = await fetch(`${API_URL}/cart/remove-item/${productId}`, {
+      // const response = await fetch(`http://91.203.135.152:2001/api/cart/remove-item/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

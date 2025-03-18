@@ -58,7 +58,8 @@ const AboutPage = () => {
         <div className="absolute inset-0 bg-black opacity-70"></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h2 className="text-4xl font-bold text-white mb-12">WHO WE ARE</h2>
-          
+                  {/* <img src="https://tangerineluxury.com/wp-content/uploads/2023/11/black-bag-from-brand-louis-vuitton-scaled.jpg" alt="Who We Are" className="w-full h-full object-cover" /> */}
+
           <div className="max-w-3xl mx-auto">
             <p className="text-white mb-6">
               Tangerine Luxury is who we are. And we adore fashion tremendously. Fashion is incredibly good at generating desire and creating magical worlds.

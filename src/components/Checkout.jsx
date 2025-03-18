@@ -65,7 +65,7 @@ function Checkout() {
       const token = localStorage.getItem('authToken');
       const address_id = '67c970bf49a2ab0ce7857d98'; // Replace with actual address ID logic
       const shipping = 'standard'; // Replace with actual shipping logic
-  
+      const API_URL = "/api";
       // Check if cart has items
       if (!cart || cart.length === 0) {
         console.error('Cart is empty');
@@ -85,7 +85,9 @@ function Checkout() {
       // Log the exact payload for debugging
       console.log('Request payload:', JSON.stringify(order));
   
-      const response = await fetch('http://91.203.135.152:2001/api/order/add', {
+      // const response = await fetch('http://91.203.135.152:2001/api/order/add', {
+            const response = await fetch(`${API_URL}/order/add`, {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

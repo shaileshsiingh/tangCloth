@@ -5,11 +5,12 @@ function HomePage() {
   const [showCard, setShowCard] = useState(false);
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-
+  const API_URL = "/api";   
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://91.203.135.152:2001/api/product/list');
+        // const response = await fetch('http://91.203.135.152:2001/api/product/list');
+        const response = await fetch(`${API_URL}/product/list`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }

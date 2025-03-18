@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 
-// const API_URL = process.env.REACT_APP_API_URL || "https://91.203.135.152:2001/api";
-const API_URL = "http://91.203.135.152:2001/api";
+// const API_URL = process.env.REACT_APP_API_URL ;
+const API_URL = "/api";
 
 function ProductList() {
   const navigate = useNavigate();
@@ -21,42 +21,49 @@ function ProductList() {
 
   const [searchTimeout, setSearchTimeout] = useState(null);
 
-  const fetchProducts = useCallback(async (page, search = '') => {
+  const itemsPerPage = 12; // Set items per page to 12
+
+  const fetchProducts = useCallback(async (page, search = '', sort = 'default') => {
     try {
       setLoading(true);
-      
-      // Create URL with URLSearchParams for proper query string handling
       const baseUrl = `${API_URL}/product/list`;
       const params = new URLSearchParams();
       params.append('page', page);
+      params.append('limit', itemsPerPage);
       
       if (search && search.trim() !== '') {
         params.append('search', search.trim());
       }
       
+      // Add sort parameter to the API request
+      if (sort === 'price-asc') {
+        params.append('sort', 'price');
+        params.append('order', 'asc');
+      } else if (sort === 'price-desc') {
+        params.append('sort', 'price');
+        params.append('order', 'desc');
+      }
+      
       const url = `${baseUrl}?${params.toString()}`;
       console.log('Fetching products from:', url);
-
       const response = await fetch(url);
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
-      
       if (!data.success) {
         throw new Error(data.message || 'Failed to fetch products');
       }
       
       setProducts(data.data.products || []);
-      
-      // Force the currentPage to match our requested page regardless of what the API returns
       setCurrentPage(page);
       setTotalPages(data.data.pagination.totalPages);
       setTotalProducts(data.data.pagination.totalProducts);
-
+      
       console.log('API Response:', data);
-      console.log('Forcing display of page:', page);
+      console.log('Showing page:', page);
       console.log('Total Pages:', data.data.pagination.totalPages);
       console.log('Total Products:', data.data.pagination.totalProducts);
     } catch (err) {
@@ -69,8 +76,8 @@ function ProductList() {
 
   useEffect(() => {
     // Initial fetch
-    fetchProducts(1, '');
-  }, [fetchProducts]);
+    fetchProducts(1, '', sortBy);
+  }, [fetchProducts, sortBy]);
 
   useEffect(() => {
     // Debounce search input
@@ -80,7 +87,7 @@ function ProductList() {
     
     const timeoutId = setTimeout(() => {
       // Reset to first page when searching
-      fetchProducts(1, searchTerm);
+      fetchProducts(1, searchTerm, sortBy);
     }, 500); // 500ms debounce delay
     
     setSearchTimeout(timeoutId);
@@ -88,23 +95,11 @@ function ProductList() {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [searchTerm, fetchProducts]);
-
-  // Memoized sorting
-  const sortedProducts = useMemo(() => {
-    return [...products].sort((a, b) => {
-      if (sortBy === 'price-asc') {
-        return a.price - b.price;
-      } else if (sortBy === 'price-desc') {
-        return b.price - a.price;
-      }
-      return 0;
-    });
-  }, [products, sortBy]);
+  }, [searchTerm, fetchProducts, sortBy]);
 
   const handlePageChange = useCallback((newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      fetchProducts(newPage, searchTerm);
+      fetchProducts(newPage, searchTerm, sortBy);
       
       // Scroll to top of the product list
       window.scrollTo({
@@ -112,7 +107,7 @@ function ProductList() {
         behavior: 'smooth'
       });
     }
-  }, [fetchProducts, totalPages, searchTerm]);
+  }, [fetchProducts, totalPages, searchTerm, sortBy]);
 
   const handleProductClick = (product) => {
     navigate(`/product/${product._id}`, { state: { product } });
@@ -124,6 +119,12 @@ function ProductList() {
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
+    // This will trigger a refetch due to the useEffect dependency on sortBy
+  };
+
+  const addToWishlist = (product) => {
+    // Implement add to wishlist logic here
+    console.log('Add to wishlist:', product._id);
   };
 
   if (loading && products.length === 0) {
@@ -141,7 +142,7 @@ function ProductList() {
           <h2 className="text-2xl font-bold mb-2">Error</h2>
           <p>{error}</p>
           <button 
-            onClick={() => fetchProducts(currentPage, searchTerm)}
+            onClick={() => fetchProducts(currentPage, searchTerm, sortBy)}
             className="mt-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
           >
             Try Again
@@ -152,13 +153,21 @@ function ProductList() {
   }
 
   // Calculate the start and end product numbers for the current page
-  // Use items per page as the actual number of returned products
-  const itemsPerPage = products.length || 1; // Avoid division by zero
   const startProduct = (currentPage - 1) * itemsPerPage + 1;
   const endProduct = Math.min(startProduct + products.length - 1, totalProducts);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6 text-center">My Shop</h1>
+      <nav className="text-sm mb-6">
+        <ol className="list-none p-0 inline-flex">
+          <li className="flex items-center">
+            <Link to="/" className="text-gray-500 hover:text-black">Home</Link>
+            <span className="mx-2">/</span>
+          </li>
+          <li className="text-gray-800">My Shop</li>
+        </ol>
+      </nav>
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <p className="text-gray-600">
           {totalProducts > 0 ? (
@@ -196,59 +205,98 @@ function ProductList() {
       )}
 
       <motion.div 
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {sortedProducts.map((product) => (
+        {products.map((product) => (
           <motion.div
             key={product._id}
-            className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer relative group"
+            className="overflow-hidden cursor-pointer group relative"
             whileHover={{ y: -5 }}
             onClick={() => handleProductClick(product)}
           >
-            <div className="relative pb-[100%]">
+            <div className="relative pb-[100%] bg-cyan-600">
               <img
-                src={product.images?.[0] || 'https://via.placeholder.com/400'}
+                src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
                 alt={product.product_name}
                 className="absolute top-0 left-0 w-full h-full object-cover"
                 onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/400';
+                  e.target.src = 'https://via.placeholder.com/300x300';
                 }}
               />
-              <motion.div
-                className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-end justify-center"
-              >
-                <motion.button
-                  className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300 opacity-0 group-hover:opacity-100 mb-4"
-                  whileHover={{ scale: 1.1 }}
+              {product.isSale && (
+                <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">SALE</span>
+              )}
+              {product.isNew && (
+                <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1">NEW</span>
+              )}
+              <div className="absolute right-2 top-2 flex flex-col gap-2">
+                <button 
+                  className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleProductClick(product);
+                    addToWishlist(product);
                   }}
                 >
-                  Select Option
-                </motion.button>
-              </motion.div>
-            </div>
-            <div className="p-4">
-              <h2 className="text-lg font-semibold mb-2 line-clamp-2">{product.product_name}</h2>
-              <p className="text-gray-600 mb-2 line-clamp-2">{product.description}</p>
-              <div className="flex justify-between items-center">
-                <p className="text-lg font-bold">${product.price}</p>
-                {product.sizes && product.sizes.reduce((total, size) => total + size.quantity, 0) > 0 ? (
-                  <span className="text-green-600 text-sm">In Stock</span>
-                ) : (
-                  <span className="text-red-600 text-sm">Out of Stock</span>
-                )}
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    strokeWidth={1.5} 
+                    stroke="currentColor" 
+                    className="w-5 h-5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                  </svg>
+                </button>
+                <button className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    strokeWidth={1.5} 
+                    stroke="currentColor" 
+                    className="w-5 h-5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  </svg>
+                </button>
               </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-70 flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
+              <button 
+                className="bg-black text-white border border-white px-6 py-2 text-sm font-medium hover:bg-white hover:text-black transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleProductClick(product);
+                }}
+              >
+                SELECT OPTIONS
+              </button>
+            </div>
+            <div className="pt-4 pb-2 text-center">
+              <h2 className="text-base font-medium mb-1">{product.product_name}</h2>
+              <div className="flex justify-center mb-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg 
+                    key={star} 
+                    className={`w-4 h-4 ${star <= (product.rating || 3) ? 'text-black-500' : 'text-gray-300'}`} 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-gray-800">${product.price.toFixed(2)}</p>
             </div>
           </motion.div>
         ))}
       </motion.div>
 
-      {sortedProducts.length === 0 && !loading && (
+      {products.length === 0 && !loading && (
         <div className="text-center py-12">
           <h3 className="text-xl font-semibold text-gray-600">No products found</h3>
           <p className="text-gray-500 mt-2">Try adjusting your search criteria</p>
@@ -258,14 +306,6 @@ function ProductList() {
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-2">
-          <button
-            onClick={() => handlePageChange(1)}
-            disabled={currentPage === 1 || loading}
-            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="First page"
-          >
-            &laquo;
-          </button>
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1 || loading}
@@ -279,32 +319,19 @@ function ProductList() {
           <div className="flex space-x-1">
             {[...Array(totalPages)].map((_, index) => {
               const pageNumber = index + 1;
-              // Show limited page numbers with ellipsis for better UX
-              if (
-                pageNumber === 1 ||
-                pageNumber === totalPages ||
-                (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-              ) {
-                return (
-                  <button
-                    key={pageNumber}
-                    onClick={() => handlePageChange(pageNumber)}
-                    disabled={loading}
-                    className={`w-10 h-10 flex items-center justify-center rounded
-                      ${currentPage === pageNumber 
-                        ? 'bg-black text-white' 
-                        : 'border hover:bg-gray-100'}`}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              } else if (
-                pageNumber === currentPage - 2 ||
-                pageNumber === currentPage + 2
-              ) {
-                return <span key={pageNumber} className="px-2 self-end">...</span>;
-              }
-              return null;
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  disabled={loading}
+                  className={`w-8 h-8 flex items-center justify-center
+                    ${currentPage === pageNumber 
+                      ? 'bg-black text-white' 
+                      : 'border hover:bg-gray-100'}`}
+                >
+                  {pageNumber}
+                </button>
+              );
             })}
           </div>
           
@@ -316,39 +343,6 @@ function ProductList() {
           >
             &rsaquo;
           </button>
-          <button
-            onClick={() => handlePageChange(totalPages)}
-            disabled={currentPage === totalPages || loading}
-            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Last page"
-          >
-            &raquo;
-          </button>
-        </div>
-      )}
-      
-      {/* Direct Page Navigation */}
-      {totalPages > 2 && (
-        <div className="mt-4 flex justify-center items-center">
-          <span className="text-gray-600 mr-2">Jump to:</span>
-          <div className="flex flex-wrap justify-center gap-2 max-w-md">
-            {[...Array(totalPages)].map((_, index) => {
-              const pageNumber = index + 1;
-              return (
-                <button
-                  key={pageNumber}
-                  onClick={() => handlePageChange(pageNumber)}
-                  disabled={loading || currentPage === pageNumber}
-                  className={`w-8 h-8 flex items-center justify-center text-sm
-                    ${currentPage === pageNumber 
-                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-                      : 'border hover:bg-gray-100'}`}
-                >
-                  {pageNumber}
-                </button>
-              );
-            })}
-          </div>
         </div>
       )}
     </div>

@@ -9,10 +9,11 @@ function OrderAndReturn() {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-
+    const API_URL = "/api"; 
     const fetchOrders = async () => {
       try {
-        const response = await fetch('http://91.203.135.152:2001/api/order/getAllOrder', {
+        // const response = await fetch('http://91.203.135.152:2001/api/order/getAllOrder', {
+        const response = await fetch(`${API_URL}/order/getAllOrder`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
