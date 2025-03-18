@@ -7,7 +7,7 @@ function LoadingScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
-    }, 1000); // 1 second delay
+    }, 3000); // 3 seconds delay
 
     return () => clearTimeout(timer);
   }, []);
@@ -19,7 +19,13 @@ function LoadingScreen() {
       transition={{ duration: 0.5 }}
       className="fixed inset-0 flex items-center justify-center bg-white z-50"
     >
-      <h1 className="text-4xl font-bold font-serif">Tangerine..</h1>
+      <motion.h1
+        className="text-4xl font-bold font-serif"
+        animate={{ x: [0, 10, 0], y: [0, 10, 0] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+      >
+        Tangerine..
+      </motion.h1>
     </motion.div>
   );
 }
