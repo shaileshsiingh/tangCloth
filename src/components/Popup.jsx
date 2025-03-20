@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function Popup({ isOpen, onClose }) {
+function Popup() {
+  const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  // Use effect to show popup after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 4000); // 5000 milliseconds = 5 seconds
+    
+    // Clean up the timer when component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handler to close the popup
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   // Handler to prevent event bubbling
   const handlePopupClick = (e) => {
@@ -12,7 +28,7 @@ function Popup({ isOpen, onClose }) {
 
   // Handle clicks on the overlay
   const handleOverlayClick = () => {
-    onClose();
+    handleClose();
   };
 
   const handleSubscribe = () => {
@@ -93,7 +109,7 @@ function Popup({ isOpen, onClose }) {
               </div>
               
               <button 
-                onClick={onClose} 
+                onClick={handleClose} 
                 className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-100 rounded-full"
                 style={{ 
                   cursor: "pointer", 
@@ -109,11 +125,5 @@ function Popup({ isOpen, onClose }) {
     </AnimatePresence>
   );
 }
-
-// Default props to prevent errors if not provided
-Popup.defaultProps = {
-  isOpen: false,
-  onClose: () => console.log('Close function not provided to Popup')
-};
 
 export default Popup;
