@@ -79,7 +79,7 @@ function AddProduct() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h1 className="text-3xl font-bold mb-6 text-center">Add Product</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center">Add Products</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Product Name</label>
