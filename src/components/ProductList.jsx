@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // const API_URL = process.env.REACT_APP_API_URL ;
 const API_URL = "/api";
@@ -18,24 +18,23 @@ function ProductList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
 
   const [searchTimeout, setSearchTimeout] = useState(null);
 
-  const itemsPerPage = 12; // Set items per page to 12
+  const itemsPerPage = 12; // Set items per page
 
-  const fetchProducts = useCallback(async (page, search = '', sort = 'default') => {
+  const fetchProducts = useCallback(async (search = '', sort = 'default') => {
     try {
       setLoading(true);
+      // const baseUrl = 'http://91.203.135.152:2001/api/product/list';
       const baseUrl = `${API_URL}/product/list`;
       const params = new URLSearchParams();
-      params.append('page', page);
-      params.append('limit', itemsPerPage);
       
       if (search && search.trim() !== '') {
         params.append('search', search.trim());
       }
       
-      // Add sort parameter to the API request
       if (sort === 'price-asc') {
         params.append('sort', 'price');
         params.append('order', 'asc');
@@ -57,74 +56,130 @@ function ProductList() {
         throw new Error(data.message || 'Failed to fetch products');
       }
       
-      setProducts(data.data.products || []);
-      setCurrentPage(page);
-      setTotalPages(data.data.pagination.totalPages);
-      setTotalProducts(data.data.pagination.totalProducts);
+      const allProducts = data.data.products || [];
+      setProducts(allProducts);
+      setTotalProducts(allProducts.length);
+      setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
+      setCurrentPage(1); // Reset to first page when search/sort changes
       
       console.log('API Response:', data);
-      console.log('Showing page:', page);
-      console.log('Total Pages:', data.data.pagination.totalPages);
-      console.log('Total Products:', data.data.pagination.totalProducts);
     } catch (err) {
       console.error('Error fetching products:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [itemsPerPage]);
+
+  // Update displayed products when products array or current page changes
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setDisplayedProducts(products.slice(startIndex, endIndex));
+  }, [products, currentPage, itemsPerPage]);
 
   useEffect(() => {
-    // Initial fetch
-    fetchProducts(1, '', sortBy);
-  }, [fetchProducts, sortBy]);
+    fetchProducts(searchTerm, sortBy);
+  }, [fetchProducts, searchTerm, sortBy]);
 
-  useEffect(() => {
-    // Debounce search input
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-    
-    const timeoutId = setTimeout(() => {
-      // Reset to first page when searching
-      fetchProducts(1, searchTerm, sortBy);
-    }, 500); // 500ms debounce delay
-    
-    setSearchTimeout(timeoutId);
-    
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [searchTerm, fetchProducts, sortBy]);
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  };
 
-  const handlePageChange = useCallback((newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      fetchProducts(newPage, searchTerm, sortBy);
-      
-      // Scroll to top of the product list
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }
-  }, [fetchProducts, totalPages, searchTerm, sortBy]);
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+  };
 
   const handleProductClick = (product) => {
     navigate(`/product/${product._id}`, { state: { product } });
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-    // This will trigger a refetch due to the useEffect dependency on sortBy
-  };
-
   const addToWishlist = (product) => {
     // Implement add to wishlist logic here
     console.log('Add to wishlist:', product._id);
+  };
+
+  const goToPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo(0, 0); // Scroll to top when changing page
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pageNumbers = [];
+    const showEllipsis = totalPages > 5;
+    
+    if (showEllipsis) {
+      // Always show first page
+      pageNumbers.push(1);
+      
+      // Show ellipsis if not in first few pages
+      if (currentPage > 3) {
+        pageNumbers.push('...');
+      }
+      
+      // Show pages surrounding current page
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        pageNumbers.push(i);
+      }
+      
+      // Show ellipsis if not in last few pages
+      if (currentPage < totalPages - 2) {
+        pageNumbers.push('...');
+      }
+      
+      // Always show last page
+      pageNumbers.push(totalPages);
+    } else {
+      // Show all pages if total pages <= 5
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    }
+
+    return (
+      <div className="flex items-center justify-center mt-8 space-x-1">
+        <button
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="p-2 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Previous page"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        
+        {pageNumbers.map((page, index) => (
+          page === '...' ? (
+            <span key={`ellipsis-${index}`} className="px-4 py-2">...</span>
+          ) : (
+            <button
+              key={`page-${page}`}
+              onClick={() => goToPage(page)}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === page 
+                  ? 'bg-black text-white' 
+                  : 'border border-gray-300 hover:bg-gray-100'
+              }`}
+              aria-current={currentPage === page ? 'page' : undefined}
+            >
+              {page}
+            </button>
+          )
+        ))}
+        
+        <button
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="p-2 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Next page"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+    );
   };
 
   if (loading && products.length === 0) {
@@ -142,7 +197,7 @@ function ProductList() {
           <h2 className="text-2xl font-bold mb-2">Error</h2>
           <p>{error}</p>
           <button 
-            onClick={() => fetchProducts(currentPage, searchTerm, sortBy)}
+            onClick={() => fetchProducts(searchTerm, sortBy)}
             className="mt-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
           >
             Try Again
@@ -151,10 +206,6 @@ function ProductList() {
       </div>
     );
   }
-
-  // Calculate the start and end product numbers for the current page
-  const startProduct = (currentPage - 1) * itemsPerPage + 1;
-  const endProduct = Math.min(startProduct + products.length - 1, totalProducts);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -171,7 +222,7 @@ function ProductList() {
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <p className="text-gray-600">
           {totalProducts > 0 ? (
-            `Showing ${startProduct}-${endProduct} of ${totalProducts} ${totalProducts === 1 ? 'product' : 'products'}`
+            `Showing ${Math.min((currentPage - 1) * itemsPerPage + 1, totalProducts)} - ${Math.min(currentPage * itemsPerPage, totalProducts)} of ${totalProducts} products`
           ) : (
             'No products found'
           )}
@@ -210,7 +261,7 @@ function ProductList() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {products.map((product) => (
+        {displayedProducts.map((product) => (
           <motion.div
             key={product._id}
             className="overflow-hidden cursor-pointer group relative"
@@ -303,48 +354,8 @@ function ProductList() {
         </div>
       )}
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-8 space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1 || loading}
-            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Previous page"
-          >
-            &lsaquo;
-          </button>
-          
-          {/* Page number buttons */}
-          <div className="flex space-x-1">
-            {[...Array(totalPages)].map((_, index) => {
-              const pageNumber = index + 1;
-              return (
-                <button
-                  key={pageNumber}
-                  onClick={() => handlePageChange(pageNumber)}
-                  disabled={loading}
-                  className={`w-8 h-8 flex items-center justify-center
-                    ${currentPage === pageNumber 
-                      ? 'bg-black text-white' 
-                      : 'border hover:bg-gray-100'}`}
-                >
-                  {pageNumber}
-                </button>
-              );
-            })}
-          </div>
-          
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages || loading}
-            className="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Next page"
-          >
-            &rsaquo;
-          </button>
-        </div>
-      )}
+      {/* Pagination Component */}
+      {renderPagination()}
     </div>
   );
 }
