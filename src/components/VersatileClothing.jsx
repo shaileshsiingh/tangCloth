@@ -1,8 +1,8 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
     function VersatileClothing() {
       return (
-        <section className="relative py-20">
+        <section className="relative py-20">      
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
@@ -17,9 +17,11 @@ import React from 'react';
                 <p className="text-gray-600 mb-8">
                   Maximize all great men attire, tailored-fit men suits, women's attire. Amet ut convallis est. Nam nunc erat, quis tempus ultrices ligula et amet, malesuada pellentesque diam.
                 </p>
+                <Link to="/shop">
                 <button className="bg-black text-white px-8 py-3 rounded-none hover:bg-gray-900 transition">
                   SHOP COLLECTION
                 </button>
+                </Link>
               </div>
             </div>
           </div>
