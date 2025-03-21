@@ -11,6 +11,8 @@ import Newsletter from '../components/Newsletter';
 import HomePage from '../components/HomePage';
 import LoadingScreen from '../components/LoadingScreen';
 import Popup from '../components/Popup';
+import Categories from '../components/Categories';
+import PrelovedLuxury from '../components/PrelovedLuxury'
 
 function Home() {
   const [showPopup, setShowPopup] = useState(false);
@@ -70,6 +72,8 @@ function Home() {
       <div className={showPopup ? "" : ""}>
         <Banner />
         <HomePage />
+        <Categories/>
+        <PrelovedLuxury />  
         <FeaturedProducts />
         <CategoryBanner />
         <BrandsSale />
