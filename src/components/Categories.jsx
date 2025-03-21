@@ -21,7 +21,7 @@ function Categories() {
         {categories.map((category) => (
           <motion.div
             key={category.name}
-            className="text-center"
+            className="text-center transform transition-transform duration-300 hover:scale-105"
             initial={{ opacity: 0, y: -50 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.9, ease: 'easeOut' }}
@@ -29,10 +29,10 @@ function Categories() {
             <img
               src={category.image}
               alt={category.name}
-              className="w-64 h-64 object-cover rounded-lg mb-4"
+              className="w-64 h-64 object-cover rounded-lg mb-4 shadow-lg"
             />
             <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
-            <button className="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">
+            <button className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition-colors shadow-md">
               EXPLORE MORE
             </button>
           </motion.div>
@@ -42,4 +42,4 @@ function Categories() {
   );
 }
 
-export default Categories; 
+export default Categories;

@@ -11,8 +11,8 @@ const items = [
 
 function PrelovedLuxury() {
   const { ref, inView } = useInView({
-    triggerOnce: true, // Trigger animation only once
-    threshold: 0.3, // Trigger when 10% of the component is visible
+    triggerOnce: true,
+    threshold: 0.3,
   });
 
   return (
@@ -22,18 +22,18 @@ function PrelovedLuxury() {
         {items.map((item) => (
           <motion.div
             key={item.name}
-            className="text-center"
+            className="text-center transform transition-transform duration-300 hover:scale-105"
             initial={{ opacity: 0, y: -50 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            transition={{ duration: 0.9, ease: 'easeOut' }}
           >
             <img
               src={item.image}
               alt={item.name}
-              className="w-64 h-64 object-cover rounded-lg mb-4"
+              className="w-64 h-64 object-cover rounded-lg mb-4 shadow-lg"
             />
             <h3 className="text-xl font-semibold mb-2">{item.name}</h3>
-            <button className="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">
+            <button className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition-colors shadow-md">
               EXPLORE MORE
             </button>
           </motion.div>
@@ -43,4 +43,4 @@ function PrelovedLuxury() {
   );
 }
 
-export default PrelovedLuxury; 
+export default PrelovedLuxury;
