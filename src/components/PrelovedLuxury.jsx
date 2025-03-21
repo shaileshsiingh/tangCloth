@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 const items = [
   { name: 'APPAREL', image: 'https://tangerineluxury.com/wp-content/uploads/2024/10/Gucci.png' },
@@ -8,12 +10,23 @@ const items = [
 ];
 
 function PrelovedLuxury() {
+  const { ref, inView } = useInView({
+    triggerOnce: true, // Trigger animation only once
+    threshold: 0.3, // Trigger when 10% of the component is visible
+  });
+
   return (
-    <div className="bg-pink-100 py-12">
+    <div ref={ref} className="bg-pink-100 py-12">
       <h2 className="text-center text-3xl font-bold mb-8">EXPLORE PRELOVED LUXURY</h2>
       <div className="flex justify-center space-x-8">
         {items.map((item) => (
-          <div key={item.name} className="text-center">
+          <motion.div
+            key={item.name}
+            className="text-center"
+            initial={{ opacity: 0, y: -50 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
             <img
               src={item.image}
               alt={item.name}
@@ -23,7 +36,7 @@ function PrelovedLuxury() {
             <button className="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600">
               EXPLORE MORE
             </button>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

@@ -3,14 +3,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { products } from '../data/products';
 import { StarIcon } from '@heroicons/react/24/solid';
+import { useInView } from 'react-intersection-observer';
 
 function FeaturedProducts() {
   const navigate = useNavigate();
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.3,
+  });
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      ref={ref}
+      initial={{ opacity: 0, y: -50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.9, ease: 'easeOut' }}
       className="py-16"
     >
       <div className="container mx-auto px-4">
