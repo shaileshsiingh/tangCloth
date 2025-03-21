@@ -3,17 +3,22 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// const API_URL = process.env.REACT_APP_API_URL ;
+// const API_URL = process.env.REACT_APP_API_URL;
 const API_URL = "/api";
 
 function ProductList() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('default');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [priceRange, setPriceRange] = useState([0, 180000]);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,28 +43,48 @@ function ProductList() {
     kids: ['Toys', 'Clothing', 'Shoes'],
   };
 
-  const fetchProducts = useCallback(async (search = '', sort = 'default', category = 'all') => {
+  const colors = ['Red', 'Blue', 'Green'];
+  const sizes = ['S', 'M', 'L', 'XL'];
+  const brands = ['Brand A', 'Brand B', 'Brand C'];
+
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      // const baseUrl = 'http://91.203.135.152:2001/api/product/list';
-      const baseUrl = `${API_URL}/product/list`;
+      const baseUrl = 'http://91.203.135.152:2001/api/product/list';
       const params = new URLSearchParams();
         
-      if (search && search.trim() !== '') {
-        params.append('search', search.trim());
+      if (searchTerm && searchTerm.trim() !== '') {
+        params.append('search', searchTerm.trim());
       }
       
-      if (sort === 'price-asc') {
+      if (sortBy === 'price-asc') {
         params.append('sort', 'price');
         params.append('order', 'asc');
-      } else if (sort === 'price-desc') {
+      } else if (sortBy === 'price-desc') {
         params.append('sort', 'price');
         params.append('order', 'desc');
       }
       
-      if (category !== 'all') {
-        params.append('category', category);
+      if (selectedCategory !== 'all') {
+        params.append('category', selectedCategory);
       }
+      
+      // Add these if your API supports them, otherwise remove
+      // and rely on client-side filtering
+      if (selectedColor) {
+        params.append('color', selectedColor);
+      }
+      
+      if (selectedSize) {
+        params.append('size', selectedSize);
+      }
+      
+      if (selectedBrand) {
+        params.append('brand', selectedBrand);
+      }
+      
+      params.append('min_price', priceRange[0]);
+      params.append('max_price', priceRange[1]);
       
       const url = `${baseUrl}?${params.toString()}`;
       console.log('Fetching products from:', url);
@@ -78,7 +103,6 @@ function ProductList() {
       setProducts(allProducts);
       setTotalProducts(allProducts.length);
       setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
-      setCurrentPage(1); // Reset to first page when search/sort changes
       
       console.log('API Response:', data);
     } catch (err) {
@@ -87,19 +111,80 @@ function ProductList() {
     } finally {
       setLoading(false);
     }
-  }, [itemsPerPage]);
-
-  // Update displayed products when products array or current page changes
+  }, [searchTerm, sortBy, selectedCategory, selectedColor, selectedSize, selectedBrand, priceRange, itemsPerPage]);
+  
+  // Initial fetch on mount
   useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+  
+  // Debounce search input
+  useEffect(() => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    const timeout = setTimeout(() => {
+      setCurrentPage(1); // Reset to first page when search changes
+      fetchProducts();
+    }, 500);
+    
+    setSearchTimeout(timeout);
+    
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [searchTerm, fetchProducts]);
+  
+  // Apply additional client-side filtering if needed
+  // This is a fallback for filters not supported by your API
+  useEffect(() => {
+    let filtered = [...products];
+    
+    // Only apply these filters client-side if your API doesn't support them
+    // Otherwise, remove this filtering logic as it's redundant
+    const needsClientSideFiltering = false; // Set to true if API doesn't support some filters
+    
+    if (needsClientSideFiltering) {
+      filtered = filtered.filter((product) => {
+        // Check if price is within range
+        const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+        
+        // Check if color matches (if selected)
+        const matchesColor = selectedColor ? product.color === selectedColor : true;
+        
+        // Check if size matches (if selected)
+        const matchesSize = selectedSize 
+          ? product.sizes && product.sizes.some(sizeObj => sizeObj.size === selectedSize)
+          : true;
+        
+        // Check if brand matches (if selected)
+        const matchesBrand = selectedBrand ? product.brand_id === selectedBrand : true;
+        
+        return matchesPrice && matchesColor && matchesSize && matchesBrand;
+      });
+    }
+    
+    setFilteredProducts(filtered);
+    setTotalProducts(filtered.length);
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+    
+    // Update displayed products based on current page
+    updateDisplayedProducts(filtered);
+    
+  }, [products, priceRange, selectedColor, selectedSize, selectedBrand, itemsPerPage]);
+  
+  // Update displayed products when page changes
+  useEffect(() => {
+    updateDisplayedProducts(filteredProducts);
+  }, [currentPage, filteredProducts]);
+  
+  const updateDisplayedProducts = (productsArray) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    setDisplayedProducts(products.slice(startIndex, endIndex));
-  }, [products, currentPage, itemsPerPage]);
-
-  useEffect(() => {
-    fetchProducts(searchTerm, sortBy, selectedCategory);
-  }, [fetchProducts, searchTerm, sortBy, selectedCategory]);
-
+    setDisplayedProducts(productsArray.slice(startIndex, endIndex));
+  };
+  
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -107,6 +192,7 @@ function ProductList() {
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
+    setCurrentPage(1); // Reset pagination when sort changes
   };
 
   const handleProductClick = (product) => {
@@ -126,6 +212,38 @@ function ProductList() {
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
+    setCurrentPage(1); // Reset pagination when filter changes
+  };
+  
+  const handleColorChange = (color) => {
+    setSelectedColor(color === selectedColor ? '' : color); // Toggle selection
+    setCurrentPage(1);
+  };
+  
+  const handleSizeChange = (size) => {
+    setSelectedSize(size === selectedSize ? '' : size); // Toggle selection
+    setCurrentPage(1);
+  };
+  
+  const handleBrandChange = (brand) => {
+    setSelectedBrand(brand === selectedBrand ? '' : brand); // Toggle selection
+    setCurrentPage(1);
+  };
+  
+  const handlePriceChange = (value) => {
+    setPriceRange([0, parseInt(value)]);
+    setCurrentPage(1);
+  };
+  
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSortBy('default');
+    setSelectedCategory('all');
+    setPriceRange([0, 180000]);
+    setSelectedColor('');
+    setSelectedSize('');
+    setSelectedBrand('');
+    setCurrentPage(1);
   };
 
   const renderPagination = () => {
@@ -219,7 +337,7 @@ function ProductList() {
           <h2 className="text-2xl font-bold mb-2">Error</h2>
           <p>{error}</p>
           <button 
-            onClick={() => fetchProducts(searchTerm, sortBy, selectedCategory)}
+            onClick={() => fetchProducts()}
             className="mt-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
           >
             Try Again
@@ -241,34 +359,105 @@ function ProductList() {
           <li className="text-gray-800">My Shop</li>
         </ol>
       </nav>
-      <div className="flex">
-        <aside className="w-1/4 pr-4">
-          <h2 className="text-xl font-semibold mb-4">Categories</h2>
-          <ul className="mb-6">
-            {Object.entries(categories).map(([key, value]) => (
-              <li key={key} className="mb-2">
-                <button
-                  className={`text-left w-full ${selectedCategory === key ? 'font-bold' : ''}`}
-                  onClick={() => handleCategoryChange(key)}
-                >
-                  {value}
-                </button>
-                {selectedCategory === key && subcategories[key] && (
-                  <ul className="pl-4 mt-2">
-                    {subcategories[key].map((sub) => (
-                      <li key={sub} className="mb-1">
-                        <button className="text-left w-full">{sub}</button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
+      <div className="flex flex-col md:flex-row">
+        <aside className="w-full md:w-1/4 pr-0 md:pr-4 mb-6 md:mb-0">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">FILTERS</h2>
+            <button 
+              onClick={handleResetFilters}
+              className="text-sm text-gray-600 hover:text-black"
+            >
+              Reset All
+            </button>
+          </div>
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">PRICE</h3>
+            <input
+              type="range"
+              min="0"
+              max="180000"
+              value={priceRange[1]}
+              onChange={(e) => handlePriceChange(e.target.value)}
+              className="w-full"
+            />
+            <div className="flex justify-between text-sm">
+              <span>0</span>
+              <span>{priceRange[1]}</span>
+            </div>
+          </div>
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">CATEGORIES</h3>
+            <ul>
+              {Object.entries(categories).map(([key, value]) => (
+                <li key={key} className="mb-1">
+                  <button
+                    className={`text-left w-full ${selectedCategory === key ? 'font-bold' : ''}`}
+                    onClick={() => handleCategoryChange(key)}
+                  >
+                    {value}
+                  </button>
+                  {selectedCategory === key && subcategories[key] && (
+                    <ul className="pl-4 mt-2">
+                      {subcategories[key].map((sub) => (
+                        <li key={sub} className="mb-1">
+                          <button className="text-left w-full">{sub}</button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">COLOR</h3>
+            <ul>
+              {colors.map((color) => (
+                <li key={color} className="mb-1">
+                  <button
+                    className={`text-left w-full ${selectedColor === color ? 'font-bold' : ''}`}
+                    onClick={() => handleColorChange(color)}
+                  >
+                    {color}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">SIZE</h3>
+            <ul>
+              {sizes.map((size) => (
+                <li key={size} className="mb-1">
+                  <button
+                    className={`text-left w-full ${selectedSize === size ? 'font-bold' : ''}`}
+                    onClick={() => handleSizeChange(size)}
+                  >
+                    {size}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">BRANDS</h3>
+            <ul>
+              {brands.map((brand) => (
+                <li key={brand} className="mb-1">
+                  <button
+                    className={`text-left w-full ${selectedBrand === brand ? 'font-bold' : ''}`}
+                    onClick={() => handleBrandChange(brand)}
+                  >
+                    {brand}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </aside>
-        <main className="w-3/4">
+        <main className="w-full md:w-3/4">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               {totalProducts > 0 ? (
                 `Showing ${Math.min((currentPage - 1) * itemsPerPage + 1, totalProducts)} - ${Math.min(currentPage * itemsPerPage, totalProducts)} of ${totalProducts} products`
               ) : (
@@ -304,7 +493,7 @@ function ProductList() {
           )}
 
           <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -316,7 +505,7 @@ function ProductList() {
                 whileHover={{ y: -5 }}
                 onClick={() => handleProductClick(product)}
               >
-                <div className="relative pb-[100%] bg-cyan-600">
+                <div className="relative pb-[100%] bg-gray-200">
                   <img
                     src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
                     alt={product.product_name}
@@ -350,7 +539,13 @@ function ProductList() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                       </svg>
                     </button>
-                    <button className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100">
+                    <button 
+                      className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Add quick view logic here
+                      }}
+                    >
                       <svg 
                         xmlns="http://www.w3.org/2000/svg" 
                         fill="none" 
@@ -395,7 +590,7 @@ function ProductList() {
             ))}
           </motion.div>
 
-          {products.length === 0 && !loading && (
+          {filteredProducts.length === 0 && !loading && (
             <div className="text-center py-12">
               <h3 className="text-xl font-semibold text-gray-600">No products found</h3>
               <p className="text-gray-500 mt-2">Try adjusting your search criteria</p>
