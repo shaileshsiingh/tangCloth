@@ -18,7 +18,8 @@ import { Link } from 'react-router-dom';
                   Maximize all great men attire, tailored-fit men suits, women's attire. Amet ut convallis est. Nam nunc erat, quis tempus ultrices ligula et amet, malesuada pellentesque diam.
                 </p>
                 <Link to="/shop">
-                <button className="bg-black text-white px-8 py-3 rounded-none hover:bg-gray-900 transition">
+                <button                 className="bg-black text-white px-14 py-4 border border-white rounded-lg hover:bg-white hover:text-black hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 ease-in-out"              >
+                
                   SHOP COLLECTION
                 </button>
                 </Link>

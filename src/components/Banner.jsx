@@ -68,8 +68,7 @@ function Banner() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
                 onClick={() => navigate('/shop')}
-                className="bg-black text-white px-8 py-3 border border-white hover:bg-white hover:text-black transition-colors duration-300"
-              >
+                className="bg-black text-white px-14 py-4 border border-white rounded-lg hover:bg-white hover:text-black hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 ease-in-out"              >
                 SHOP COLLECTION
               </motion.button>
             </div>
