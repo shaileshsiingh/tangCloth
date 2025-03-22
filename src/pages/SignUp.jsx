@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+
 function SignUp() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -28,8 +29,8 @@ function SignUp() {
       return;
     }
     try {
-      const response = await fetch(`${API_URL}/user/signup`, {
       // const response = await fetch(`http://91.203.135.152:2001/api/user/signup`, {
+      const response = await fetch(`${API_URL}/user/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,11 +44,12 @@ function SignUp() {
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to create account');
+        throw new Error(result.message || 'Failed to create account');
       }
 
-      const result = await response.json();
       toast.success('User signed up successfully', {
         position: "top-center",
         autoClose: 3000,
@@ -60,15 +62,14 @@ function SignUp() {
       });
       console.log('User signed up:', result);
 
-      // Store token and user information
-      localStorage.setItem('authToken', result.data.token);
-      localStorage.setItem('userId', result.data.user._id);
-      console.log(result.data.user._id);
-      localStorage.setItem('user', JSON.stringify(result.data.user._id));
+      // Clear error state on success
+      setError(result.message);
+
+    
 
       navigate('/signup-success');
     } catch (err) {
-      setError('Failed to create account');
+      setError(err.message);
     }
   };
 
