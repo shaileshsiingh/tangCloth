@@ -393,7 +393,7 @@ function ProductDetails() {
                       {[...Array(5)].map((_, i) => (
                         <StarIcon 
                           key={i} 
-                          className={`h-4 w-4 ${i < 4 ? 'text-yellow-400' : 'text-gray-200'}`}
+                          className={`h-4 w-4 ${i < 4 ? 'text-black-400' : 'text-gray-200'}`}
                         />
                       ))}
                     </div>
