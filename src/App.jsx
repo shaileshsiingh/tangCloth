@@ -26,10 +26,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import OrderAndReturn from './pages/OrderAndReturn';
 import About from './components/About';
 import AddProduct from './pages/AddProduct';
+import { WishlistProvider } from './context/WishlistContext';
 
 function App() {
   return (
     <CartProvider>
+      <WishlistProvider>
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -59,6 +61,8 @@ function App() {
         </Routes>
         <ToastContainer />
       </Layout>
+      </WishlistProvider>
+
     </CartProvider>
   );
 }

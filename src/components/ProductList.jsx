@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext'; // Import the WishlistContext
 
 // const API_URL = process.env.REACT_APP_API_URL;
 const API_URL = "http://91.203.135.152:2001/api"||"/api";
@@ -10,6 +11,7 @@ const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour
 
 function ProductList() {
   const navigate = useNavigate();
+  const { addToWishlist } = useWishlist(); // Use the addToWishlist function
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -302,17 +304,6 @@ function ProductList() {
 
   const handleProductClick = (product) => {
     navigate(`/product/${product._id}`, { state: { product } });
-  };
-
-  const addToWishlist = (product) => {
-    // Implement add to wishlist logic here
-    console.log('Add to wishlist:', product._id);
-  };
-
-  const goToPage = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    window.scrollTo(0, 0); // Scroll to top when changing page
   };
 
   const handleCategoryChange = (category) => {

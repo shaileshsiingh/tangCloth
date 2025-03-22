@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Heart, User, ChevronDown, Search as SearchIcon } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import TopBar from './TopBar';
 import Search from './Search';
@@ -201,9 +202,9 @@ const menuItems = {
 function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const { cartCount, setIsCartOpen } = useCart();
+  const { wishlist } = useWishlist();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [wishlistCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -580,7 +581,7 @@ function Navbar() {
                   >
                     <Heart className="w-5 h-5" />
                     <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                      {wishlistCount}
+                      {wishlist.length}
                     </span>
                   </motion.button>
                 </Link>
