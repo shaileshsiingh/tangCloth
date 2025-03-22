@@ -600,7 +600,7 @@ function ProductList() {
                       e.target.src = 'https://via.placeholder.com/300x300';
                     }}
                   />
-                  {product.isSale && (
+                  {!product.isSoldOut && (
                     <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">SALE</span>
                   )}
                   {product.isNew && (
