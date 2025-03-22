@@ -5,6 +5,8 @@ import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // const API_URL = process.env.REACT_APP_API_URL;
 const API_URL = "/api";
+const CACHE_KEY = 'productListCache';
+const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour
 
 function ProductList() {
   const navigate = useNavigate();
@@ -50,6 +52,18 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
+
+      // Check for cached data
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        if (Date.now() - timestamp < CACHE_EXPIRY) {
+          setProducts(data);
+          setLoading(false);
+          return;
+        }
+      }
+
       // const baseUrl = 'http://91.203.135.152:2001/api/product/list';
       const baseUrl = `${API_URL}/product/list`;
       const params = new URLSearchParams();
@@ -114,6 +128,9 @@ function ProductList() {
       setFilteredProducts(allProducts);
       setTotalProducts(allProducts.length);
       setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
+      
+      // Cache the data
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ data: allProducts, timestamp: Date.now() }));
       
       console.log('API Response:', data);
     } catch (err) {
@@ -603,7 +620,7 @@ function ProductList() {
                   {!product.isSoldOut && (
                     <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">SALE</span>
                   )}
-                  {product.isNew && (
+                  {product.isSoldOut && (
                     <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1">NEW</span>
                   )}
                   <div className="absolute right-2 top-2 flex flex-col gap-2">
