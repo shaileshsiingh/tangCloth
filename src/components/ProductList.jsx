@@ -5,7 +5,7 @@ import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext'; // Import the WishlistContext
 
 // const API_URL = process.env.REACT_APP_API_URL;
-const API_URL = "http://91.203.135.152:2001/api"||"/api";
+const API_URL = "/api";
 const CACHE_KEY = 'productListCache';
 const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour
 
