@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // const API_URL = process.env.REACT_APP_API_URL;
-const API_URL = "/api";
+const API_URL = "http://91.203.135.152:2001/api"||"/api";
 const CACHE_KEY = 'productListCache';
 const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour
 
@@ -49,6 +49,14 @@ function ProductList() {
   const sizes = ['S', 'M', 'L', 'XL'];
   const brands = ['Brand A', 'Brand B', 'Brand C'];
 
+  const categoryIds = {
+    men: "67c82a32ac6e3964ca7755f7",
+    kids: "67c9b33fb372a96364d09e3b",
+    women: "67c08f837f61f5f03104ec4b"
+  };
+
+  const [categoryList, setCategoryList] = useState([]);
+
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
@@ -64,8 +72,8 @@ function ProductList() {
         }
       }
 
-      // const baseUrl = 'http://91.203.135.152:2001/api/product/list';
-      const baseUrl = `${API_URL}/product/list`;
+      const baseUrl = 'http://91.203.135.152:2001/api/product/list';
+      // const baseUrl = `${API_URL}/product/list`;
       const params = new URLSearchParams();
         
       if (searchTerm && searchTerm.trim() !== '') {
@@ -185,10 +193,26 @@ function ProductList() {
     }
   }, [searchTerm, sortBy, selectedCategory, selectedColor, selectedSize, selectedBrand, priceRange]);
   
-  // Initial fetch on mount
+  const fetchCategories = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/category/getAllCategory`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      const data = await response.json();
+      setCategoryList(data.data.category);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
   
   // Debounce search input
   useEffect(() => {
@@ -232,7 +256,7 @@ function ProductList() {
       
       // Category filter - simplified, would need mapping between category names and IDs
       const matchesCategory = selectedCategory === 'all' ? true : 
-                             product.category_id === getCategoryId(selectedCategory);
+                             product.category_id === categoryIds[selectedCategory];
       
       // Product name search - if not already handled by API
       const matchesSearch = !searchTerm || 
@@ -259,17 +283,6 @@ function ProductList() {
   useEffect(() => {
     updateDisplayedProducts(filteredProducts);
   }, [currentPage, filteredProducts]);
-  
-  // Helper function to get category ID from category name
-  // In a real app, you would fetch these mappings from the API
-  const getCategoryId = (categoryName) => {
-    const categoryMap = {
-      'men': '67c9b33fb372a96364d09e3b',
-      'women': '67c9b33fb372a96364d09e3c',
-      'kids': '67c9b33fb372a96364d09e3d'
-    };
-    return categoryMap[categoryName] || '';
-  };
   
   const updateDisplayedProducts = (productsArray) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -491,23 +504,14 @@ function ProductList() {
           <div className="mb-6">
             <h3 className="font-semibold mb-2">CATEGORIES</h3>
             <ul>
-              {Object.entries(categories).map(([key, value]) => (
-                <li key={key} className="mb-1">
+              {categoryList.map(category => (
+                <li key={category._id} className="mb-1">
                   <button
-                    className={`text-left w-full ${selectedCategory === key ? 'font-bold' : ''}`}
-                    onClick={() => handleCategoryChange(key)}
+                    className={`text-left w-full ${selectedCategory === category.name.toLowerCase() ? 'font-bold' : ''}`}
+                    onClick={() => handleCategoryChange(category.name.toLowerCase())}
                   >
-                    {value}
+                    {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
                   </button>
-                  {selectedCategory === key && subcategories[key] && (
-                    <ul className="pl-4 mt-2">
-                      {subcategories[key].map((sub) => (
-                        <li key={sub} className="mb-1">
-                          <button className="text-left w-full">{sub}</button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                 </li>
               ))}
             </ul>
