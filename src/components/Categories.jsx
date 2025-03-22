@@ -39,6 +39,11 @@ function Categories() {
     fetchCategories();
   }, [fetchCategories]);
 
+  // Function to navigate to shop with selected category
+  const handleCategoryClick = (categoryName) => {
+    navigate('/shop', { state: { selectedCategory: categoryName.toLowerCase() } });
+  };
+
   return (
     <div ref={ref} className="py-16">
       <h2 className="text-center text-3xl font-bold mb-4">Shop By Category</h2>
@@ -58,7 +63,7 @@ function Categories() {
               initial={{ opacity: 0, y: -50 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.9, ease: 'easeOut' }}
-              onClick={() => navigate('/shop')}
+              onClick={() => handleCategoryClick(category.name)}
             >
               <div className="w-64 h-64 bg-white rounded-full overflow-hidden shadow-lg mb-4">
                 <img

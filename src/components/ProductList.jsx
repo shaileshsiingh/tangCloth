@@ -212,6 +212,12 @@ function ProductList() {
   }, []);
 
   useEffect(() => {
+    // Check if there's a selected category in the navigation state
+    const location = window.location;
+    if (location.state && location.state.selectedCategory) {
+      setSelectedCategory(location.state.selectedCategory);
+    }
+    
     fetchProducts();
     fetchCategories();
   }, [fetchProducts, fetchCategories]);
@@ -726,7 +732,7 @@ function ProductList() {
                       </div>
                     )}
                   </div>
-                  <p className="text-gray-800 mt-1">₹{(product.price / 100).toFixed(2)}</p>
+                  <p className="text-gray-800 mt-1">₹{product.price}</p>
                 </div>
               </motion.div>
             ))}
