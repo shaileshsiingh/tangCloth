@@ -50,7 +50,8 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const baseUrl = 'http://91.203.135.152:2001/api/product/list';
+      // const baseUrl = 'http://91.203.135.152:2001/api/product/list';
+      const baseUrl = `${API_URL}/product/list`;
       const params = new URLSearchParams();
         
       if (searchTerm && searchTerm.trim() !== '') {
@@ -69,22 +70,29 @@ function ProductList() {
         params.append('category', selectedCategory);
       }
       
-      // Add these if your API supports them, otherwise remove
-      // and rely on client-side filtering
+      // Add category_id filter if your API supports it
+      // if (selectedCategory !== 'all') {
+      //   params.append('category_id', getCategoryId(selectedCategory));
+      // }
+      
+      // Color filter
       if (selectedColor) {
         params.append('color', selectedColor);
       }
       
+      // Brand filter - assuming the API accepts brand_id
+      if (selectedBrand) {
+        params.append('brand_id', selectedBrand);
+      }
+      
+      // Price range filter
+      params.append('min_price', priceRange[0]);
+      params.append('max_price', priceRange[1]);
+      
+      // Size filter - this might need special handling depending on API
       if (selectedSize) {
         params.append('size', selectedSize);
       }
-      
-      if (selectedBrand) {
-        params.append('brand', selectedBrand);
-      }
-      
-      params.append('min_price', priceRange[0]);
-      params.append('max_price', priceRange[1]);
       
       const url = `${baseUrl}?${params.toString()}`;
       console.log('Fetching products from:', url);
@@ -101,6 +109,9 @@ function ProductList() {
       
       const allProducts = data.data.products || [];
       setProducts(allProducts);
+      
+      // Set filtered products - we'll apply client-side filtering for any filters not supported by API
+      setFilteredProducts(allProducts);
       setTotalProducts(allProducts.length);
       setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
       
@@ -108,10 +119,54 @@ function ProductList() {
     } catch (err) {
       console.error('Error fetching products:', err);
       setError(err.message);
+      
+      // If API fails, we can use mock data for testing
+      const mockProducts = [
+        {
+          "_id": "67dc4cdb095d30b5d3d169a7",
+          "product_name": "h&m sweatshirt",
+          "color": "Red",
+          "price": 4999,
+          "sizes": [
+            {
+              "size": "M",
+              "quantity": 3,
+              "_id": "67dc4cdb095d30b5d3d169a8"
+            },
+            {
+              "size": "S",
+              "quantity": 6,
+              "_id": "67dc4cdb095d30b5d3d169a9"
+            },
+            {
+              "size": "L",
+              "quantity": 5,
+              "_id": "67dc4cdb095d30b5d3d169aa"
+            }
+          ],
+          "images": [
+            "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+          ],
+          "description": "h&m sweatshirt red",
+          "category_id": "67c9b33fb372a96364d09e3b",
+          "sub_category_id": "67d828ed03c676492cbbeb4d",
+          "brand_id": "67d8454223fd32371a042167",
+          "isActive": true,
+          "isSold": false,
+          "ratings": [],
+          "averageRating": null
+        }
+      ];
+      
+      // Uncomment this to use mock data for testing if the API fails
+      // setProducts(mockProducts);
+      // setFilteredProducts(mockProducts);
+      // setTotalProducts(mockProducts.length);
+      // setTotalPages(Math.ceil(mockProducts.length / itemsPerPage));
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, sortBy, selectedCategory, selectedColor, selectedSize, selectedBrand, priceRange, itemsPerPage]);
+  }, [searchTerm, sortBy, selectedCategory, selectedColor, selectedSize, selectedBrand, priceRange]);
   
   // Initial fetch on mount
   useEffect(() => {
@@ -137,47 +192,67 @@ function ProductList() {
   }, [searchTerm, fetchProducts]);
   
   // Apply additional client-side filtering if needed
-  // This is a fallback for filters not supported by your API
   useEffect(() => {
     let filtered = [...products];
     
-    // Only apply these filters client-side if your API doesn't support them
-    // Otherwise, remove this filtering logic as it's redundant
-    const needsClientSideFiltering = false; // Set to true if API doesn't support some filters
+    // Client-side filtering as a fallback or supplement to API filtering
+    filtered = filtered.filter((product) => {
+      // Check if product matches all selected filters
+      
+      // Price filter
+      const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+      
+      // Color filter
+      const matchesColor = selectedColor ? product.color === selectedColor : true;
+      
+      // Size filter - check if product has the selected size
+      const matchesSize = selectedSize 
+        ? product.sizes && product.sizes.some(sizeObj => sizeObj.size === selectedSize)
+        : true;
+      
+      // Brand filter
+      const matchesBrand = selectedBrand ? product.brand_id === selectedBrand : true;
+      
+      // Category filter - simplified, would need mapping between category names and IDs
+      const matchesCategory = selectedCategory === 'all' ? true : 
+                             product.category_id === getCategoryId(selectedCategory);
+      
+      // Product name search - if not already handled by API
+      const matchesSearch = !searchTerm || 
+                           product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      return matchesPrice && matchesColor && matchesSize && matchesBrand && matchesCategory && matchesSearch;
+    });
     
-    if (needsClientSideFiltering) {
-      filtered = filtered.filter((product) => {
-        // Check if price is within range
-        const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-        
-        // Check if color matches (if selected)
-        const matchesColor = selectedColor ? product.color === selectedColor : true;
-        
-        // Check if size matches (if selected)
-        const matchesSize = selectedSize 
-          ? product.sizes && product.sizes.some(sizeObj => sizeObj.size === selectedSize)
-          : true;
-        
-        // Check if brand matches (if selected)
-        const matchesBrand = selectedBrand ? product.brand_id === selectedBrand : true;
-        
-        return matchesPrice && matchesColor && matchesSize && matchesBrand;
-      });
+    // Apply client-side sorting if needed
+    if (sortBy === 'price-asc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-desc') {
+      filtered.sort((a, b) => b.price - a.price);
     }
     
     setFilteredProducts(filtered);
     setTotalProducts(filtered.length);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
     
-    // Update displayed products based on current page
-    updateDisplayedProducts(filtered);
-    
-  }, [products, priceRange, selectedColor, selectedSize, selectedBrand, itemsPerPage]);
+  }, [products, priceRange, selectedColor, selectedSize, selectedBrand, selectedCategory, searchTerm, sortBy]);
   
-  // Update displayed products when page changes
+  // Update displayed products when page or filtered products change
   useEffect(() => {
     updateDisplayedProducts(filteredProducts);
   }, [currentPage, filteredProducts]);
+  
+  // Helper function to get category ID from category name
+  // In a real app, you would fetch these mappings from the API
+  const getCategoryId = (categoryName) => {
+    const categoryMap = {
+      'men': '67c9b33fb372a96364d09e3b',
+      'women': '67c9b33fb372a96364d09e3c',
+      'kids': '67c9b33fb372a96364d09e3d'
+    };
+    return categoryMap[categoryName] || '';
+  };
   
   const updateDisplayedProducts = (productsArray) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -244,6 +319,17 @@ function ProductList() {
     setSelectedSize('');
     setSelectedBrand('');
     setCurrentPage(1);
+  };
+
+  // Format price from cents to dollars with proper formatting
+  const formatPrice = (price) => {
+    // If price is in cents (as in your example), convert to dollars
+    return (price / 100).toFixed(2);
+  };
+
+  // Check if a product has a specific size
+  const hasSize = (product, size) => {
+    return product.sizes && product.sizes.some(sizeObj => sizeObj.size === size);
   };
 
   const renderPagination = () => {
@@ -381,8 +467,8 @@ function ProductList() {
               className="w-full"
             />
             <div className="flex justify-between text-sm">
-              <span>0</span>
-              <span>{priceRange[1]}</span>
+              <span>₹0</span>
+              <span>₹{priceRange[1] / 100}</span>
             </div>
           </div>
           <div className="mb-6">
@@ -576,7 +662,7 @@ function ProductList() {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <svg 
                         key={star} 
-                        className={`w-4 h-4 ${star <= (product.rating || 3) ? 'text-black-500' : 'text-gray-300'}`} 
+                        className={`w-4 h-4 ${star <= (product.averageRating || 3) ? 'text-black-500' : 'text-gray-300'}`} 
                         fill="currentColor" 
                         viewBox="0 0 20 20"
                       >
@@ -584,7 +670,23 @@ function ProductList() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-gray-800">${product.price.toFixed(2)}</p>
+                  <div className="flex gap-2 justify-center">
+                    {/* Display available sizes */}
+                    {product.sizes && (
+                      <div className="flex gap-1">
+                        {product.sizes.map(sizeObj => (
+                          <span 
+                            key={sizeObj._id} 
+                            className="text-xs border px-1 rounded"
+                            title={`${sizeObj.quantity} in stock`}
+                          >
+                            {sizeObj.size}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-gray-800 mt-1">₹{(product.price / 100).toFixed(2)}</p>
                 </div>
               </motion.div>
             ))}
