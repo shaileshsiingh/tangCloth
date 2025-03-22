@@ -73,9 +73,10 @@ function Home() {
         <Banner />
         <HomePage />
         <Categories/>
-        <PrelovedLuxury />  
-        <FeaturedProducts />
         <CategoryBanner />
+
+        {/* <PrelovedLuxury />   */}
+        <FeaturedProducts />
         <BrandsSale />
         
         <PopularProducts />
