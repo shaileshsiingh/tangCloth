@@ -327,7 +327,7 @@ function ProductList() {
   };
   
   const handlePriceChange = (value) => {
-    setPriceRange([0, parseInt(value)]);
+    setPriceRange([100, parseInt(value)]);
     setCurrentPage(1);
   };
   
@@ -335,7 +335,7 @@ function ProductList() {
     setSearchTerm('');
     setSortBy('default');
     setSelectedCategory('all');
-    setPriceRange([5000, 180000]);
+    setPriceRange([5000, 1800000]);
     setSelectedColor('');
     setSelectedSize('');
     setSelectedBrand('');
