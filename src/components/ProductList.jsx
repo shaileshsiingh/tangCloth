@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext'; // Import the WishlistContext
@@ -11,6 +11,7 @@ const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour
 
 function ProductList() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToWishlist } = useWishlist(); // Use the addToWishlist function
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -74,8 +75,8 @@ function ProductList() {
         }
       }
 
-      // const baseUrl = 'http://91.203.135.152:2001/api/product/list';
-      const baseUrl = `${API_URL}/product/list`;
+      const baseUrl = 'http://91.203.135.152:2001/api/product/list';
+      // const baseUrl = `${API_URL}/product/list`;
       const params = new URLSearchParams();
         
       if (searchTerm && searchTerm.trim() !== '') {
@@ -198,7 +199,9 @@ function ProductList() {
   const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/category/getAllCategory`);
+      // const response = await fetch(`${API_URL}/category/getAllCategory`);
+      const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory` )
+
       if (!response.ok) {
         throw new Error('Failed to fetch categories');
       }
@@ -213,14 +216,13 @@ function ProductList() {
 
   useEffect(() => {
     // Check if there's a selected category in the navigation state
-    const location = window.location;
     if (location.state && location.state.selectedCategory) {
-      setSelectedCategory(location.state.selectedCategory);
+      setSelectedCategory(location.state.selectedCategory.toLowerCase());
     }
     
     fetchProducts();
     fetchCategories();
-  }, [fetchProducts, fetchCategories]);
+  }, [fetchProducts, fetchCategories, location]);
   
   // Debounce search input
   useEffect(() => {
