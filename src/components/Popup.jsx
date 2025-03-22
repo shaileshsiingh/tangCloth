@@ -1,24 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Popup() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [showCloseButton, setShowCloseButton] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const popupRef = useRef(null);
 
-  // Use effect to show popup after 5 seconds
+  // Use effect to show popup after 4 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsOpen(true);
-    }, 4000); // 5000 milliseconds = 5 seconds
+      // Disable scrolling when popup opens
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'hidden';
+      }
+    }, 4000);
     
-    // Clean up the timer when component unmounts
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Re-enable scrolling when component unmounts
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'auto';
+      }
+    };
   }, []);
 
   // Handler to close the popup
   const handleClose = () => {
     setIsOpen(false);
+    // Re-enable scrolling when popup closes
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'auto';
+    }
   };
 
   // Handler to prevent event bubbling
@@ -37,6 +53,24 @@ function Popup() {
     }
   };
 
+  // Handle mouse move to track position and determine if cursor is outside popup
+  const handleMouseMove = (e) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+    
+    if (popupRef.current) {
+      const rect = popupRef.current.getBoundingClientRect();
+      
+      // Check if mouse is outside the popup boundaries
+      const isOutside = 
+        e.clientX < rect.left || 
+        e.clientX > rect.right || 
+        e.clientY < rect.top || 
+        e.clientY > rect.bottom;
+      
+      setShowCloseButton(isOutside);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -52,29 +86,36 @@ function Popup() {
             touchAction: "auto"
           }}
           onClick={handleOverlayClick}
+          onMouseMove={handleMouseMove}
           data-popup-element="true"
         >
           <div className="fixed inset-0 bg-black bg-opacity-50 popup-overlay" data-popup-element="true"></div>
           
           <motion.div
+            ref={popupRef}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-white shadow-lg rounded-lg w-full max-w-5xl mx-4 relative z-50 popup-content"
+            className="bg-white shadow-lg rounded-lg w-full max-w-6xl mx-4 relative z-50 popup-content overflow-hidden"
             style={{ height: "500px" }}
             onClick={handlePopupClick}
             data-popup-element="true"
           >
+            {/* Transparent "Subscribe" text overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <h1 className="text-white text-9xl font-bold opacity-30">Subscribe Now</h1>
+            </div>
+            
             {/* Single div with background image and content overlay */}
             <div 
-              className="w-full h-full flex bg-cover bg-left rounded-lg relative"
+              className="w-full h-full flex bg-cover bg-center rounded-lg relative"
               style={{ 
-                backgroundImage: 'url(https://wamani.vercel.app/wp-content/uploads/2023/05/Home-1-Slider-1-2.jpg)'
+                backgroundImage: 'url(https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?q=80&w=2670&auto=format&fit=crop)'
               }}
             >
               {/* Content overlay on the right side */}
-              <div className="w-1/2 ml-auto p-8 bg-white rounded-r-lg flex flex-col justify-center">
+              <div className="w-1/2 ml-auto p-8 rounded-r-lg flex flex-col justify-center">
                 <motion.h1 
                   className="text-4xl font-bold font-serif mb-2" 
                   animate={{ x: [0, 10, 0] }} 
@@ -86,7 +127,7 @@ function Popup() {
                 
                 <div className="mb-4">
                   <p className="text-gray-600 mb-6">
-                    Join our newsletter for exclusive offers and updates.
+                    Join our newsletter for exclusive offers and updates on latest trends.
                   </p>
                 </div>
                 
@@ -107,19 +148,31 @@ function Popup() {
                 </div>
                 {subscribed && <p className="text-green-600 mt-2">Subscribed successfully!</p>}
               </div>
-              
-              <button 
-                onClick={handleClose} 
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-100 rounded-full"
-                style={{ 
-                  cursor: "pointer", 
-                  zIndex: 9999
-                }}
-              >
-                ✖
-              </button>
             </div>
           </motion.div>
+          
+          {/* Cursor-following close button */}
+          {showCloseButton && (
+            <div 
+              className="absolute z-[9999]"
+              style={{
+                left: `${mousePosition.x - 16}px`,
+                top: `${mousePosition.y - 16}px`,
+                pointerEvents: 'auto'
+              }}
+            >
+              <button 
+                onClick={handleClose} 
+                className="w-full h-full flex items-center justify-center hover:opacity-120 transition-opacity cursor-pointer"
+              >
+                <img 
+                  src="https://wamani.vercel.app/wp-content/themes/neytri/assets/images/pop-close.png" 
+                  alt="Close" 
+                  className="w-full h-full"
+                />
+              </button>
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

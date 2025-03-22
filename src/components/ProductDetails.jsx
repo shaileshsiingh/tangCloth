@@ -2,9 +2,130 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Tab } from '@headlessui/react';
 import { StarIcon } from '@heroicons/react/24/solid';
+import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
 import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+
+function ReviewForm({ productId, onReviewAdded }) {
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (rating === 0) {
+      setError('Please select a rating');
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      setError(null);
+      
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setError('You must be logged in to leave a review');
+        return;
+      }
+      
+      const response = await fetch('/api/rating/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          rating,
+          review: review.trim() || undefined
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit review');
+      }
+      
+      const data = await response.json();
+      setSuccess(true);
+      setRating(0);
+      setReview('');
+      
+      if (onReviewAdded) {
+        onReviewAdded(data);
+      }
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="bg-gray-50 p-6 rounded-lg shadow-sm mt-8">
+      <h3 className="text-xl font-semibold mb-4">Write a Review</h3>
+      
+      {success && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          Your review has been submitted successfully!
+        </div>
+      )}
+      
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <p className="mb-2 font-medium">Your Rating</p>
+          <div className="flex">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                className="text-yellow-400 focus:outline-none"
+                onClick={() => setRating(star)}
+              >
+                {star <= rating ? (
+                  <StarIcon className="h-8 w-8" />
+                ) : (
+                  <StarIconOutline className="h-8 w-8" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <label htmlFor="review" className="block mb-2 font-medium">
+            Your Review (Optional)
+          </label>
+          <textarea
+            id="review"
+            rows="4"
+            className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-black"
+            placeholder="Share your experience with this product..."
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+          ></textarea>
+        </div>
+        
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 disabled:bg-gray-400"
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit Review'}
+        </button>
+      </form>
+    </div>
+  );
+}
 
 function ProductDetails() {
   const { id } = useParams();
@@ -149,6 +270,12 @@ function ProductDetails() {
 
   const handleRelatedProductClick = (relatedProduct) => {
     navigate(`/product/${relatedProduct._id}`, { state: { product: relatedProduct } });
+  };
+
+  // Handle receiving a new review
+  const handleReviewAdded = (newReview) => {
+    // Update your product reviews state here
+    console.log('New review added:', newReview);
   };
 
   if (!product) {
@@ -323,40 +450,75 @@ function ProductDetails() {
                   </Tab>
                 </Tab.List>
                 <Tab.Panels className="pt-6">
-                  <Tab.Panel className="text-gray-600">{product.description}</Tab.Panel>
-                  <Tab.Panel className="text-gray-600 whitespace-pre-line">
-                    <div>
-                      <h4 className="font-medium mb-2">Available Sizes:</h4>
-                      <ul>
-                        {product.sizes.map(size => (
-                          <li key={size.size}>
-                            Size {size.size}: {size.quantity} in stock
-                          </li>
-                        ))}
-                      </ul>
+                  <Tab.Panel>
+                    <div className="prose max-w-none">
+                      <p>{product.description}</p>
                     </div>
                   </Tab.Panel>
-                  <Tab.Panel className="text-gray-600">
-                    <div className="space-y-4">
-                      {reviews.items.map(review => (
-                        <div key={review.id} className="border-b pb-4">
-                          <div className="flex items-center mb-2">
+                  
+                  <Tab.Panel>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h3 className="font-medium">Brand</h3>
+                        <p className="text-gray-600">{product.brand || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Material</h3>
+                        <p className="text-gray-600">{product.material || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Color</h3>
+                        <p className="text-gray-600">{product.color || 'Not specified'}</p>
+                      </div>
+                    </div>
+                  </Tab.Panel>
+                  
+                  <Tab.Panel>
+                    <div>
+                      {/* Review summary */}
+                      <div className="mb-6">
+                        <div className="flex items-center mb-2">
+                          <div className="flex mr-2">
                             {[...Array(5)].map((_, i) => (
                               <StarIcon 
                                 key={i} 
-                                className={`h-4 w-4 ${i < review.rating ? 'text-black-400' : 'text-gray-200'}`}
+                                className={`h-5 w-5 ${i < reviews.rating ? 'text-black-400' : 'text-gray-200'}`}
                               />
                             ))}
                           </div>
-                          <p>{review.comment}</p>
+                          <span className="text-lg font-medium">{reviews.rating} out of 5</span>
                         </div>
-                      ))}
+                        <p className="text-gray-600">{reviews.count} customer ratings</p>
+                      </div>
+                      
+                      {/* Existing reviews */}
+                      <div className="space-y-6 mb-8">
+                        {reviews.items.map((review) => (
+                          <div key={review.id} className="border-b pb-4">
+                            <div className="flex mb-2">
+                              {[...Array(5)].map((_, i) => (
+                                <StarIcon 
+                                  key={i} 
+                                  className={`h-4 w-4 ${i < review.rating ? 'text-black-400' : 'text-gray-200'}`}
+                                />
+                              ))}
+                            </div>
+                            <p className="text-gray-800">{review.comment}</p>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Add ReviewForm component here */}
+                      <ReviewForm productId={product?._id} onReviewAdded={handleReviewAdded} />
                     </div>
                   </Tab.Panel>
-                  <Tab.Panel className="text-gray-600">
-                    <p>Standard shipping: 3-5 business days</p>
-                    <p>Express shipping: 1-2 business days</p>
-                    <p>Free shipping on orders over $100</p>
+                  
+                  <Tab.Panel>
+                    <div className="prose max-w-none">
+                      <p>We offer standard shipping with delivery within 5-7 business days.</p>
+                      <p>Express shipping is available with delivery within 2-3 business days at an additional cost.</p>
+                      <p>Free shipping on all orders over $100.</p>
+                    </div>
                   </Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>
