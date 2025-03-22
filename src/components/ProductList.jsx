@@ -335,7 +335,7 @@ function ProductList() {
     setSearchTerm('');
     setSortBy('default');
     setSelectedCategory('all');
-    setPriceRange([0, 180000]);
+    setPriceRange([5000, 180000]);
     setSelectedColor('');
     setSelectedSize('');
     setSelectedBrand('');
