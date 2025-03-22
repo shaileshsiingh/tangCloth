@@ -18,17 +18,22 @@ export function WishlistProvider({ children }) {
           'Authorization': `Bearer ${token}`,
         },
       });
-console.log(response);
+
       if (!response.ok) {
         throw new Error('Failed to fetch wishlist items');
       }
 
       const data = await response.json();
-      setWishlist(data.data.map(item => ({
-        _id: item._id,
-        name: item.product.product_name,
-        image: item.product.images[0],
-        price: item.product.price,
+      console.log('Wishlist API Response:', data);
+
+      // Map the wishlist items from the response
+      setWishlist(data.data.wishlists.map(item => ({
+        _id: item.productDetails._id,
+        name: item.productDetails.product_name,
+        image: item.productDetails.images[0],
+        price: item.productDetails.price,
+        sizes: item.productDetails.sizes,
+        description: item.productDetails.description,
       })));
     } catch (error) {
       console.error('Error fetching wishlist items:', error);
