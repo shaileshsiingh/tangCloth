@@ -9,6 +9,9 @@ function Popup() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const popupRef = useRef(null);
 
+  // Add letters for animation
+  const tangerineLetters = "Tangerine".split("");
+
   // Use effect to show popup after 4 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -104,34 +107,76 @@ function Popup() {
           >
             {/* Transparent "Subscribe" text overlay */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-              <h1 className="text-white text-9xl font-bold opacity-30">Subscribe Now</h1>
+              <h1 className="text-black text-9xl font-bold opacity-10">Subscribe Now</h1>
             </div>
             
             {/* Single div with background image and content overlay */}
             <div 
               className="w-full h-full flex bg-cover bg-center rounded-lg relative"
               style={{ 
-                backgroundImage: 'url(https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?q=80&w=2670&auto=format&fit=crop)'
+                backgroundImage: 'url(https://wamani.vercel.app/wp-content/uploads/2023/06/Newsletter-Bg.png)'
               }}
             >
               {/* Content overlay on the right side */}
               <div className="w-1/2 ml-auto p-8 rounded-r-lg flex flex-col justify-center">
-                <motion.h1 
-                  className="text-4xl font-bold font-serif mb-2" 
-                  animate={{ x: [0, 10, 0] }} 
-                  transition={{ repeat: Infinity, duration: 2 }}
-                >
-                  Tangerine..
-                </motion.h1>
-                <p className="text-lg font-bold mb-6">Always First.</p>
-                
-                <div className="mb-4">
-                  <p className="text-gray-600 mb-6">
-                    Join our newsletter for exclusive offers and updates on latest trends.
-                  </p>
+                {/* Animated Tangerine text with letter-by-letter animation */}
+                <div className="flex mb-2">
+                  {tangerineLetters.map((letter, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ 
+                        duration: 0.3, 
+                        delay: index * 0.1,
+                        ease: "easeOut" 
+                      }}
+                      className="text-6xl font-cursive"
+                      style={{ 
+                        fontFamily: "'Pinyon Script', cursive",
+                        marginRight: letter === " " ? "0.5rem" : "0" 
+                      }}
+                    >
+                      {letter}
+                    </motion.span>
+                  ))}
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: tangerineLetters.length * 0.1 + 0.2 }}
+                    className="text-6xl"
+                    style={{ fontFamily: "'Pinyon Script', cursive" }}
+                  >
+                    ..
+                  </motion.span>
                 </div>
                 
-                <div className="flex flex-col space-y-4">
+                <motion.p 
+                  className="text-2xl font-bold mb-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: tangerineLetters.length * 0.1 + 0.5 }}
+                >
+                  Always First.
+                </motion.p>
+                
+                <div className="mb-4">
+                  <motion.p 
+                    className="text-gray-600 mb-6"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: tangerineLetters.length * 0.1 + 0.7 }}
+                  >
+                    Join our newsletter for exclusive offers and updates on latest trends.
+                  </motion.p>
+                </div>
+                
+                <motion.div 
+                  className="flex flex-col space-y-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: tangerineLetters.length * 0.1 + 0.9 }}
+                >
                   <input 
                     type="email" 
                     placeholder="Enter your email" 
@@ -145,7 +190,7 @@ function Popup() {
                   >
                     Subscribe
                   </button>
-                </div>
+                </motion.div>
                 {subscribed && <p className="text-green-600 mt-2">Subscribed successfully!</p>}
               </div>
             </div>
