@@ -45,7 +45,7 @@ function Wishlist() {
                 }}
               />
               <h2 className="text-lg font-medium">{item.name}</h2>
-              <p className="text-gray-600">${item.price.toFixed(2)}</p>
+              <p className="text-gray-600">₹{item.price}</p>
               <p className="text-sm text-gray-500">Size: {item.selectedSize}</p>
               <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
               <p className="text-sm font-medium mt-1">Total: ${(item.price * item.quantity).toFixed(2)}</p>

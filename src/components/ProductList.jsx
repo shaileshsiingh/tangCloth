@@ -332,12 +332,12 @@ function ProductList() {
   };
   
   const handleMinPriceChange = (e) => {
-    const value = parseInt(e.target.value) || 0;
+    const value = e.target.value === '' ? 0 : parseInt(e.target.value);
     setPriceRange([value, priceRange[1]]);
   };
 
   const handleMaxPriceChange = (e) => {
-    const value = parseInt(e.target.value) || 180000;
+    const value = e.target.value === '' ? 180000 : parseInt(e.target.value);
     setPriceRange([priceRange[0], value]);
   };
   
@@ -517,7 +517,7 @@ function ProductList() {
             />
             <div className="flex justify-between text-sm">
               <span>₹0</span>
-              <span>₹{priceRange[1] / 100}</span>
+              <span>₹{priceRange[1]}</span>
             </div>
           </div>
           <div className="mb-6">
