@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const WishlistContext = createContext();
-const API_URL = "http://91.203.135.152:2001/api"||"/api";
+const API_URL = "/api";
 
 export function WishlistProvider({ children }) {
   const [wishlist, setWishlist] = useState([]);
