@@ -50,8 +50,10 @@ function Wishlist() {
               <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
               <p className="text-sm font-medium mt-1">Total: ${(item.price * item.quantity).toFixed(2)}</p>
               <Link 
-                to={`/product/${item._id}`} 
-                state={{ product: item }}
+                to={{
+                  pathname: `/product/${item._id}`,
+                  state: { product: item }
+                }}
                 className="mt-4 block w-full bg-black text-white text-center py-2 hover:bg-gray-900"
               >
                 View Product

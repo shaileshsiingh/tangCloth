@@ -327,15 +327,25 @@ function ProductList() {
   };
   
   const handlePriceChange = (value) => {
-    setPriceRange([100, parseInt(value)]);
+    setPriceRange([priceRange[0], parseInt(value)]);
     setCurrentPage(1);
+  };
+  
+  const handleMinPriceChange = (e) => {
+    const value = parseInt(e.target.value) || 0;
+    setPriceRange([value, priceRange[1]]);
+  };
+
+  const handleMaxPriceChange = (e) => {
+    const value = parseInt(e.target.value) || 180000;
+    setPriceRange([priceRange[0], value]);
   };
   
   const handleResetFilters = () => {
     setSearchTerm('');
     setSortBy('default');
     setSelectedCategory('all');
-    setPriceRange([5000, 1800000]);
+    setPriceRange([0, 180000]);
     setSelectedColor('');
     setSelectedSize('');
     setSelectedBrand('');
@@ -479,6 +489,24 @@ function ProductList() {
           </div>
           <div className="mb-6">
             <h3 className="font-semibold mb-2">PRICE</h3>
+            <div className="flex justify-between mb-2">
+              <input
+                type="number"
+                value={priceRange[0]}
+                onChange={handleMinPriceChange}
+                className="w-1/2 border p-1 mr-2"
+                min="0"
+                max="180000"
+              />
+              <input
+                type="number"
+                value={priceRange[1]}
+                onChange={handleMaxPriceChange}
+                className="w-1/2 border p-1"
+                min="0"
+                max="180000"
+              />
+            </div>
             <input
               type="range"
               min="0"
