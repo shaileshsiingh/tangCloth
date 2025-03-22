@@ -19,7 +19,7 @@ function ProductList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [priceRange, setPriceRange] = useState([0, 180000]);
+  const [priceRange, setPriceRange] = useState([0, 18000]);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
@@ -332,12 +332,12 @@ function ProductList() {
   };
   
   const handleMinPriceChange = (e) => {
-    const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+    const value = e.target.value === '' ? '' : parseInt(e.target.value);
     setPriceRange([value, priceRange[1]]);
   };
 
   const handleMaxPriceChange = (e) => {
-    const value = e.target.value === '' ? 180000 : parseInt(e.target.value);
+    const value = e.target.value === '' ? '' : parseInt(e.target.value);
     setPriceRange([priceRange[0], value]);
   };
   
@@ -345,7 +345,7 @@ function ProductList() {
     setSearchTerm('');
     setSortBy('default');
     setSelectedCategory('all');
-    setPriceRange([0, 180000]);
+    setPriceRange([0, 18000]);
     setSelectedColor('');
     setSelectedSize('');
     setSelectedBrand('');
@@ -496,7 +496,7 @@ function ProductList() {
                 onChange={handleMinPriceChange}
                 className="w-1/2 border p-1 mr-2"
                 min="0"
-                max="180000"
+                max="18000"
               />
               <input
                 type="number"
@@ -504,13 +504,13 @@ function ProductList() {
                 onChange={handleMaxPriceChange}
                 className="w-1/2 border p-1"
                 min="0"
-                max="180000"
+                max="18000"
               />
             </div>
             <input
               type="range"
               min="0"
-              max="180000"
+              max="18000"
               value={priceRange[1]}
               onChange={(e) => handlePriceChange(e.target.value)}
               className="w-full"

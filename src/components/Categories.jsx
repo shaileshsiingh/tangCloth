@@ -24,7 +24,10 @@ function Categories() {
         throw new Error('Failed to fetch categories');
       }
       const data = await response.json();
-      setCategories(data.data.category);
+      const filteredCategories = data.data.category.filter(cat =>
+        ['men', 'women', 'kids'].includes(cat.name.toLowerCase())
+      );
+      setCategories(filteredCategories);
     } catch (err) {
       setError(err.message);
     } finally {
