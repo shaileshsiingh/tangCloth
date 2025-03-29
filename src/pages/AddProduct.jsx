@@ -24,7 +24,8 @@ function AddProduct() {
     discount_price: 0,
     sizes: [{ size: '', quantity: 0 }],
     images: [],
-    description: ''
+    description: '',
+    tags: []
   });
   
   // State for categories, brands, etc.
