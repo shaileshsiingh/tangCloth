@@ -1,0 +1,1288 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
+import axios from 'axios';
+
+function ProductList() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { addToWishlist } = useWishlist();
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('default');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedSubSubcategory, setSelectedSubSubcategory] = useState('');
+  const [priceRange, setPriceRange] = useState([0, 18000]);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const initialLoadRef = useRef(false);
+  const [category_id_state, setCategory_id_state] = useState(null);
+  const [sub_category_id_state, setSub_category_id_state] = useState(null);
+  const [sub_sub_category_id_state, setSub_sub_category_id_state] = useState(null);
+  const [brands, setBrands] = useState([]);
+  const [brandsLoading, setBrandsLoading] = useState(true);
+
+  const itemsPerPage = 12;
+
+  // Category mappings
+  const categories = {
+    all: 'All',
+    men: 'Men',
+    women: 'Women',
+    kids: 'Kids',
+  };
+
+  const categoryIds = {
+    'men': '67c82a32ac6e3964ca7755f7',
+    'women': '67c08f837f61f5f03104ec4b',
+    'kids': '67c9b33fb372a96364d09e3b'
+  };
+
+  // Filter options
+  // const colors = ['Red', 'Blue', 'Green', 'Black', 'White'];
+  const sizes = ['S', 'M', 'L', 'XL'];
+  // const brands = [
+  //   { id: '67d8454223fd32371a042167', name: 'H&M' },
+  //   { id: '67d8454a23fd32371a04216a', name: 'Zara' },
+  //   { id: '67d8455123fd32371a04216d', name: 'Nike' },
+  //   { id: '67d8455823fd32371a042170', name: 'Adidas' },
+  //   { id: '67d8455f23fd32371a042173', name: 'Gucci' },
+  //   { id: '67d8456023fd32371a042174', name: 'JIMMY CHOO' },
+  //   { id: '67d8456123fd32371a042175', name: 'GG' },  
+  //   { id: '67d8456223fd32371a042176', name: 'roberto cavalli' },
+  //   { id: '67d8456323fd32371a042177', name: 'POLO RALPH LAUREN' },
+  //   { id: '67d8456423fd32371a042178', name: 'LOUIS VUITTON' }
+  // ];
+
+  // Category structure
+  const subcategoryStructure = {
+    '67c82a32ac6e3964ca7755f7': [ // Men
+      { id: '67d8282003c676492cbbeb40', name: 'Clothing' },
+      { id: '67d8283003c676492cbbeb44', name: 'Footwear' },
+      { id: '67d827fd03c676492cbbeb3c', name: 'Accessories' }
+    ],
+    '67c08f837f61f5f03104ec4b': [ // Women
+      { id: '67d826ef03c676492cbbeb2d', name: 'All Bags' },
+      { id: '67d8276703c676492cbbeb33', name: 'Clothing' },
+      { id: '67d8276003c676492cbbeb30', name: 'Footwear' },
+      { id: '67d8277e03c676492cbbeb39', name: 'Accessories' },
+      { id: '67d8277203c676492cbbeb36', name: 'Fine Jewellery' }
+    ],
+    '67c9b33fb372a96364d09e3b': [ // Kids
+      { id: '67d828ed03c676492cbbeb4d', name: 'Clothing' },
+      { id: '67d8292603c676492cbbeb65', name: 'Footwear' },
+      { id: '67d828d103c676492cbbeb48', name: 'Accessories' }
+    ]
+  };
+
+  const subSubcategoryStructure = {
+    // Women's All Bags
+    '67d826ef03c676492cbbeb2d': [
+      { id: '67e1a5742328f40a1515b803', name: 'Tote Bags' },
+      { id: '67e1a6292328f40a1515b853', name: 'Shoulder Bags' },
+      { id: '67e1a6342328f40a1515b858', name: 'Clutch' },
+      { id: '67e1a63e2328f40a1515b85d', name: 'Sling Bags' },
+      { id: '67e1a6482328f40a1515b862', name: 'Mini Bags' },
+      { id: '67e5b3c25eb5e80a2ac15b95', name: 'Satchel Bags' },
+      { id: '67e5b3cc5eb5e80a2ac15b9a', name: 'Handbags' },
+      { id: '67e5b3d65eb5e80a2ac15b9f', name: 'Beltbags' },
+      { id: '67e5b3e05eb5e80a2ac15ba4', name: 'Wristlet' }
+    ],
+    
+    // Women's Clothing
+    '67d8276703c676492cbbeb33': [
+      { id: '67e5b3f35eb5e80a2ac15ba9', name: 'Dresses & Gowns' },
+      { id: '67e5b3fe5eb5e80a2ac15bae', name: 'Skirts & Shorts' },
+      { id: '67e5b4085eb5e80a2ac15bb3', name: 'T Shirts & Shirts' },
+      { id: '67e5b4125eb5e80a2ac15bb8', name: 'Trousers & Denims' },
+      { id: '67e5b41c5eb5e80a2ac15bbd', name: 'Jackets & Outerwear' },
+      { id: '67e5b4275eb5e80a2ac15bc2', name: 'Jumpsuits' },
+      { id: '67e5b4325eb5e80a2ac15bc7', name: 'Co-Ord Sets Womens' },
+      { id: '67e5b43c5eb5e80a2ac15bcc', name: 'Swim Suit' }
+    ],
+    
+    // Women's Footwear
+    '67d8276003c676492cbbeb30': [
+      { id: '67e5b4465eb5e80a2ac15bd1', name: 'Boots' },
+      { id: '67e5b4505eb5e80a2ac15bd6', name: 'Espadrilles & Loafers' },
+      { id: '67e5b45c5eb5e80a2ac15bdb', name: 'Flats & Slippers' },
+      { id: '67d8290a03c676492cbbeb59', name: 'Heels & Wedges' },
+      { id: '67e5b4705eb5e80a2ac15be5', name: 'Peeptoes' },
+      { id: '67e5b47a5eb5e80a2ac15bea', name: 'Sneakers' }
+    ],
+    
+    // Women's All Accessories
+    '67d8277e03c676492cbbeb39': [
+      { id: '67e5b4845eb5e80a2ac15bef', name: 'Belts' },
+      { id: '67e5b48f5eb5e80a2ac15bf4', name: 'Watches' },
+      { id: '67e5b4995eb5e80a2ac15bf9', name: 'Shawls & Scarves' },
+      { id: '67e5b4a35eb5e80a2ac15bfe', name: 'Sunglasses' },
+      { id: '67e5b4ae5eb5e80a2ac15c03', name: 'Small Accessories' }
+    ],
+    
+    // Women's Fine Jewellery
+    '67d8277203c676492cbbeb36': [
+      { id: '67e5b4b85eb5e80a2ac15c08', name: 'Earrings' },
+      { id: '67e5b4c25eb5e80a2ac15c0d', name: 'Rings' },
+      { id: '67e5b4cd5eb5e80a2ac15c12', name: 'Charms & Bracelets' },
+      { id: '67e5b4d75eb5e80a2ac15c17', name: 'Necklaces' }
+    ],
+    
+    // Men's Accessories
+    '67d827fd03c676492cbbeb3c': [
+      { id: '67e5b4e35eb5e80a2ac15c1c', name: 'Belts' },
+      { id: '67e5b4ed5eb5e80a2ac15c21', name: 'Sunglasses' },
+      { id: '67e5b4f75eb5e80a2ac15c26', name: 'Scarves' },
+      { id: '67e5b5015eb5e80a2ac15c2b', name: 'Caps' }
+    ],
+    
+    // Men's Clothing
+    '67d8282003c676492cbbeb40': [
+      { id: '67e1a5812328f40a1515b808', name: 'Shirts' },
+      { id: '67e1a58e2328f40a1515b80d', name: 'Track Suits' },
+      { id: '67e1a5982328f40a1515b812', name: 'T-Shirts' },
+      { id: '67e1a5a42328f40a1515b817', name: 'Trousers & Denims' },
+      { id: '67e1a5b32328f40a1515b81c', name: 'Jackets & Outerwear' },
+      { id: '67e1a5bd2328f40a1515b821', name: 'Shorts' }
+    ],
+    
+    // Men's Footwear
+    '67d8283003c676492cbbeb44': [
+      { id: '67e1a5c92328f40a1515b826', name: 'Boots' },
+      { id: '67e1a5d52328f40a1515b82b', name: 'Espadrilles' },
+      { id: '67e1a5e02328f40a1515b830', name: 'Loafers & Moccasins' },
+      { id: '67e1a5ec2328f40a1515b835', name: 'Sliders & Slippers' },
+      { id: '67e1a5f52328f40a1515b83a', name: 'Sneakers' }
+    ],
+    
+    // Kids' Accessories
+    '67d828d103c676492cbbeb48': [
+      { id: '67e5b50b5eb5e80a2ac15c30', name: 'Belts' },
+      { id: '67e5b5155eb5e80a2ac15c35', name: 'Caps' }
+    ],
+    
+    // Kids' Clothing
+    '67d828ed03c676492cbbeb4d': [
+      { id: '67e5b51f5eb5e80a2ac15c3a', name: 'T Shirts & Shirts' },
+      { id: '67e5b5295eb5e80a2ac15c3f', name: 'Denims & Trousers' },
+      { id: '67e5b5335eb5e80a2ac15c44', name: 'Shorts & Skirts' },
+      { id: '67e5b53d5eb5e80a2ac15c49', name: 'Playsuit & Jumpsuit' },
+      { id: '67e5b5475eb5e80a2ac15c4e', name: 'Onesies & Rompers' },
+      { id: '67e5b5515eb5e80a2ac15c53', name: 'Jackets & Outerwear' },
+      { id: '67e5b55b5eb5e80a2ac15c58', name: 'Dresses' },
+      { id: '67e5b5655eb5e80a2ac15c5d', name: 'Co-Ords Sets' }
+    ],
+    
+    // Kids' Footwear
+    '67d8292603c676492cbbeb65': [
+      { id: '67e5b56f5eb5e80a2ac15c62', name: 'Shoes' }
+    ]
+  };
+
+  // Get URL parameters
+  const [searchParams] = useSearchParams();
+  const category_id_url = searchParams.get('category_id');
+  const sub_category_id_url = searchParams.get('sub_category_id');
+  const subSubCategoryid = searchParams.get('subSubCategoryid');
+  const categoryName_url = searchParams.get('categoryName');
+  const subcategoryName_url = searchParams.get('subcategoryName');
+  const subSubcategoryName_url = searchParams.get('subSubcategoryName');
+
+  console.log('URL Parameters:', {
+    category_id: category_id_url,
+    sub_category_id: sub_category_id_url,
+    subSubCategoryid: subSubCategoryid
+  });
+
+  // Get category IDs from location state
+  const category_id_state_state = location.state?.category_id || null;
+  const sub_category_id_state_state = location.state?.sub_category_id || null;
+  const sub_sub_category_id_state_state = location.state?.sub_sub_category_id || null;
+
+  // Log these values to confirm they're being extracted
+  console.log('Extracted category IDs from state:', {
+    category_id: category_id_state_state,
+    sub_category_id: sub_category_id_state_state,
+    sub_sub_category_id: sub_sub_category_id_state_state
+  });
+
+  // Fetch all products
+  const API_URL = '/api'
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      // const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
+      const response = await axios.get(`${API_URL}/product/list`);
+
+      if (response.data.success) {
+        const allProducts = response.data.data.products || [];
+        setProducts(allProducts);
+        setFilteredProducts(allProducts);
+        setTotalProducts(allProducts.length);
+        setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
+        console.log('Total products loaded:', allProducts.length);
+      }
+      } catch (error) {
+      console.error('Error loading products:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      setDataLoaded(true);
+    }
+  }, []);
+
+  // Initial data load
+  useEffect(() => {
+    if (!initialLoadRef.current) {
+      initialLoadRef.current = true;
+      fetchProducts();
+    }
+  }, [fetchProducts]);
+
+  // Add a useEffect to handle state-based filtering
+  useEffect(() => {
+    if (!dataLoaded || !category_id_state_state) return;
+    
+    console.log('Applying filters from router state:', {
+      category_id: category_id_state_state,
+      sub_category_id: sub_category_id_state_state, 
+      sub_sub_category_id: sub_sub_category_id_state_state
+    });
+    
+    // Set UI state to match the passed-in state
+    if (category_id_state_state) {
+      // Find the category name from the ID
+      const categoryEntry = Object.entries(categoryIds).find(
+        ([_, id]) => id === category_id_state_state
+      );
+      
+      if (categoryEntry) {
+        setSelectedCategory(categoryEntry[0]); // 'men', 'women', or 'kids'
+      }
+    }
+    
+    // Just trigger the filtering process - the main filter effect will handle the rest
+    if (sub_category_id_state_state) {
+      setSelectedSubcategory(sub_category_id_state_state);
+    }
+    
+    if (sub_sub_category_id_state_state) {
+      setSelectedSubSubcategory(sub_sub_category_id_state_state);
+    }
+    
+  }, [category_id_state_state, sub_category_id_state_state, sub_sub_category_id_state_state, dataLoaded]);
+
+  // Apply filters whenever dependencies change
+  useEffect(() => {
+    if (!dataLoaded || !products.length) return;
+
+    let filtered = [...products];
+    console.log('Starting filtering with', filtered.length, 'products');
+    console.log('Using filter values:', {
+      category_id_state_state,
+      sub_category_id_state_state,
+      sub_sub_category_id_state_state,
+      selectedCategory,
+      selectedSubcategory,
+      selectedSubSubcategory
+    });
+
+    // Apply category filters from state or URL params
+    const catId = category_id_state_state;
+    const subCatId = sub_category_id_state_state; 
+    const subSubCatId = sub_sub_category_id_state_state;
+    
+    console.log('Active filter IDs:', { catId, subCatId, subSubCatId });
+    
+    if (catId || subCatId || subSubCatId) {
+      filtered = filtered.filter(product => {
+        if (catId && product.category_id !== catId) return false;
+        if (subCatId && product.sub_category_id !== subCatId) return false;
+        if (subSubCatId && product.sub_sub_category_id !== subSubCatId) return false;
+        return true;
+      });
+      console.log('After category filters:', filtered.length);
+    } 
+    // Otherwise apply UI filters
+    else if (selectedCategory !== 'all') {
+      const categoryId = categoryIds[selectedCategory];
+      filtered = filtered.filter(product => product.category_id === categoryId);
+      console.log('After category filter:', filtered.length);
+      
+      if (selectedSubcategory) {
+        filtered = filtered.filter(product => product.sub_category_id === selectedSubcategory);
+        console.log('After subcategory filter:', filtered.length);
+      }
+      
+      if (selectedSubSubcategory) {
+        filtered = filtered.filter(product => product.sub_sub_category_id === selectedSubSubcategory);
+        console.log('After sub-subcategory filter:', filtered.length);
+      }
+    }
+
+    // CRITICAL FIX: Only apply other filters if user has explicitly set them
+    // This prevents automatic filtering when no filters are selected
+    const hasAppliedFilters = (
+      selectedColor || 
+      selectedSize || 
+      selectedBrand || 
+      searchTerm || 
+      priceRange[0] > 0 || 
+      priceRange[1] < 18000
+    );
+
+    if (hasAppliedFilters) {
+      filtered = filtered.filter(product => {
+      // Price filter
+        const price = product.price ?? 0;
+        const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
+      
+      // Color filter
+        const matchesColor = !selectedColor || product.color === selectedColor;
+        
+        // Size filter
+        const matchesSize = !selectedSize || 
+                          (product.sizes && Array.isArray(product.sizes) && 
+                           product.sizes.some(s => s && s.size === selectedSize));
+      
+      // Brand filter
+        const matchesBrand = !selectedBrand || product.brand_id === selectedBrand;
+        
+        // Search filter
+      const matchesSearch = !searchTerm || 
+                          (product.product_name && 
+                           product.product_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                          (product.description && 
+                           product.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        return matchesPrice && matchesColor && matchesSize && matchesBrand && matchesSearch;
+      });
+      
+      console.log('Filter debug counts:', {
+        price: 0,
+        color: 0,
+        size: 0,
+        brand: 0,
+        search: 0
+      });
+    }
+    
+    console.log('After filters applied:', filtered.length);
+
+    // Apply sorting
+    if (sortBy === 'price-asc') {
+      filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sortBy === 'price-desc') {
+      filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+    }
+    
+    setFilteredProducts(filtered);
+    setTotalProducts(filtered.length);
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [
+    products,
+    selectedCategory,
+    selectedSubcategory,
+    selectedSubSubcategory,
+    priceRange,
+    selectedColor,
+    selectedSize,
+    selectedBrand,
+    searchTerm,
+    sortBy,
+    category_id_state_state,
+    sub_category_id_state_state,
+    sub_sub_category_id_state_state,
+    dataLoaded
+  ]);
+
+  // Update displayed products when page or filtered products change
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setDisplayedProducts(filteredProducts.slice(startIndex, endIndex));
+  }, [currentPage, filteredProducts, itemsPerPage]);
+  
+  // Reset all filters completely
+  const resetFilters = useCallback(() => {
+    // Clear all state filters
+    setSelectedCategory('all');
+    setSelectedSubcategory('');
+    setSelectedSubSubcategory('');
+    setSelectedColor('');
+    setSelectedSize('');
+    setSelectedBrand('');
+    setPriceRange([0, 18000]);
+    setSearchTerm('');
+    setSortBy('default');
+    setCurrentPage(1);
+    
+    // Reset URL to remove all filter parameters - CRITICAL for proper reset
+    navigate('/shop', { replace: true });
+    
+    console.log('All filters reset');
+  }, [navigate]);
+
+  // Handle category change
+  const handleCategoryChange = (category) => {
+    if (selectedCategory === category) {
+      setSelectedCategory('all');
+    } else {
+      setSelectedCategory(category);
+      setSelectedSubcategory('');
+      setSelectedSubSubcategory('');
+    }
+      setSearchTerm('');
+  };
+  
+  // Handle subcategory change
+  const handleSubcategoryChange = (subcategoryId) => {
+    setSelectedSubcategory(subcategoryId === selectedSubcategory ? '' : subcategoryId);
+    setSelectedSubSubcategory('');
+      setSearchTerm('');
+  };
+
+  // Handle sub-subcategory change
+  const handleSubSubcategoryChange = (subSubcategoryId) => {
+    setSelectedSubSubcategory(subSubcategoryId === selectedSubSubcategory ? '' : subSubcategoryId);
+      setSearchTerm('');
+  };
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0);
+  };
+
+  // Render subcategories
+  const renderSubcategories = () => {
+    const activeCategoryId = category_id_state_state || (selectedCategory !== 'all' ? categoryIds[selectedCategory] : null);
+    if (!activeCategoryId) return null;
+    
+    const subcategories = subcategoryStructure[activeCategoryId] || [];
+    if (subcategories.length === 0) return null;
+    
+    return (
+      <div className="mb-6">
+        <h3 className="font-medium mb-2">Subcategories</h3>
+        <div className="flex flex-wrap gap-2">
+          {subcategories.map(subcat => (
+            <button
+              key={subcat.id}
+              className={`px-3 py-1 text-sm rounded ${
+                (sub_category_id_state_state === subcat.id || selectedSubcategory === subcat.id) 
+                  ? 'bg-black text-white' 
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              onClick={() => handleSubcategoryChange(subcat.id)}
+            >
+              {subcat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Render sub-subcategories
+  const renderSubSubcategories = () => {
+    const activeSubcategoryId = sub_category_id_state_state || selectedSubcategory;
+    if (!activeSubcategoryId) return null;
+    
+    const subSubcategories = subSubcategoryStructure[activeSubcategoryId] || [];
+    if (subSubcategories.length === 0) return null;
+    
+    return (
+      <div className="mb-6">
+        <h3 className="font-medium mb-2">Types</h3>
+        <div className="flex flex-wrap gap-2">
+          {subSubcategories.map(subSubcat => (
+            <button
+              key={subSubcat.id}
+              className={`px-3 py-1 text-sm rounded ${
+                (sub_sub_category_id_state_state === subSubcat.id || selectedSubSubcategory === subSubcat.id)
+                  ? 'bg-black text-white' 
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              onClick={() => handleSubSubcategoryChange(subSubcat.id)}
+            >
+              {subSubcat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Pagination controls
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+    
+    return (
+      <div className="flex justify-center mt-8 space-x-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded ${
+            currentPage === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+        >
+          <ChevronLeft size={16} />
+        </button>
+        
+        {[...Array(totalPages)].map((_, index) => {
+          const pageNumber = index + 1;
+          return (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              className={`px-3 py-1 rounded ${
+                currentPage === pageNumber ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              {pageNumber}
+            </button>
+          );
+        })}
+        
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded ${
+            currentPage === totalPages ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+        >
+          <ChevronRight size={16} />
+        </button>
+      </div>
+    );
+  };
+
+  // Use this ID in your filtering logic
+  useEffect(() => {
+    if (!dataLoaded || !products.length) return;
+    
+    console.log(`Filtering by subSubCategoryid: ${subSubCategoryid}`);
+    console.log(`Total products before filtering: ${products.length}`);
+    
+    let filtered = [...products];
+    
+    // Apply filtering based on the sub-subcategory ID
+    if (subSubCategoryid) {
+      // Debug: Print out all sub_sub_category_id values to check for mismatches
+      const uniqueSubSubCategories = [...new Set(products.map(p => p.sub_sub_category_id))];
+      console.log('Available sub_sub_category_ids in products:', uniqueSubSubCategories);
+      
+      filtered = filtered.filter(product => product.sub_sub_category_id === subSubCategoryid);
+      console.log('After filtering by subSubCategoryid:', filtered.length);
+      
+      // If we have matches, update the UI state
+      if (filtered.length > 0) {
+        const firstProduct = filtered[0];
+        console.log('First matched product:', {
+          id: firstProduct._id,
+          name: firstProduct.product_name,
+          category_id: firstProduct.category_id,
+          sub_category_id: firstProduct.sub_category_id
+        });
+        
+        // Find and set the category name
+        for (const [catName, catId] of Object.entries(categoryIds)) {
+          if (catId === firstProduct.category_id) {
+            setSelectedCategory(catName);
+            console.log(`Setting selected category to: ${catName}`);
+            break;
+          }
+        }
+        
+        // Set subcategory
+        setSelectedSubcategory(firstProduct.sub_category_id);
+        console.log(`Setting selected subcategory to: ${firstProduct.sub_category_id}`);
+        
+        // Set sub-subcategory
+        setSelectedSubSubcategory(subSubCategoryid);
+      } else {
+        console.log('No products found with sub_sub_category_id:', subSubCategoryid);
+      }
+    }
+    
+    setFilteredProducts(filtered);
+    setTotalProducts(filtered.length);
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+  }, [subSubCategoryid, products, dataLoaded]);
+
+  // Add this to your filtering logic in ProductList.jsx
+
+  // Inside your filtering useEffect
+  if (sub_category_id_url) {
+    // Check if sub_category_id contains comma-separated values
+    if (sub_category_id_url.includes(',')) {
+      const subCategoryIds = sub_category_id_url.split(',');
+      console.log(`Filtering by multiple subcategory IDs: ${subCategoryIds}`);
+      
+      // Filter products that match ANY of the subcategory IDs (OR condition)
+      filtered = filtered.filter(product => 
+        subCategoryIds.includes(product.sub_category_id)
+      );
+    } else {
+      // Regular single subcategory filter
+      filtered = filtered.filter(product => 
+        product.sub_category_id === sub_category_id_url
+      );
+    }
+    console.log('After subcategory filter:', filtered.length);
+  }
+
+  // Add this useEffect near the top of your component, after your state declarations
+  // This focuses solely on handling URL parameters
+
+  useEffect(() => {
+    if (!dataLoaded || !products.length) return;
+    
+    // Get URL parameters
+    const categoryIdParam = searchParams.get('category_id');
+    const subCategoryIdParam = searchParams.get('sub_category_id');
+    const subSubCategoryIdParam = searchParams.get('subSubCategoryid');
+    
+    // Only proceed if we have URL parameters
+    if (categoryIdParam || subCategoryIdParam || subSubCategoryIdParam) {
+      console.log("Processing URL parameters:", {
+        category_id: categoryIdParam,
+        sub_category_id: subCategoryIdParam,
+        subSubCategoryid: subSubCategoryIdParam
+      });
+      
+      // Start with all products
+      let filtered = [...products];
+      
+      // Apply category filter if present
+      if (categoryIdParam) {
+        filtered = filtered.filter(product => product.category_id === categoryIdParam);
+        console.log(`After category filter ${categoryIdParam}:`, filtered.length);
+        
+        // Update UI state
+        for (const [catName, catId] of Object.entries(categoryIds)) {
+          if (catId === categoryIdParam) {
+            setSelectedCategory(catName);
+            break;
+          }
+        }
+      }
+      
+      // Apply subcategory filter if present
+      if (subCategoryIdParam) {
+        if (subCategoryIdParam.includes(',')) {
+          const subCatIds = subCategoryIdParam.split(',');
+          filtered = filtered.filter(product => subCatIds.includes(product.sub_category_id));
+          console.log(`After filtering by multiple subcategories:`, filtered.length);
+        } else {
+          filtered = filtered.filter(product => product.sub_category_id === subCategoryIdParam);
+          console.log(`After subcategory filter ${subCategoryIdParam}:`, filtered.length);
+        }
+        
+        // Update UI state
+        setSelectedSubcategory(subCategoryIdParam);
+      }
+      
+      // Apply sub-subcategory filter if present
+      if (subSubCategoryIdParam) {
+        filtered = filtered.filter(product => product.sub_sub_category_id === subSubCategoryIdParam);
+        console.log(`After sub-subcategory filter ${subSubCategoryIdParam}:`, filtered.length);
+        
+        // Update UI state
+        setSelectedSubSubcategory(subSubCategoryIdParam);
+      }
+      
+      // Update states with filtered products
+      setFilteredProducts(filtered);
+      setTotalProducts(filtered.length);
+      setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+    }
+  }, [searchParams, products, dataLoaded, categoryIds]);
+
+  // Colors for filtering - add all the popular colors
+  const popularColors = [
+    'Black', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Purple', 
+    'Brown', 'Gray', 'Pink', 'Orange', 'Beige', 'Navy', 'Olive'
+  ];
+
+  // Fetch brands from API
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        setBrandsLoading(true);
+        const token = localStorage.getItem('authToken');
+
+const API_URL = '/api'
+        // const response = await fetch('http://91.203.135.152:2001/api/brand/get-brands', {
+                const response = await fetch(`${API_URL}/brand/get-brands`, {
+
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch brands');
+        }
+        
+        const responseData = await response.json();
+        
+        // The data structure is { success, message, data[] }
+        // where data is the brands array directly
+        if (responseData.success && Array.isArray(responseData.data)) {
+          setBrands(responseData.data);
+          console.log('Brands loaded:', responseData.data.length);
+        } else {
+          console.error('Unexpected brand data format:', responseData);
+          setBrands([]);
+        }
+      } catch (error) {
+        console.error('Error fetching brands:', error);
+        setBrands([]);
+      } finally {
+        setBrandsLoading(false);
+      }
+    };
+    
+    fetchBrands();
+  }, []);
+
+  // Add this to the top of your useEffect
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const subSubCategoryid = queryParams.get('subSubCategoryid');
+    
+    console.log('URL subSubCategoryid:', subSubCategoryid);
+    
+    if (subSubCategoryid) {
+      // Filter products based on this ID
+      // ...
+    }
+  }, []);
+
+  // Add this effect to your ProductList component to handle brandId parameter
+
+  useEffect(() => {
+    // Get brandId from URL parameters
+    const queryParams = new URLSearchParams(window.location.search);
+    const brandId = queryParams.get('brandId');
+    
+    if (brandId) {
+      console.log(`Filtering products by brand ID: ${brandId}`);
+      setSelectedBrand(brandId);
+      
+      // If we already have products loaded, filter them by brand
+      if (products.length > 0) {
+        const filteredByBrand = products.filter(product => 
+          product.brand_id === brandId || product.brand?._id === brandId);
+        setFilteredProducts(filteredByBrand);
+        console.log(`Found ${filteredByBrand.length} products for this brand`);
+      }
+      
+      // If we don't have products loaded yet, we can add logic to fetch them by brand directly
+      // ...
+    }
+  }, [window.location.search, products]);
+
+  // Update your applyAllFilters function to include brand filtering
+  const applyAllFilters = useCallback(() => {
+    let result = [...products];
+    
+    // Apply brand filter
+    if (selectedBrand) {
+      result = result.filter(product => 
+        product.brand_id === selectedBrand || product.brand?._id === selectedBrand);
+    }
+    
+    // Other filter logic...
+    // ...
+    
+    setFilteredProducts(result);
+    setTotalProducts(result.length);
+    setTotalPages(Math.ceil(result.length / itemsPerPage));
+    setCurrentPage(1);
+  }, [products, selectedBrand, /* other dependencies */]);
+
+  if (loading && products.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+      </div>
+    );
+  }
+
+  if (error && products.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-600 text-center">
+          <h2 className="text-2xl font-bold mb-2">Error</h2>
+          <p>{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="product-list-controls">
+        <button 
+          className="refresh-button mb-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" 
+          onClick={fetchProducts}
+        >
+          Refresh Products
+        </button>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold">
+          {subSubcategoryName_url || subcategoryName_url || categoryName_url || 'All Products'}
+        </h2>
+        
+        <nav className="text-sm text-gray-500 mt-2 mb-4">
+          <ol className="flex">
+            <li>
+              <Link to="/" className="hover:text-black">Home</Link>
+            </li>
+            <li className="mx-2">/</li>
+            <li>
+              <Link to="/products" className="hover:text-black">Products</Link>
+            </li>
+            
+            {categoryName_url && (
+              <>
+                <li className="mx-2">/</li>
+                <li>
+                  <Link 
+                    to={`/products?category_id=${category_id_url}&categoryName=${categoryName_url}`}
+                    className="hover:text-black"
+                  >
+                    {categoryName_url}
+                  </Link>
+                </li>
+              </>
+            )}
+            
+            {subcategoryName_url && (
+              <>
+                <li className="mx-2">/</li>
+                <li>
+                  <Link 
+                    to={`/products?category_id=${category_id_url}&categoryName=${categoryName_url}&sub_category_id=${sub_category_id_url}&subcategoryName=${subcategoryName_url}`}
+                    className="hover:text-black"
+                  >
+                    {subcategoryName_url}
+                  </Link>
+                </li>
+              </>
+            )}
+            
+            {subSubcategoryName_url && (
+              <>
+                <li className="mx-2">/</li>
+                <li className="text-black font-medium">{subSubcategoryName_url}</li>
+              </>
+            )}
+          </ol>
+        </nav>
+
+        {renderSubcategories()}
+        {renderSubSubcategories()}
+      </div>
+
+      <div className="flex flex-col md:flex-row">
+        <aside className="w-full md:w-1/4 pr-0 md:pr-4 mb-6 md:mb-0">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">FILTERS</h2>
+            <button 
+              onClick={resetFilters}
+              className="mb-4 px-3 py-1 bg-gray-200 text-black text-sm rounded hover:bg-gray-300"
+            >
+              Reset All
+            </button>
+          </div>
+          
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">CATEGORIES</h3>
+            <ul>
+              {Object.entries(categories).map(([key, value]) => (
+                <li key={key} className="mb-1">
+                  <button
+                    className={`text-left w-full ${selectedCategory === key ? 'font-bold' : ''}`}
+                    onClick={() => handleCategoryChange(key)}
+                  >
+                    {value}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          {renderSubcategories()}
+          {renderSubSubcategories()}
+          
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">PRICE</h3>
+            <div className="flex justify-between mb-2">
+              <input
+                type="number"
+                value={priceRange[0]}
+                onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                className="w-1/2 border p-1 mr-2"
+                min="0"
+                max="18000"
+              />
+              <input
+                type="number"
+                value={priceRange[1]}
+                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                className="w-1/2 border p-1"
+                min="0"
+                max="18000"
+              />
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="18000"
+              value={priceRange[1]}
+              onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+              className="w-full"
+            />
+            <div className="flex justify-between text-sm">
+              <span>₹0</span>
+              <span>₹{priceRange[1]}</span>
+            </div>
+          </div>
+          
+          <div className="mb-6">
+            <h4 className="text-lg font-medium mb-3">Color</h4>
+            <select
+              value={selectedColor || ''}
+              onChange={(e) => setSelectedColor(e.target.value || null)}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+            >
+              <option value="">All Colors</option>
+              {popularColors.map(color => (
+                <option key={color} value={color}>
+                  {color}
+                </option>
+              ))}
+            </select>
+            {selectedColor && (
+              <div className="mt-2 flex items-center">
+                <div 
+                  className="w-4 h-4 rounded-full mr-2" 
+                  style={{backgroundColor: selectedColor.toLowerCase()}}
+                />
+                <span className="text-sm">{selectedColor}</span>
+                <button 
+                  onClick={() => setSelectedColor(null)} 
+                  className="ml-2 text-xs text-gray-500 hover:text-black"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <div className="mb-6">
+            <h3 className="font-semibold mb-2">SIZE</h3>
+            <ul>
+              {sizes.map((size) => (
+                <li key={size} className="mb-1">
+                  <button
+                    className={`text-left w-full ${selectedSize === size ? 'font-bold' : ''}`}
+                    onClick={() => setSelectedSize(selectedSize === size ? '' : size)}
+                  >
+                    {size}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div className="mb-6">
+            <h4 className="text-lg font-medium mb-3">Brand</h4>
+            {brandsLoading ? (
+              <p className="text-sm text-gray-500">Loading brands...</p>
+            ) : (
+              <>
+                <select
+                  value={selectedBrand || ''}
+                  onChange={(e) => setSelectedBrand(e.target.value || null)}
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                >
+                  <option value="">All Brands</option>
+                  {brands.map(brand => (
+                    <option key={brand._id} value={brand._id}>
+                      {brand.name.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+                {selectedBrand && (
+                  <div className="mt-2 flex items-center">
+                    <span className="text-sm">
+                      {brands.find(b => b._id === selectedBrand)?.name || 'Selected Brand'}
+                    </span>
+                    <button 
+                      onClick={() => setSelectedBrand(null)} 
+                      className="ml-2 text-xs text-gray-500 hover:text-black"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+                {brands.length === 0 && !brandsLoading && (
+                  <p className="text-sm text-gray-500 mt-1">No brands available</p>
+                )}
+              </>
+            )}
+          </div>
+        </aside>
+        
+        <main className="w-full md:w-3/4">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <p className="text-gray-600 text-sm">
+              {totalProducts > 0 ? (
+                `Showing ${Math.min((currentPage - 1) * itemsPerPage + 1, totalProducts)} - ${Math.min(currentPage * itemsPerPage, totalProducts)} of ${totalProducts} products`
+              ) : (
+                'No products found'
+              )}
+            </p>
+            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full md:w-64 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <select
+                className="w-full md:w-auto border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-black"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="default">Default sorting</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+          {loading && products.length > 0 && (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black"></div>
+            </div>
+          )}
+
+          <motion.div 
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {displayedProducts.length > 0 ? (
+              displayedProducts.map((product) => (
+                <motion.div
+                  key={product._id}
+                  className="overflow-hidden cursor-pointer group relative"
+                  whileHover={{ y: -5 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/product/${product._id}`, { state: { product } });
+                  }}                >
+                  <div className="relative pb-[125%] bg-gray-200">
+                    <img
+                      src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
+                      alt={product.product_name}
+                      className="absolute top-0 left-0 w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/300x300';
+                      }}
+                    />
+                    {!product.isSoldOut && (
+                      <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">SALE</span>
+                    )}
+                    {product.isSoldOut && (
+                      <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1">NEW</span>
+                    )}
+                    
+                    <div className="absolute right-2 top-2 z-10 opacity-0 transform scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
+                      <button 
+                        className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToWishlist(product);
+                        }}
+                        title="Add to Wishlist"
+                      >
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          strokeWidth={1.5} 
+                          stroke="white" 
+                          className="w-5 h-5"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute bottom-0 left-0 right-0 bg-black transform transition-transform duration-300 translate-y-full group-hover:translate-y-0 z-10">
+                    <button 
+                      className="w-full py-4 text-white hover:bg-opacity-90 font-medium transition-colors text-center"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/product/${product._id}`, { state: { product } });
+                      }}
+                    >
+                      SELECT OPTIONS
+                    </button>
+                  </div>
+                  
+                  <div className="pt-4 pb-2 text-center">
+                    <h2 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h2>
+                    <div className="flex justify-center mb-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg 
+                          key={star} 
+                          className={`w-4 h-4 ${star <= (product.averageRating || 3) ? 'text-black-500' : 'text-gray-300'}`} 
+                          fill="currentColor" 
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                      {product.sizes && (
+                        <div className="flex gap-1">
+                          {product.sizes.map(sizeObj => (
+                            <span 
+                              key={sizeObj._id} 
+                              className="text-xs border px-1 rounded"
+                              title={`${sizeObj.quantity} in stock`}
+                            >
+                              {sizeObj.size}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                      <p className="text-gray-600 text-sm mt-1">
+                        {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
+                      </p>
+                    )}
+                    <div className="mt-1">
+                      {product.estimated_price ? (
+                        <div className="flex justify-center items-center gap-2">
+                          <span className="text-gray-500 line-through">₹{product.estimated_price}</span>
+                          <span className="text-gray-800 font-medium">
+                            Our Price: ₹{product.discount_price || product.price}
+                          </span>
+                        </div>
+                      ) : (
+                        <p className="text-gray-800">₹{product.price}</p>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-4 text-center py-12">
+                <h3 className="text-xl font-semibold text-gray-600">No products found</h3>
+                <p className="text-gray-500 mt-2">Try adjusting your search criteria or filters</p>
+              </div>
+            )}
+          </motion.div>
+
+          {renderPagination()}
+        </main>
+      </div>
+       {/* Add this new services section at the end, just before the closing </div> */}
+       <div className="bg-gray-50 py-12 mt-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Feature 1: Free Shipping */}
+            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+              <img 
+                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-1.png" 
+                alt="Free Shipping" 
+                className="w-14 h-auto"
+              />
+              <div>
+                <h3 className="font-medium text-lg">Free Shipping</h3>
+                <p className="text-gray-600 text-sm">Free Shipping World wide</p>
+              </div>
+            </div>
+            
+            {/* Feature 2: Secured Payment */}
+            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+              <img 
+                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-2.png" 
+                alt="Secured Payment" 
+                className="w-9 h-auto"
+              />
+              <div>
+                <h3 className="font-medium text-lg">Secured Payment</h3>
+                <p className="text-gray-600 text-sm">Safe & Secured Payments</p>
+              </div>
+            </div>
+            
+            {/* Feature 3: 24/7 Support */}
+            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+              <img 
+                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-3.png" 
+                alt="24/7 Support" 
+                className="w-14 h-auto"
+              />
+              <div>
+                <h3 className="font-medium text-lg">24/7 Support</h3>
+                <p className="text-gray-600 text-sm">Support Around The Clock</p>
+              </div>
+            </div>
+            
+            {/* Feature 4: Surprise Gifts */}
+            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+              <img 
+                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-4.png" 
+                alt="Surprise Gifts" 
+                className="w-8 h-auto"
+              />
+              <div>
+                <h3 className="font-medium text-lg">Surprise Gifts</h3>
+                <p className="text-gray-600 text-sm">Free Gift Cards & Vouchers</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ProductList;
