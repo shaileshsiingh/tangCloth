@@ -13,18 +13,18 @@ function AddProduct() {
   
   // Product form state
   const [formData, setFormData] = useState({
-    product_name: '',
-    description: '',
-    price: '',
-    discount_price: '',
     category_id: '',
     subCategory_id: '',
     subSubCategory_id: '',
     brand_id: '',
+    product_name: '',
     color: '',
-    material: '',
-    sizes: [{ size: '', quantity: '' }],
-    tags: []
+    price: 0,
+    estimated_price: 0,
+    discount_price: 0,
+    sizes: [{ size: '', quantity: 0 }],
+    images: [],
+    description: ''
   });
   
   // State for categories, brands, etc.
@@ -410,7 +410,19 @@ function AddProduct() {
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Convert price fields to numbers when appropriate
+    if (name === 'price' || name === 'estimated_price' || name === 'discount_price') {
+      setFormData({
+        ...formData,
+        [name]: value === '' ? '' : Number(value)
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
   
   // Handle size changes
@@ -424,7 +436,7 @@ function AddProduct() {
   const addSizeField = () => {
     setFormData(prev => ({
       ...prev,
-      sizes: [...prev.sizes, { size: '', quantity: '' }]
+      sizes: [...prev.sizes, { size: '', quantity: 0 }]
     }));
   };
   
@@ -522,7 +534,9 @@ function AddProduct() {
         brand_id: formData.brand_id,
         product_name: formData.product_name,
         color: formData.color,
-        price: parseFloat(formData.price),
+        price: Number(formData.price),
+        estimated_price: Number(formData.estimated_price) || undefined,
+        discount_price: Number(formData.discount_price) || undefined,
         sizes: formData.sizes.map(size => ({
           size: size.size,
           quantity: parseInt(size.quantity, 10)
@@ -1096,6 +1110,94 @@ function AddProduct() {
               ))}
             </div>
           )}
+        </div>
+        
+        {/* Price Information Section */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Price Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Estimated Retail Price */}
+            <div>
+              <label className="block text-gray-700 mb-2" htmlFor="estimated_price">
+                Estimated Retail Price
+              </label>
+              <input
+                type="number"
+                id="estimated_price"
+                name="estimated_price"
+                value={formData.estimated_price}
+                onChange={handleInputChange}
+                min="0"
+                step="0.01"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Estimated Price (e.g. 1299)"
+              />
+              <p className="text-xs text-gray-500 mt-1">Original market price for comparison</p>
+            </div>
+            
+            {/* Our Price (Required) */}
+            <div>
+              <label className="block text-gray-700 mb-2" htmlFor="price">
+                Our Price <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                min="0"
+                step="0.01"
+                required
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Price (e.g. 999)"
+              />
+              <p className="text-xs text-gray-500 mt-1">Default selling price if no discount</p>
+            </div>
+            
+            {/* Discount Price */}
+            <div>
+              <label className="block text-gray-700 mb-2" htmlFor="discount_price">
+                Discount Price
+              </label>
+              <input
+                type="number"
+                id="discount_price"
+                name="discount_price"
+                value={formData.discount_price}
+                onChange={handleInputChange}
+                min="0"
+                step="0.01"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Discount Price (e.g. 799)"
+              />
+              <p className="text-xs text-gray-500 mt-1">Special promotional price (if applicable)</p>
+            </div>
+          </div>
+          
+          {/* Price Preview */}
+          <div className="mt-4 p-3 bg-gray-50 rounded-md">
+            <h3 className="font-medium mb-2">Price Display Preview:</h3>
+            <div className="flex items-center">
+              {formData.estimated_price > 0 ? (
+                <>
+                  <span className="text-gray-500 line-through mr-3">
+                    ₹{formData.estimated_price}
+                  </span>
+                  <span className="font-medium mr-2">
+                    Our Price: ₹{formData.discount_price > 0 ? formData.discount_price : formData.price}
+                  </span>
+                  {(formData.estimated_price > (formData.discount_price > 0 ? formData.discount_price : formData.price)) && (
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                      {Math.round((1 - (formData.discount_price > 0 ? formData.discount_price : formData.price) / formData.estimated_price) * 100)}% OFF
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="font-medium">₹{formData.price}</span>
+              )}
+            </div>
+          </div>
         </div>
         
         {/* Submit Button */}
