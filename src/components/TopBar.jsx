@@ -17,9 +17,9 @@ function TopBar() {
             <a href="#" className="hover:text-gray-300">TW</a>
           </div>
         </div>
-        <div>
+        {/* <div>
           Free Shipping on Orders over $100
-        </div>
+        </div> */}
       </div>
     </div>
   );

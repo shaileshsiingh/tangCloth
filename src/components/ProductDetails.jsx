@@ -3,7 +3,7 @@ import { useParams, Navigate, Link, useLocation, useNavigate } from 'react-route
 import { Tab } from '@headlessui/react';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
-import { HeartIcon, TruckIcon, ShieldCheckIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { HeartIcon, TruckIcon, ShieldCheckIcon, ArrowLeftIcon, ArrowRightIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
@@ -163,7 +163,7 @@ function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const { addToCart, removeFromCart, fetchCartItems } = useCart();
   const {addToWishlist} = useWishlist()
-  const [reviews, setReviews] = useState({ rating: 0, count: 0, items: [] });
+  // const [reviews, setReviews] = useState({ rating: 0, count: 0, items: [] });
   const [relatedProducts, setRelatedProducts] = useState([]);
   
   // Format the product name in title case
@@ -356,27 +356,47 @@ function ProductDetails() {
   };
 
   // Function to handle adding new reviews
-  const handleReviewAdded = (newReview) => {
-    // Create a copy of current reviews
-    const updatedReviews = { ...reviews };
+  // const handleReviewAdded = (newReview) => {
+  //   // Create a copy of current reviews
+  //   const updatedReviews = { ...reviews };
     
-    // Add the new review to items
-    updatedReviews.items = [...updatedReviews.items, {
-      id: Date.now(), // Generate a unique ID
-      rating: newReview.rating,
-      comment: newReview.review,
-      name: newReview.name || 'Anonymous'
-    }];
+  //   // Add the new review to items
+  //   updatedReviews.items = [...updatedReviews.items, {
+  //     id: Date.now(), // Generate a unique ID
+  //     rating: newReview.rating,
+  //     comment: newReview.review,
+  //     name: newReview.name || 'Anonymous'
+  //   }];
     
-    // Update count
-    updatedReviews.count = updatedReviews.items.length;
+  //   // Update count
+  //   updatedReviews.count = updatedReviews.items.length;
     
-    // Recalculate average rating
-    const totalRating = updatedReviews.items.reduce((sum, item) => sum + item.rating, 0);
-    updatedReviews.rating = updatedReviews.count > 0 ? (totalRating / updatedReviews.count).toFixed(1) : 0;
+  //   // Recalculate average rating
+  //   const totalRating = updatedReviews.items.reduce((sum, item) => sum + item.rating, 0);
+  //   updatedReviews.rating = updatedReviews.count > 0 ? (totalRating / updatedReviews.count).toFixed(1) : 0;
     
-    // Update reviews state
-    setReviews(updatedReviews);
+  //   // Update reviews state
+  //   setReviews(updatedReviews);
+  // };
+
+  // Function to handle sharing
+  const handleShare = () => {
+    const productUrl = window.location.href; // Get the current product URL
+    const productName = product ? product.product_name : 'Product';
+
+    if (navigator.share) {
+      // Use Web Share API if supported
+      navigator.share({
+        title: productName,
+        text: `Check out this product: ${productName}`,
+        url: productUrl,
+      }).catch((error) => console.error('Error sharing:', error));
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      const shareText = `Check out this product: ${productName} - ${productUrl}`;
+      const mailtoLink = `mailto:?subject=Check out this product&body=${encodeURIComponent(shareText)}`;
+      window.open(mailtoLink, '_blank');
+    }
   };
 
   if (!product) {
@@ -479,7 +499,14 @@ function ProductDetails() {
           {/* Right Column - Enhanced Product Info */}
           <div className="flex flex-col space-y-6">
             <div>
-              <h1 className="text-3xl font-bold mb-2 text-gray-900">{formattedProductName}</h1>
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">{product.product_name.toUpperCase()}</h1>
+                {/* Share Icon */}
+                <ShareIcon 
+                  className="w-6 h-6 text-gray-600 cursor-pointer hover:text-gray-800 transition-colors"
+                  onClick={handleShare}
+                />
+              </div>
               
               {/* Brand name with badge */}
               {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
@@ -489,19 +516,6 @@ function ProductDetails() {
                    (product.brand?.name || 'Brand')).toUpperCase()}
                 </div>
               )}
-              
-              {/* Enhanced Reviews Summary */}
-              <div className="flex items-center mb-6">
-                <div className="flex mr-2">
-                  {[...Array(5)].map((_, i) => (
-                    <StarIcon 
-                      key={i} 
-                      className={`h-5 w-5 ${i < Math.round(reviews.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-                    />
-                  ))}
-                </div>
-                <span className="text-gray-600 text-sm">{reviews.count} reviews</span>
-              </div>
               
               {/* Price with discounted price if available */}
               <div className="mb-6">
@@ -612,10 +626,10 @@ function ProductDetails() {
               <div className="border-t border-b py-6 space-y-4">
                 <div className="flex items-start space-x-3">
                   <TruckIcon className="h-6 w-6 text-gray-600 mt-0.5" />
-                  <div>
+                  {/* <div>
                     <p className="font-medium">Free Shipping & Returns</p>
                     <p className="text-sm text-gray-600">Free shipping on orders over ₹999</p>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex items-start space-x-3">
                   <ShieldCheckIcon className="h-6 w-6 text-gray-600 mt-0.5" />
@@ -648,13 +662,13 @@ function ProductDetails() {
               }>
                 Product Details
               </Tab>
-              <Tab className={({ selected }) => 
+              {/* <Tab className={({ selected }) => 
                 `pb-4 font-medium text-sm focus:outline-none ${
                   selected ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-700'
                 }`
               }>
                 Reviews
-              </Tab>
+              </Tab> */}
               <Tab className={({ selected }) => 
                 `pb-4 font-medium text-sm focus:outline-none ${
                   selected ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-700'
@@ -721,85 +735,9 @@ function ProductDetails() {
                 </div>
               </Tab.Panel>
               
+             
               <Tab.Panel>
-                <div className="space-y-6">
-                  {/* Review summary */}
-                  <div className="mb-6 bg-gray-50 p-6 rounded-lg">
-                    <div className="flex flex-col md:flex-row md:items-center md:space-x-8">
-                      <div className="flex flex-col items-center mb-4 md:mb-0">
-                        <div className="text-5xl font-bold">{reviews.rating}</div>
-                        <div className="flex mt-2">
-                          {[...Array(5)].map((_, i) => (
-                            <StarIcon 
-                              key={i} 
-                              className={`h-5 w-5 ${i < Math.round(reviews.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-                            />
-                          ))}
-                        </div>
-                        <p className="text-gray-600 mt-1">{reviews.count} reviews</p>
-                      </div>
-                      
-                      <div className="flex-1">
-                        {/* Rating bars */}
-                        {[5, 4, 3, 2, 1].map((star) => {
-                          const count = reviews.items.filter(item => item.rating === star).length;
-                          const percentage = reviews.count > 0 ? Math.round((count / reviews.count) * 100) : 0;
-                          
-                          return (
-                            <div key={star} className="flex items-center mb-2">
-                              <div className="flex items-center w-12">
-                                <span className="text-sm text-gray-600">{star}</span>
-                                <StarIcon className="h-4 w-4 ml-1 text-yellow-400" />
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2 mx-3">
-                                <div 
-                                  className="bg-yellow-400 h-2 rounded-full" 
-                                  style={{ width: `${percentage}%` }}
-                                ></div>
-                              </div>
-                              <span className="text-sm text-gray-600 w-10">{percentage}%</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Existing reviews */}
-                  <div className="space-y-6 mb-8">
-                    {reviews.items.length > 0 ? (
-                      reviews.items.map((review) => (
-                        <div key={review.id} className="border-b pb-6">
-                          <div className="flex justify-between mb-2">
-                            <div className="flex mb-2">
-                              {[...Array(5)].map((_, i) => (
-                                <StarIcon 
-                                  key={i} 
-                                  className={`h-4 w-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                                />
-                              ))}
-                            </div>
-                            <span className="text-sm text-gray-500">
-                              {new Date().toLocaleDateString()}
-                            </span>
-                          </div>
-                          <p className="font-medium">{review.name}</p>
-                          <p className="text-gray-800 mt-2">{review.comment}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-6 bg-gray-50 rounded-lg">
-                        <p className="text-gray-600">No reviews yet. Be the first to review this product!</p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Review Form component */}
-                  <ReviewForm productId={product?._id} onReviewAdded={handleReviewAdded} />
-                </div>
-              </Tab.Panel>
-              
-              <Tab.Panel>
+
                 <div className="prose max-w-none">
                   <h3 className="text-xl font-medium mb-4">Shipping Information</h3>
                   <div className="space-y-4">
@@ -872,12 +810,12 @@ function ProductDetails() {
                     </div>
                     
                     <div className="flex">
-                      {[...Array(5)].map((_, i) => (
+                      {/* {[...Array(5)].map((_, i) => (
                         <StarIcon 
                           key={i} 
                           className={`h-4 w-4 ${i < 4 ? 'text-yellow-400' : 'text-gray-300'}`}
                         />
-                      ))}
+                      ))} */}
                     </div>
                   </div>
                 </div>
@@ -892,7 +830,7 @@ function ProductDetails() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1: Free Shipping */}
-            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+            {/* <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
               <img 
                 src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-1.png" 
                 alt="Free Shipping" 
@@ -902,7 +840,7 @@ function ProductDetails() {
                 <h3 className="font-medium text-lg">Free Shipping</h3>
                 <p className="text-gray-600 text-sm">Free Shipping World wide</p>
               </div>
-            </div>
+            </div> */}
             
             {/* Feature 2: Secured Payment */}
             <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
@@ -944,6 +882,17 @@ function ProductDetails() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Share Button */}
+      <div className="flex justify-end mt-4">
+        <button
+          onClick={handleShare}
+          className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+        >
+          <ShareIcon className="w-5 h-5" />
+          <span>Share</span>
+        </button>
       </div>
       </div>
     </motion.div>

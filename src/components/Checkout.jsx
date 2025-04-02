@@ -654,7 +654,7 @@ function Checkout() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1: Free Shipping */}
-            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+            {/* <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
               <img 
                 src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-1.png" 
                 alt="Free Shipping" 
@@ -664,7 +664,7 @@ function Checkout() {
                 <h3 className="font-medium text-lg">Free Shipping</h3>
                 <p className="text-gray-600 text-sm">Free Shipping World wide</p>
               </div>
-            </div>
+            </div> */}
             
             {/* Feature 2: Secured Payment */}
             <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">

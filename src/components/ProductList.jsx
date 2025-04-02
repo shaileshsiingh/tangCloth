@@ -223,8 +223,8 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      // const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
-      const response = await axios.get(`${API_URL}/product/list`);
+      const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
+      // const response = await axios.get(`${API_URL}/product/list`);
 
       if (response.data.success) {
         const allProducts = response.data.data.products || [];
@@ -1165,8 +1165,8 @@ const API_URL = '/api'
                   
                   <div className="pt-4 pb-2 text-center">
                     <h2 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h2>
-                    <div className="flex justify-center mb-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
+                    {/* <div className="flex justify-center mb-1"> */}
+                      {/* {[1, 2, 3, 4, 5].map((star) => (
                         <svg 
                           key={star} 
                           className={`w-4 h-4 ${star <= (product.averageRating || 3) ? 'text-black-500' : 'text-gray-300'}`} 
@@ -1175,9 +1175,9 @@ const API_URL = '/api'
                         >
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                      ))}
-                    </div>
-                    <div className="flex gap-2 justify-center">
+                      ))} */}
+                    {/* </div> */}
+                    {/* <div className="flex gap-2 justify-center">
                       {product.sizes && (
                         <div className="flex gap-1">
                           {product.sizes.map(sizeObj => (
@@ -1191,7 +1191,7 @@ const API_URL = '/api'
                           ))}
                         </div>
                       )}
-                    </div>
+                    </div> */}
                     {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
                       <p className="text-gray-600 text-sm mt-1">
                         {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
@@ -1228,7 +1228,7 @@ const API_URL = '/api'
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1: Free Shipping */}
-            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+            {/* <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
               <img 
                 src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-1.png" 
                 alt="Free Shipping" 
@@ -1238,7 +1238,7 @@ const API_URL = '/api'
                 <h3 className="font-medium text-lg">Free Shipping</h3>
                 <p className="text-gray-600 text-sm">Free Shipping World wide</p>
               </div>
-            </div>
+            </div> */}
             
             {/* Feature 2: Secured Payment */}
             <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">

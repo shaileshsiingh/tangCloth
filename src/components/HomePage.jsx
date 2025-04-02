@@ -285,7 +285,7 @@ function HomePage() {
             </div>
             <div className="w-2/3 p-3">
               <div className="mb-1">
-                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Just Purchased!</span>
+                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">You Missed It!</span>
               </div>
               <h3 className="text-lg font-medium">Coat</h3>
               <p className="text-sm text-gray-800">$99.99</p>
