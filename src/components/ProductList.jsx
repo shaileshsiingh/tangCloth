@@ -33,6 +33,7 @@ function ProductList() {
   const [sub_sub_category_id_state, setSub_sub_category_id_state] = useState(null);
   const [brands, setBrands] = useState([]);
   const [brandsLoading, setBrandsLoading] = useState(true);
+  const [selectedCondition, setSelectedCondition] = useState('');
 
   const itemsPerPage = 12;
 
@@ -223,7 +224,6 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      // const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
       const response = await axios.get(`${API_URL}/product/list`);
 
       if (response.data.success) {
@@ -234,11 +234,11 @@ function ProductList() {
         setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
         console.log('Total products loaded:', allProducts.length);
       }
-      } catch (error) {
+    } catch (error) {
       console.error('Error loading products:', error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
+      setError(error.message);
+    } finally {
+      setLoading(false);
       setDataLoaded(true);
     }
   }, []);
@@ -818,6 +818,15 @@ const API_URL = '/api'
     setCurrentPage(1);
   }, [products, selectedBrand, /* other dependencies */]);
 
+  // Filter products by condition
+  useEffect(() => {
+    if (selectedCondition) {
+      setFilteredProducts(products.filter(product => product.condition === selectedCondition));
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [selectedCondition, products]);
+
   if (loading && products.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -910,377 +919,131 @@ const API_URL = '/api'
         {renderSubSubcategories()}
       </div>
 
-      <div className="flex flex-col md:flex-row">
-        <aside className="w-full md:w-1/4 pr-0 md:pr-4 mb-6 md:mb-0">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">FILTERS</h2>
-            <button 
-              onClick={resetFilters}
-              className="mb-4 px-3 py-1 bg-gray-200 text-black text-sm rounded hover:bg-gray-300"
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <select
+          className="w-full md:w-auto border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-black"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="all">All</option>
+          <option value="men">Men</option>
+          <option value="women">Women</option>
+          <option value="kids">Kids</option>
+        </select>
+
+        <select
+          className="w-full md:w-auto border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-black"
+          value={selectedCondition}
+          onChange={(e) => setSelectedCondition(e.target.value)}
+        >
+          <option value="">All Conditions</option>
+          <option value="pristine">Pristine Condition</option>
+          <option value="good">Good Condition</option>
+          <option value="new_with_tags">New with tags</option>
+          <option value="new_without_tags">New without tags</option>
+          <option value="gently_used">Gently used</option>
+          <option value="used_fairly_well">Used fairly well</option>
+        </select>
+      </div>
+
+      <motion.div 
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {displayedProducts.length > 0 ? (
+          displayedProducts.map((product) => (
+            <motion.div
+              key={product._id}
+              className="overflow-hidden cursor-pointer group relative"
+              whileHover={{ y: -5 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/product/${product._id}`, { state: { product } });
+              }}
             >
-              Reset All
-            </button>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="font-semibold mb-2">CATEGORIES</h3>
-            <ul>
-              {Object.entries(categories).map(([key, value]) => (
-                <li key={key} className="mb-1">
-                  <button
-                    className={`text-left w-full ${selectedCategory === key ? 'font-bold' : ''}`}
-                    onClick={() => handleCategoryChange(key)}
-                  >
-                    {value}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {renderSubcategories()}
-          {renderSubSubcategories()}
-          
-          <div className="mb-6">
-            <h3 className="font-semibold mb-2">PRICE</h3>
-            <div className="flex justify-between mb-2">
-              <input
-                type="number"
-                value={priceRange[0]}
-                onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-                className="w-1/2 border p-1 mr-2"
-                min="0"
-                max="18000"
-              />
-              <input
-                type="number"
-                value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                className="w-1/2 border p-1"
-                min="0"
-                max="18000"
-              />
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="18000"
-              value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-              className="w-full"
-            />
-            <div className="flex justify-between text-sm">
-              <span>₹0</span>
-              <span>₹{priceRange[1]}</span>
-            </div>
-          </div>
-          
-          <div className="mb-6">
-            <h4 className="text-lg font-medium mb-3">Color</h4>
-            <select
-              value={selectedColor || ''}
-              onChange={(e) => setSelectedColor(e.target.value || null)}
-              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
-            >
-              <option value="">All Colors</option>
-              {popularColors.map(color => (
-                <option key={color} value={color}>
-                  {color}
-                </option>
-              ))}
-            </select>
-            {selectedColor && (
-              <div className="mt-2 flex items-center">
-                <div 
-                  className="w-4 h-4 rounded-full mr-2" 
-                  style={{backgroundColor: selectedColor.toLowerCase()}}
+              <div className="relative pb-[125%] bg-gray-200">
+                <img
+                  src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
+                  alt={product.product_name}
+                  className="absolute top-0 left-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/300x300';
+                  }}
                 />
-                <span className="text-sm">{selectedColor}</span>
-                <button 
-                  onClick={() => setSelectedColor(null)} 
-                  className="ml-2 text-xs text-gray-500 hover:text-black"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="font-semibold mb-2">SIZE</h3>
-            <ul>
-              {sizes.map((size) => (
-                <li key={size} className="mb-1">
-                  <button
-                    className={`text-left w-full ${selectedSize === size ? 'font-bold' : ''}`}
-                    onClick={() => setSelectedSize(selectedSize === size ? '' : size)}
+                {product.condition && (
+                  <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">
+                    {product.condition.replace(/_/g, ' ').toUpperCase()}
+                  </span>
+                )}
+                
+                <div className="absolute right-2 top-2 z-10 opacity-0 transform scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
+                  <button 
+                    className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToWishlist(product);
+                    }}
+                    title="Add to Wishlist"
                   >
-                    {size}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="mb-6">
-            <h4 className="text-lg font-medium mb-3">Brand</h4>
-            {brandsLoading ? (
-              <p className="text-sm text-gray-500">Loading brands...</p>
-            ) : (
-              <>
-                <select
-                  value={selectedBrand || ''}
-                  onChange={(e) => setSelectedBrand(e.target.value || null)}
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
-                >
-                  <option value="">All Brands</option>
-                  {brands.map(brand => (
-                    <option key={brand._id} value={brand._id}>
-                      {brand.name.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-                {selectedBrand && (
-                  <div className="mt-2 flex items-center">
-                    <span className="text-sm">
-                      {brands.find(b => b._id === selectedBrand)?.name || 'Selected Brand'}
-                    </span>
-                    <button 
-                      onClick={() => setSelectedBrand(null)} 
-                      className="ml-2 text-xs text-gray-500 hover:text-black"
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      strokeWidth={1.5} 
+                      stroke="white" 
+                      className="w-5 h-5"
                     >
-                      ✕
-                    </button>
-                  </div>
-                )}
-                {brands.length === 0 && !brandsLoading && (
-                  <p className="text-sm text-gray-500 mt-1">No brands available</p>
-                )}
-              </>
-            )}
-          </div>
-        </aside>
-        
-        <main className="w-full md:w-3/4">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <p className="text-gray-600 text-sm">
-              {totalProducts > 0 ? (
-                `Showing ${Math.min((currentPage - 1) * itemsPerPage + 1, totalProducts)} - ${Math.min(currentPage * itemsPerPage, totalProducts)} of ${totalProducts} products`
-              ) : (
-                'No products found'
-              )}
-            </p>
-            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full md:w-64 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <select
-                className="w-full md:w-auto border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-black"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="default">Default sorting</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
-            </div>
-          </div>
-
-          {loading && products.length > 0 && (
-            <div className="flex justify-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-black"></div>
-            </div>
-          )}
-
-          <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {displayedProducts.length > 0 ? (
-              displayedProducts.map((product) => (
-                <motion.div
-                  key={product._id}
-                  className="overflow-hidden cursor-pointer group relative"
-                  whileHover={{ y: -5 }}
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="absolute bottom-0 left-0 right-0 bg-black transform transition-transform duration-300 translate-y-full group-hover:translate-y-0 z-10">
+                <button 
+                  className="w-full py-4 text-white hover:bg-opacity-90 font-medium transition-colors text-center"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`/product/${product._id}`, { state: { product } });
-                  }}                >
-                  <div className="relative pb-[125%] bg-gray-200">
-                    <img
-                      src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
-                      alt={product.product_name}
-                      className="absolute top-0 left-0 w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/300x300';
-                      }}
-                    />
-                    {!product.isSoldOut && (
-                      <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">SALE</span>
-                    )}
-                    {product.isSoldOut && (
-                      <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1">NEW</span>
-                    )}
-                    
-                    <div className="absolute right-2 top-2 z-10 opacity-0 transform scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
-                      <button 
-                        className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToWishlist(product);
-                        }}
-                        title="Add to Wishlist"
-                      >
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          strokeWidth={1.5} 
-                          stroke="white" 
-                          className="w-5 h-5"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                      </button>
+                  }}
+                >
+                  SELECT OPTIONS
+                </button>
+              </div>
+              
+              <div className="pt-4 pb-2 text-center">
+                <h2 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h2>
+                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                  <p className="text-gray-600 text-sm mt-1">
+                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
+                  </p>
+                )}
+                <div className="mt-1">
+                  {product.estimated_price ? (
+                    <div className="flex justify-center items-center gap-2">
+                      <span className="text-gray-500 line-through">₹{product.estimated_price}</span>
+                      <span className="text-gray-800 font-medium">
+                        Our Price: ₹{product.discount_price || product.price}
+                      </span>
                     </div>
-                  </div>
-                  
-                  <div className="absolute bottom-0 left-0 right-0 bg-black transform transition-transform duration-300 translate-y-full group-hover:translate-y-0 z-10">
-                    <button 
-                      className="w-full py-4 text-white hover:bg-opacity-90 font-medium transition-colors text-center"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/product/${product._id}`, { state: { product } });
-                      }}
-                    >
-                      SELECT OPTIONS
-                    </button>
-                  </div>
-                  
-                  <div className="pt-4 pb-2 text-center">
-                    <h2 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h2>
-                    {/* <div className="flex justify-center mb-1"> */}
-                      {/* {[1, 2, 3, 4, 5].map((star) => (
-                        <svg 
-                          key={star} 
-                          className={`w-4 h-4 ${star <= (product.averageRating || 3) ? 'text-black-500' : 'text-gray-300'}`} 
-                          fill="currentColor" 
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))} */}
-                    {/* </div> */}
-                    {/* <div className="flex gap-2 justify-center">
-                      {product.sizes && (
-                        <div className="flex gap-1">
-                          {product.sizes.map(sizeObj => (
-                            <span 
-                              key={sizeObj._id} 
-                              className="text-xs border px-1 rounded"
-                              title={`${sizeObj.quantity} in stock`}
-                            >
-                              {sizeObj.size}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div> */}
-                    {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                      <p className="text-gray-600 text-sm mt-1">
-                        {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
-                      </p>
-                    )}
-                    <div className="mt-1">
-                      {product.estimated_price ? (
-                        <div className="flex justify-center items-center gap-2">
-                          <span className="text-gray-500 line-through">₹{product.estimated_price}</span>
-                          <span className="text-gray-800 font-medium">
-                            Our Price: ₹{product.discount_price || product.price}
-                          </span>
-                        </div>
-                      ) : (
-                        <p className="text-gray-800">₹{product.price}</p>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              <div className="col-span-4 text-center py-12">
-                <h3 className="text-xl font-semibold text-gray-600">No products found</h3>
-                <p className="text-gray-500 mt-2">Try adjusting your search criteria or filters</p>
+                  ) : (
+                    <p className="text-gray-800">₹{product.price}</p>
+                  )}
+                </div>
               </div>
-            )}
-          </motion.div>
-
-          {renderPagination()}
-        </main>
-      </div>
-       {/* Add this new services section at the end, just before the closing </div> */}
-       <div className="bg-gray-50 py-12 mt-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature 1: Free Shipping */}
-            {/* <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
-              <img 
-                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-1.png" 
-                alt="Free Shipping" 
-                className="w-14 h-auto"
-              />
-              <div>
-                <h3 className="font-medium text-lg">Free Shipping</h3>
-                <p className="text-gray-600 text-sm">Free Shipping World wide</p>
-              </div>
-            </div> */}
-            
-            {/* Feature 2: Secured Payment */}
-            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
-              <img 
-                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-2.png" 
-                alt="Secured Payment" 
-                className="w-9 h-auto"
-              />
-              <div>
-                <h3 className="font-medium text-lg">Secured Payment</h3>
-                <p className="text-gray-600 text-sm">Safe & Secured Payments</p>
-              </div>
-            </div>
-            
-            {/* Feature 3: 24/7 Support */}
-            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
-              <img 
-                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-3.png" 
-                alt="24/7 Support" 
-                className="w-14 h-auto"
-              />
-              <div>
-                <h3 className="font-medium text-lg">24/7 Support</h3>
-                <p className="text-gray-600 text-sm">Support Around The Clock</p>
-              </div>
-            </div>
-            
-            {/* Feature 4: Surprise Gifts */}
-            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
-              <img 
-                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-4.png" 
-                alt="Surprise Gifts" 
-                className="w-8 h-auto"
-              />
-              <div>
-                <h3 className="font-medium text-lg">Surprise Gifts</h3>
-                <p className="text-gray-600 text-sm">Free Gift Cards & Vouchers</p>
-              </div>
-            </div>
+            </motion.div>
+          ))
+        ) : (
+          <div className="col-span-4 text-center py-12">
+            <h3 className="text-xl font-semibold text-gray-600">No products found</h3>
+            <p className="text-gray-500 mt-2">Try adjusting your search criteria or filters</p>
           </div>
-        </div>
-      </div>
+        )}
+      </motion.div>
+
+      {renderPagination()}
     </div>
   );
 }
