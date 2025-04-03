@@ -25,7 +25,7 @@ function AddProduct() {
     sizes: [{ size: '', quantity: 0 }],
     images: [],
     description: '',
-    tags: []
+    condition: ''
   });
   
   // State for categories, brands, etc.
@@ -543,12 +543,14 @@ function AddProduct() {
           quantity: parseInt(size.quantity, 10)
         })),
         images: base64Images,
-        description: formData.description
+        description: formData.description,
+        condition: formData.condition
       };
       
       console.log('Submitting product with payload:', payload);
-      
       const response = await axios.post(`${API_URL}/product/add`, payload, {
+        // const response = await axios.post(`http://91.203.135.152:2001/api/product/add`, payload, {
+
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1056,7 +1058,7 @@ function AddProduct() {
           </div>
           
           <div className="flex flex-wrap gap-2 mt-3">
-            {formData.tags.map((tag, index) => (
+            {formData?.tags?.map((tag, index) => (
               <div 
                 key={index}
                 className="bg-gray-200 px-3 py-1 rounded-full flex items-center"
@@ -1199,6 +1201,27 @@ function AddProduct() {
               )}
             </div>
           </div>
+        </div>
+        
+        {/* Product Condition Field */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Product Condition
+          </label>
+          <select
+            name="condition"
+            value={formData.condition}
+            onChange={handleInputChange}
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+          >
+            <option value="">Select Condition</option>
+            <option value="pristine">Pristine Condition</option>
+            <option value="good">Good Condition</option>
+            <option value="new_with_tags">New with tags</option>
+            <option value="new_without_tags">New without tags</option>
+            <option value="gently_used">Gently used</option>
+            <option value="used_fairly_well">Used fairly well</option>
+          </select>
         </div>
         
         {/* Submit Button */}
