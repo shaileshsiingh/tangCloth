@@ -162,9 +162,11 @@ function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(product?.sizes[0]?.size || '');
   const [quantity, setQuantity] = useState(1);
   const { addToCart, removeFromCart, fetchCartItems } = useCart();
-  const {addToWishlist} = useWishlist()
-  // const [reviews, setReviews] = useState({ rating: 0, count: 0, items: [] });
+  const { addToWishlist } = useWishlist();
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [customPrice, setCustomPrice] = useState(''); // State for custom price quote
+  const [showPriceQuote, setShowPriceQuote] = useState(true); // Show button for all products
+  const [showPriceQuoteForm, setShowPriceQuoteForm] = useState(false); // Control form visibility
   
   // Format the product name in title case
   const formattedProductName = product ? toTitleCase(product.product_name) : '';
@@ -355,30 +357,6 @@ function ProductDetails() {
     navigate(`/product/${relatedProduct._id}`, { state: { product: relatedProduct } });
   };
 
-  // Function to handle adding new reviews
-  // const handleReviewAdded = (newReview) => {
-  //   // Create a copy of current reviews
-  //   const updatedReviews = { ...reviews };
-    
-  //   // Add the new review to items
-  //   updatedReviews.items = [...updatedReviews.items, {
-  //     id: Date.now(), // Generate a unique ID
-  //     rating: newReview.rating,
-  //     comment: newReview.review,
-  //     name: newReview.name || 'Anonymous'
-  //   }];
-    
-  //   // Update count
-  //   updatedReviews.count = updatedReviews.items.length;
-    
-  //   // Recalculate average rating
-  //   const totalRating = updatedReviews.items.reduce((sum, item) => sum + item.rating, 0);
-  //   updatedReviews.rating = updatedReviews.count > 0 ? (totalRating / updatedReviews.count).toFixed(1) : 0;
-    
-  //   // Update reviews state
-  //   setReviews(updatedReviews);
-  // };
-
   // Function to handle sharing
   const handleShare = () => {
     const productUrl = window.location.href; // Get the current product URL
@@ -397,6 +375,21 @@ function ProductDetails() {
       const mailtoLink = `mailto:?subject=Check out this product&body=${encodeURIComponent(shareText)}`;
       window.open(mailtoLink, '_blank');
     }
+  };
+
+  // Function to handle price quote button click
+  const handlePriceQuoteClick = () => {
+    setShowPriceQuoteForm(!showPriceQuoteForm);
+  };
+
+  const handlePriceQuoteSubmit = (e) => {
+    e.preventDefault();
+    // Handle the custom price quote submission logic here
+    console.log('Custom Price Quote Submitted:', customPrice);
+    toast.success('Your price quote has been submitted!');
+    // Reset form and hide it after submission
+    setCustomPrice('');
+    setShowPriceQuoteForm(false);
   };
 
   if (!product) {
@@ -620,6 +613,18 @@ function ProductDetails() {
                 >
                   Buy Now
                 </motion.button>
+
+                {/* Price Quote Button */}
+                {showPriceQuote && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-8 py-3 bg-gray-200 text-black font-medium rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors"
+                    onClick={handlePriceQuoteClick}
+                  >
+                    Price Quote
+                  </motion.button>
+                )}
               </div>
               
               {/* Delivery & Return Info */}
@@ -894,6 +899,38 @@ function ProductDetails() {
           <span>Share</span>
         </button>
       </div>
+
+      {/* Price Quote Form */}
+      {showPriceQuoteForm && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-50 p-6 rounded-lg shadow-sm mt-4 mb-8"
+        >
+          <h3 className="text-xl font-semibold mb-4">Submit Your Price Quote</h3>
+          <form onSubmit={handlePriceQuoteSubmit}>
+            <div className="mb-4">
+              <label htmlFor="customPrice" className="block mb-2 font-medium">
+                Your Price Quote
+              </label>
+              <input
+                type="number"
+                id="customPrice"
+                value={customPrice}
+                onChange={(e) => setCustomPrice(e.target.value)}
+                className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Enter your price quote"
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+            >
+              Submit Quote
+            </button>
+          </form>
+        </motion.div>
+      )}
       </div>
     </motion.div>
   );
