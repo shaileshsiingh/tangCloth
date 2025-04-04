@@ -9,18 +9,28 @@ function AbandonedCartReminder() {
   const { cartItems } = useCart();
   const navigate = useNavigate();
   
+  console.log('AbandonedCartReminder rendered, cartItems:', cartItems);
+  console.log('Current showReminder state:', showReminder);
+  
   useEffect(() => {
+    console.log('Effect running, cartItems:', cartItems);
+    
     // Only show reminder if there are items in the cart
     if (cartItems && cartItems.length > 0) {
-      // Set a timeout to show the reminder after a delay (e.g., 30 seconds)
+      console.log('Cart has items, setting timeout');
+      
+      // Set a timeout to show the reminder after a delay
       const timeoutId = setTimeout(() => {
+        console.log('Timeout triggered - showing reminder');
         setShowReminder(true);
-      }, 30000); // 30 seconds
+      }, 1000); // 1 second for testing
       
       // Add event listener for mouse leaving the page area
       const handleMouseLeave = (e) => {
         // If mouse moves to the top of the page (potentially leaving)
+        console.log('Mouse leave event, clientY:', e.clientY);
         if (e.clientY < 10) {
+          console.log('Mouse near top of page - showing reminder');
           setShowReminder(true);
         }
       };
@@ -28,13 +38,17 @@ function AbandonedCartReminder() {
       document.addEventListener('mouseleave', handleMouseLeave);
       
       return () => {
+        console.log('Cleanup function called');
         clearTimeout(timeoutId);
         document.removeEventListener('mouseleave', handleMouseLeave);
       };
+    } else {
+      console.log('Cart is empty, not setting timeout');
     }
   }, [cartItems]);
   
   const handleClose = () => {
+    console.log('Close button clicked');
     setShowReminder(false);
     
     // Don't show again for this session
@@ -42,12 +56,18 @@ function AbandonedCartReminder() {
   };
   
   const goToCart = () => {
+    console.log('Go to cart button clicked');
     navigate('/cart');
     setShowReminder(false);
   };
   
+  // Check if reminder was dismissed
+  const dismissed = sessionStorage.getItem('cartReminderDismissed') === 'true';
+  console.log('Cart reminder dismissed in this session:', dismissed);
+  
   // Don't show if user has dismissed it already in this session
-  if (sessionStorage.getItem('cartReminderDismissed') === 'true') {
+  if (dismissed) {
+    console.log('Not showing reminder because it was dismissed');
     return null;
   }
   
