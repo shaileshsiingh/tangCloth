@@ -23,7 +23,7 @@ function AbandonedCartReminder() {
       const timeoutId = setTimeout(() => {
         console.log('Timeout triggered - showing reminder');
         setShowReminder(true);
-      }, 1000); // 1 second for testing
+      }, 30000); // 1 second for testing
       
       // Add event listener for mouse leaving the page area
       const handleMouseLeave = (e) => {
@@ -57,7 +57,7 @@ function AbandonedCartReminder() {
   
   const goToCart = () => {
     console.log('Go to cart button clicked');
-    navigate('/cart');
+    navigate('/checkout');
     setShowReminder(false);
   };
   
