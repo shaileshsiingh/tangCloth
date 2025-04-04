@@ -8,7 +8,7 @@ function HomePage() {
   const [showCard, setShowCard] = useState(false);
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  const{addTowishlist} = useWishlist()
+  const { addTowishlist } = useWishlist();
   const API_URL = "/api";   
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -43,8 +43,22 @@ function HomePage() {
     navigate(`/product/${product._id}`, { state: { product } });
   };
 
-  const addToWishlist = (product) => {
-    console.log('Add to wishlist:', product._id);
+  // Helper function to determine badge color based on condition
+  const getConditionBadgeColor = (condition) => {
+    switch (condition?.toLowerCase()) {
+      case 'pristine':
+        return 'bg-green-600';
+      case 'new':
+        return 'bg-red-600';
+      case 'sale':
+        return 'bg-black';
+      case 'used':
+        return 'bg-orange-500';
+      case 'refurbished':
+        return 'bg-blue-600';
+      default:
+        return 'bg-gray-600';
+    }
   };
 
   return (
@@ -71,18 +85,17 @@ function HomePage() {
                   className="absolute top-0 left-0 w-full h-full object-cover"
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
-                {product.isSale && (
-                  <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">SALE</span>
-                )}
-                {product.isNew && (
-                  <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1">NEW</span>
+                {product.condition && (
+                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1`}>
+                    {product.condition.toUpperCase()}
+                  </span>
                 )}
                 <div className="absolute right-2 top-2 flex flex-col gap-2">
                   <button 
                     className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                     onClick={(e) => {
                       e.stopPropagation();
-                      addToWishlist(product);
+                      addTowishlist(product);
                     }}
                   >
                     <svg 
@@ -100,7 +113,7 @@ function HomePage() {
                     className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                     onClick={(e) => {
                       e.stopPropagation();
-                      addToWishlist(product)
+                      addTowishlist(product);
                     }}
                   >
                     <svg 
@@ -118,8 +131,8 @@ function HomePage() {
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-70 flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
                 <button 
-                      className="w-full py-4 text-white hover:bg-opacity-90 font-medium transition-colors text-center"
-                      onClick={(e) => {
+                  className="w-full py-4 text-white hover:bg-opacity-90 font-medium transition-colors text-center"
+                  onClick={(e) => {
                     e.stopPropagation();
                     handleProductClick(product);
                   }}
@@ -129,13 +142,6 @@ function HomePage() {
               </div>
               <div className="pt-4 pb-2 text-center">
                 <h3 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h3>
-                {/* <div className="flex justify-center mb-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} className={`w-4 h-4 ${star <= (product.rating || 3) ? 'text-black' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div> */}
                 {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
                   <p className="text-gray-600 text-sm mt-1">
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
@@ -181,18 +187,17 @@ function HomePage() {
                   className="absolute top-0 left-0 w-full h-full object-cover"
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
-                {product.isSale && (
-                  <span className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1">SALE</span>
-                )}
-                {product.isNew && (
-                  <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1">NEW</span>
+                {product.condition && (
+                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1`}>
+                    {product.condition.toUpperCase()}
+                  </span>
                 )}
                 <div className="absolute right-2 top-2 flex flex-col gap-2">
                   <button 
                     className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                     onClick={(e) => {
                       e.stopPropagation();
-                      addToWishlist(product);
+                      addTowishlist(product);
                     }}
                   >
                     <svg 
@@ -210,6 +215,7 @@ function HomePage() {
                     className="bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                     onClick={(e) => {
                       e.stopPropagation();
+                      addTowishlist(product);
                     }}
                   >
                     <svg 
@@ -238,13 +244,6 @@ function HomePage() {
               </div>
               <div className="pt-4 pb-2 text-center">
                 <h3 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h3>
-                {/* <div className="flex justify-center mb-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} className={`w-4 h-4 ${star <= (product.rating || 3) ? 'text-black' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div> */}
                 {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
                   <p className="text-gray-600 text-sm mt-1">
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
