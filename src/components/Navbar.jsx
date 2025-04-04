@@ -247,7 +247,7 @@ const menuItems = {
           { name: 'Authentication', url: '/authentication' },
           { name: 'Bio Cleaning', url: '/bio-cleaning' },
           { name: 'Private Viewing', url: '/private-viewing' },
-          // { name: 'Sell With Us', url: '/sell-with-us' }
+          { name: 'Request a Product', url: '/request-product' }
         ]
       }
     ],
@@ -618,7 +618,7 @@ const API_URL = '/api'
         {Object.keys(structure).map((subcatName) => (
           <div key={subcatName} className="relative">
             <button
-              className="px-4 py-2 text-left w-full hover:bg-gray-100 flex justify-between items-center"
+              className="px-4 py-2 text-left w-full hover:bg-orange-400 flex justify-between items-center"
               onClick={() => toggleSubcategoryDropdown(`${categoryName}-${subcatName}`)}
             >
               <span>{subcatName}</span>
@@ -631,7 +631,7 @@ const API_URL = '/api'
                   <motion.li
                     key={item.id}
                     variants={itemVariants}
-                    className="text-sm text-gray-600 hover:text-black"
+                    className="text-sm text-gray-600 hover:text-orange-400"
                   >
                     <Link 
                       to="#"
@@ -748,7 +748,7 @@ const API_URL = '/api'
                           {searchResults.map(product => (
                             <li 
                               key={product._id} 
-                              className="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100"
+                              className="p-3 hover:bg-orange-400 cursor-pointer border-b border-gray-100"
                               onClick={() => handleSearchResultClick(product)}
                             >
                               <div className="flex items-center">
@@ -766,7 +766,7 @@ const API_URL = '/api'
                               </div>
                             </li>
                           ))}
-                          <li className="p-2 text-center text-sm text-blue-600 hover:bg-gray-100 cursor-pointer">
+                          <li className="p-2 text-center text-sm text-blue-600 hover:bg-orange-400 cursor-pointer">
                             <button
                               onClick={() => handleSearchSubmit({ preventDefault: () => {} })}
                               className="w-full"
@@ -788,14 +788,14 @@ const API_URL = '/api'
                 <div className="hidden lg:flex lg:items-center lg:space-x-6">
                   <Link 
                     to="/" 
-                    className="text-gray-700 hover:text-black font-medium"
+                    className="text-gray-700 hover:text-orange-400 font-medium"
                     style={{ fontSize: '15px' }}
                   >
                     Home
                   </Link>
                   <Link 
                     to="/shop" 
-                    className="text-gray-700 hover:text-black font-medium"
+                    className="text-gray-700 hover:text-orange-400 font-medium"
                     style={{ fontSize: '15px' }}
                   >
                     Just In
@@ -811,7 +811,7 @@ const API_URL = '/api'
                         onMouseLeave={handleMouseLeave}
                       >
                         <button 
-                          className="flex items-center text-gray-700 hover:text-black gap-1 font-medium"
+                          className="flex items-center text-gray-700 hover:text-orange-400 gap-1 font-medium"
                           style={{ fontSize: '15px' }}
                         >
                           {menuItems[key].title}
@@ -837,7 +837,7 @@ const API_URL = '/api'
                                           <motion.li
                                             key={itemIdx}
                                             variants={itemVariants}
-                                            className="text-sm text-gray-600 hover:text-black"
+                                            className="text-sm text-gray-600 hover:text-orange-400"
                                           >
                                             <Link 
                                               to="#"
@@ -896,7 +896,7 @@ const API_URL = '/api'
                         onMouseLeave={handleMouseLeave}
                       >
                         <button 
-                          className="flex items-center text-gray-700 hover:text-black gap-1 font-medium"
+                          className="flex items-center text-gray-700 hover:text-orange-400 gap-1 font-medium"
                           style={{ fontSize: '15px' }}
                         >
                           {menuItems[key].title}
@@ -922,7 +922,7 @@ const API_URL = '/api'
                                           <motion.li
                                             key={itemIdx}
                                             variants={itemVariants}
-                                            className="text-sm text-gray-600 hover:text-black"
+                                            className="text-sm text-gray-600 hover:text-orange-400"
                                           >
                                             <Link 
                                               to="#"
@@ -957,14 +957,14 @@ const API_URL = '/api'
                   
                   <Link 
                     to="/contact" 
-                    className="text-gray-700 hover:text-black font-medium"
+                    className="text-gray-700 hover:text-orange-400 font-medium"
                     style={{ fontSize: '15px' }}
                   >
                     Contact
                   </Link>
                   <Link 
                     to="/sell-with-us" 
-                    className="text-gray-700 hover:text-black font-medium mr-4 hidden lg:block"
+                    className="text-gray-700 hover:text-orange-400 font-medium mr-4 hidden lg:block"
                     style={{ fontSize: '15px' }}
                   >
                     Sell With Us

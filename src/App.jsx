@@ -43,6 +43,8 @@ import OrderPolicyPage from './pages/OrderPolicyPage'
 import TLElite from './pages/TLElite'
 import Layway from './pages/Layway'
 import Authentication from './pages/Authentication';
+import ProductRequestForm from './components/ProductRequestForm';
+import AbandonedCartReminder from './components/AbandonedCartReminder';
 
 
 
@@ -85,6 +87,7 @@ function App() {
           <Route path="/tl-elite" element={<TLElite />} />
           <Route path="/layaway" element={<Layway />} />
           <Route path="/authentication" element={<Authentication />} />
+          <Route path="/request-product" element={<ProductRequestForm />} />
 
 
 
@@ -99,6 +102,7 @@ function App() {
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
         <ToastContainer />
+        <AbandonedCartReminder />
       </Layout>
       </WishlistProvider>
 
