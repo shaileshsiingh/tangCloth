@@ -6,17 +6,17 @@ import { XMarkIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 
 function AbandonedCartReminder() {
   const [showReminder, setShowReminder] = useState(false);
-  const { cartItems } = useCart();
+  const { cart } = useCart(); // Changed from cartItems to cart to match CartContext
   const navigate = useNavigate();
   
-  console.log('AbandonedCartReminder rendered, cartItems:', cartItems);
+  console.log('AbandonedCartReminder rendered, cart:', cart);
   console.log('Current showReminder state:', showReminder);
   
   useEffect(() => {
-    console.log('Effect running, cartItems:', cartItems);
+    console.log('Effect running, cart:', cart);
     
     // Only show reminder if there are items in the cart
-    if (cartItems && cartItems.length > 0) {
+    if (cart && cart.length > 0) {
       console.log('Cart has items, setting timeout');
       
       // Set a timeout to show the reminder after a delay
@@ -45,7 +45,7 @@ function AbandonedCartReminder() {
     } else {
       console.log('Cart is empty, not setting timeout');
     }
-  }, [cartItems]);
+  }, [cart]); // Changed dependency from cartItems to cart
   
   const handleClose = () => {
     console.log('Close button clicked');
@@ -119,4 +119,4 @@ function AbandonedCartReminder() {
   );
 }
 
-export default AbandonedCartReminder; 
+export default AbandonedCartReminder;
