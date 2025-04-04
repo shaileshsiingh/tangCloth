@@ -128,7 +128,7 @@ function HomePage() {
                 </button>
               </div>
               <div className="pt-4 pb-2 text-center">
-                <h3 className="text-base font-medium mb-1">{product.product_name}</h3>
+                <h3 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h3>
                 {/* <div className="flex justify-center mb-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <svg key={star} className={`w-4 h-4 ${star <= (product.rating || 3) ? 'text-black' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
