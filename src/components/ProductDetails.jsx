@@ -11,6 +11,9 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useWishlist } from '../context/WishlistContext';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+import emailjs from '@emailjs/browser';
 
 // Helper function to convert title to Title Case
 function toTitleCase(str) {
@@ -164,9 +167,19 @@ function ProductDetails() {
   const { addToCart, removeFromCart, fetchCartItems } = useCart();
   const { addToWishlist } = useWishlist();
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const [customPrice, setCustomPrice] = useState(''); // State for custom price quote
-  const [showPriceQuote, setShowPriceQuote] = useState(true); // Show button for all products
-  const [showPriceQuoteForm, setShowPriceQuoteForm] = useState(false); // Control form visibility
+  const [customPrice, setCustomPrice] = useState('');
+  const [showPriceQuote, setShowPriceQuote] = useState(true);
+  const [showPriceQuoteForm, setShowPriceQuoteForm] = useState(false);
+  const [quoteFormOpen, setQuoteFormOpen] = useState(false);
+  const [quoteFormData, setQuoteFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    whatsapp: '',
+    price: '',
+    message: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
   
   // Format the product name in title case
   const formattedProductName = product ? toTitleCase(product.product_name) : '';
@@ -392,6 +405,63 @@ function ProductDetails() {
     setShowPriceQuoteForm(false);
   };
 
+  // Handle opening the quote form
+  const openQuoteForm = () => {
+    setQuoteFormOpen(true);
+  };
+
+  // Handle quote form input changes
+  const handleQuoteFormChange = (e) => {
+    const { name, value } = e.target;
+    setQuoteFormData({
+      ...quoteFormData,
+      [name]: value
+    });
+  };
+
+  // Handle submit of quote form
+  const handleQuoteFormSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      // You'll need to set up EmailJS or another email service
+      // This is a simplified example
+      const templateParams = {
+        from_name: quoteFormData.name,
+        to_email: 'shaileshsiingh@gmail.com',
+        product_name: product.product_name,
+        price_quote: quoteFormData.price,
+        customer_email: quoteFormData.email,
+        customer_phone: quoteFormData.phone,
+        customer_whatsapp: quoteFormData.whatsapp,
+        message: quoteFormData.message
+      };
+
+      // If using EmailJS, you would do something like:
+      // await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams, 'YOUR_PUBLIC_KEY');
+      
+      // For now, let's just simulate an API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast.success('Your price quote request has been submitted successfully!');
+      setQuoteFormOpen(false);
+      setQuoteFormData({
+        name: '',
+        email: '',
+        phone: '',
+        whatsapp: '',
+        price: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting price quote:', error);
+      toast.error('Failed to submit your request. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (!product) {
     return <Navigate to="/404" replace />;
   }
@@ -614,17 +684,15 @@ function ProductDetails() {
                   Buy Now
                 </motion.button>
 
-                {/* Price Quote Button */}
-                {showPriceQuote && (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="px-8 py-3 bg-gray-200 text-black font-medium rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors"
-                    onClick={handlePriceQuoteClick}
-                  >
-                    Price Quote
-                  </motion.button>
-                )}
+                {/* Quote Your Price Button */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                  onClick={openQuoteForm}
+                >
+                  Quote Your Price
+                </motion.button>
               </div>
               
               {/* Delivery & Return Info */}
@@ -901,36 +969,171 @@ function ProductDetails() {
       </div>
 
       {/* Price Quote Form */}
-      {showPriceQuoteForm && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-50 p-6 rounded-lg shadow-sm mt-4 mb-8"
-        >
-          <h3 className="text-xl font-semibold mb-4">Submit Your Price Quote</h3>
-          <form onSubmit={handlePriceQuoteSubmit}>
-            <div className="mb-4">
-              <label htmlFor="customPrice" className="block mb-2 font-medium">
-                Your Price Quote
-              </label>
-              <input
-                type="number"
-                id="customPrice"
-                value={customPrice}
-                onChange={(e) => setCustomPrice(e.target.value)}
-                className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-black"
-                placeholder="Enter your price quote"
-              />
+      <Transition appear show={quoteFormOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={() => setQuoteFormOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-xl font-bold leading-6 text-gray-900 mb-4"
+                  >
+                    Quote Your Price
+                  </Dialog.Title>
+
+                  <form onSubmit={handleQuoteFormSubmit} className="space-y-4">
+                    {/* Pre-filled Product Name (Read-only) */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Product
+                      </label>
+                      <input
+                        type="text"
+                        value={product.product_name}
+                        disabled
+                        className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm text-gray-500 focus:outline-none"
+                      />
+                    </div>
+
+                    {/* Name Field */}
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                        Your Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        value={quoteFormData.name}
+                        onChange={handleQuoteFormChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                    </div>
+
+                    {/* Email Field */}
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        value={quoteFormData.email}
+                        onChange={handleQuoteFormChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                    </div>
+
+                    {/* Phone Number */}
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                        Phone Number *
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        required
+                        value={quoteFormData.phone}
+                        onChange={handleQuoteFormChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                    </div>
+
+                    {/* WhatsApp Number */}
+                    <div>
+                      <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700">
+                        WhatsApp Number
+                      </label>
+                      <input
+                        type="tel"
+                        id="whatsapp"
+                        name="whatsapp"
+                        value={quoteFormData.whatsapp}
+                        onChange={handleQuoteFormChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                    </div>
+
+                    {/* Price Quote */}
+                    <div>
+                      <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                        Your Price Quote (₹) *
+                      </label>
+                      <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        required
+                        min="1"
+                        value={quoteFormData.price}
+                        onChange={handleQuoteFormChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                    </div>
+
+                    {/* Additional Message */}
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                        Additional Message
+                      </label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows="3"
+                        value={quoteFormData.message}
+                        onChange={handleQuoteFormChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      ></textarea>
+                    </div>
+
+                    <div className="mt-6 flex justify-end space-x-3">
+                      <button
+                        type="button"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        onClick={() => setQuoteFormOpen(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
+                      >
+                        {submitting ? 'Submitting...' : 'Submit Quote'}
+                      </button>
+                    </div>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
-            <button
-              type="submit"
-              className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
-            >
-              Submit Quote
-            </button>
-          </form>
-        </motion.div>
-      )}
+          </div>
+        </Dialog>
+      </Transition>
       </div>
     </motion.div>
   );
