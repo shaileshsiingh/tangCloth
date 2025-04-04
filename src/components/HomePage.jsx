@@ -177,7 +177,7 @@ function HomePage() {
               <div className="relative pb-[100%] bg-cyan-100">
                 <img 
                   src={product.images?.[0] || 'https://via.placeholder.com/400'}
-                  alt={product.product_name}
+                  alt={product.product_name.toUpperCase()}
                   className="absolute top-0 left-0 w-full h-full object-cover"
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
@@ -237,7 +237,7 @@ function HomePage() {
                 </button>
               </div>
               <div className="pt-4 pb-2 text-center">
-                <h3 className="text-base font-medium mb-1">{product.product_name}</h3>
+                <h3 className="text-base font-medium mb-1">{product.product_name.toUpperCase()}</h3>
                 {/* <div className="flex justify-center mb-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <svg key={star} className={`w-4 h-4 ${star <= (product.rating || 3) ? 'text-black' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
