@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useWishlist } from '../context/WishlistContext';
 
 function HomePage() {
   const [showCard, setShowCard] = useState(false);
   const [products, setProducts] = useState([]);
+  const [rotate, setRotate] = useState(false);
   const navigate = useNavigate();
   const { addTowishlist } = useWishlist();
   const API_URL = "/api";   
@@ -36,7 +37,15 @@ function HomePage() {
       setTimeout(() => setShowCard(false), 5000);
     }, 8000);
 
-    return () => clearInterval(interval);
+    // Set up the rotation animation interval
+    const rotationInterval = setInterval(() => {
+      setRotate(prev => !prev);
+    }, 4000);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(rotationInterval);
+    };
   }, []);
 
   const handleProductClick = (product) => {
@@ -64,7 +73,22 @@ function HomePage() {
   return (
     <div ref={ref} className="container mx-auto px-4 py-12">
       <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center">Casual Outfits</h2>
+        <div className="flex justify-center items-center mb-8">
+          <motion.h2 
+            className="text-3xl font-bold text-center relative inline-block"
+            animate={{ rotate: rotate ? 180 : 0 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+          >
+            <span className="bg-gradient-to-r from-red-600 to-yellow-500 text-transparent bg-clip-text">SALE IS LIVE</span>
+            <motion.div 
+              className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              SALE
+            </motion.div>
+          </motion.h2>
+        </div>
         <motion.div 
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
           initial={{ opacity: 0, y: -50 }}
@@ -74,15 +98,15 @@ function HomePage() {
           {products.slice(0, 4).map((product) => (
             <motion.div
               key={product._id}
-              className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg"
+              className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-200"
               whileHover={{ y: -5 }}
               onClick={() => handleProductClick(product)}
             >
-              <div className="relative pb-[125%] bg-gray-50">
+              <div className="relative pb-[120%] bg-gray-50">
                 <img 
                   src={product.images?.[0] || 'https://via.placeholder.com/400'}
                   alt={product.product_name}
-                  className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="absolute top-0 left-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
                 {product.condition && (
@@ -90,7 +114,15 @@ function HomePage() {
                     {product.condition.toUpperCase()}
                   </span>
                 )}
-                <div className="absolute right-2 top-2 flex flex-col gap-2">
+                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                  <span className="absolute top-10 left-2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-md">
+                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
+                  </span>
+                )}
+                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                  SALE
+                </div>
+                <div className="absolute right-2 top-14 flex flex-col gap-2">
                   <motion.button 
                     className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
                     whileHover={{ scale: 1.1 }}
@@ -148,15 +180,10 @@ function HomePage() {
                   SHOP NOW
                 </motion.button>
               </div>
-              <div className="p-4 text-center">
-                <h3 className="text-base font-medium mb-1 transition-colors group-hover:text-premium-gold">
+              <div className="p-5 text-center">
+                <h3 className="text-base font-medium mb-1 transition-all duration-200 group-hover:text-black group-hover:font-bold">
                   {product.product_name.toUpperCase()}
                 </h3>
-                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <p className="text-gray-600 text-sm mb-2">
-                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
-                  </p>
-                )}
                 <div className="mt-2">
                   {product.estimated_price ? (
                     <div className="flex flex-col items-center">
@@ -188,20 +215,25 @@ function HomePage() {
           {products.slice(4, 8).map((product) => (
             <motion.div
               key={product._id}
-              className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg"
+              className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-200"
               whileHover={{ y: -5 }}
               onClick={() => handleProductClick(product)}
             >
-              <div className="relative pb-[125%] bg-gray-50">
+              <div className="relative pb-[120%] bg-gray-50">
                 <img 
                   src={product.images?.[0] || 'https://via.placeholder.com/400'}
                   alt={product.product_name.toUpperCase()}
-                  className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="absolute top-0 left-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
                 {product.condition && (
                   <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1 rounded shadow-md`}>
                     {product.condition.toUpperCase()}
+                  </span>
+                )}
+                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                  <span className="absolute top-10 left-2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-md">
+                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
                 <div className="absolute right-2 top-2 flex flex-col gap-2">
@@ -262,15 +294,10 @@ function HomePage() {
                   SHOP NOW
                 </motion.button>
               </div>
-              <div className="p-4 text-center">
-                <h3 className="text-base font-medium mb-1 transition-colors group-hover:text-premium-gold">
+              <div className="p-5 text-center">
+                <h3 className="text-base font-medium mb-1 transition-all duration-200 group-hover:text-black group-hover:font-bold">
                   {product.product_name.toUpperCase()}
                 </h3>
-                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <p className="text-gray-600 text-sm mb-2">
-                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
-                  </p>
-                )}
                 <div className="mt-2">
                   {product.estimated_price ? (
                     <div className="flex flex-col items-center">

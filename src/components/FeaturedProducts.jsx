@@ -96,15 +96,15 @@ function FeaturedProducts() {
             {products.map((product) => (
               <motion.div 
                 key={product._id} 
-                className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg"
+                className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-200"
                 whileHover={{ y: -5 }}
                 onClick={() => handleProductClick(product._id, product)}
               >
-                <div className="relative pb-[125%] bg-gray-50">
+                <div className="relative pb-[120%] bg-gray-50">
                   <img
                     src={product.images?.[0] || 'https://via.placeholder.com/400x500'}
                     alt={product.product_name}
-                    className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="absolute top-0 left-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       e.target.src = 'https://via.placeholder.com/400x500';
                     }}
@@ -117,6 +117,11 @@ function FeaturedProducts() {
                   <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-md">
                     PREMIUM
                   </div>
+                  {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                    <span className="absolute top-10 left-2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-md">
+                      {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
+                    </span>
+                  )}
                   <div className="absolute right-2 top-14 flex flex-col gap-2">
                     <motion.button 
                       className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
@@ -175,15 +180,10 @@ function FeaturedProducts() {
                     SHOP NOW
                   </motion.button>
                 </div>
-                <div className="p-4 text-center">
-                  <h3 className="text-base font-medium mb-1 transition-colors group-hover:text-gray-900">
+                <div className="p-5 text-center">
+                  <h3 className="text-base font-medium mb-1 transition-all duration-200 group-hover:text-black group-hover:font-bold">
                     {product.product_name.toUpperCase()}
                   </h3>
-                  {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                    <p className="text-gray-600 text-sm mb-2">
-                      {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
-                    </p>
-                  )}
                   
                   <div className="mt-2">
                     {product.estimated_price ? (
