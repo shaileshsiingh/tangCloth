@@ -73,20 +73,20 @@ function HomePage() {
   return (
     <div ref={ref} className="container mx-auto px-4 py-12">
       <section className="mb-16">
-        <div className="flex justify-center items-center mb-8">
+        <div className="flex justify-center items-center mb-12 mt-20">
           <motion.h2 
-            className="text-3xl font-bold text-center relative inline-block"
-            animate={{ rotate: rotate ? 180 : 0 }}
+            className="text-5xl font-bold text-center relative inline-block"
+            animate={{ rotate: rotate ? 360 : 0 }}
             transition={{ duration: 1, ease: "easeInOut" }}
           >
             <span className="bg-gradient-to-r from-red-600 to-yellow-500 text-transparent bg-clip-text">SALE IS LIVE</span>
-            <motion.div 
+            {/* <motion.div 
               className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
               SALE
-            </motion.div>
+            </motion.div> */}
           </motion.h2>
         </div>
         <motion.div 
