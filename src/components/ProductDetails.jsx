@@ -273,8 +273,8 @@ function ProductDetails() {
       try {
         setLoading(true);
         const API_URL = '/api';
-        // const response = await fetch(`${API_URL}/product/list`);
-        const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
+        const response = await fetch(`${API_URL}/product/list`);
+        // const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
 
         if (response.status === 200) {
           const data = response.data;

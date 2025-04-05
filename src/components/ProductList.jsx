@@ -224,8 +224,8 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      // const response = await axios.get(`${API_URL}/product/list`);
-      const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
+      const response = await axios.get(`${API_URL}/product/list`);
+      // const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
 
 
       if (response.data.success) {
@@ -729,8 +729,8 @@ function ProductList() {
         setBrandsLoading(true);
         const token = localStorage.getItem('authToken');
 
-        // const response = await fetch(`${API_URL}/brand/get-brands`, {
-              const response = await fetch(`http://91.203.135.152:2001/brand/get-brands`,{
+        const response = await fetch(`${API_URL}/brand/get-brands`, {
+              // const response = await fetch(`http://91.203.135.152:2001/brand/get-brands`,{
 
           headers: {
             'Authorization': `Bearer ${token}`
