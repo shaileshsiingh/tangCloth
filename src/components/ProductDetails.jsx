@@ -563,6 +563,22 @@ function ProductDetails() {
                               e.target.src = 'https://via.placeholder.com/400';
                             }}
                           />
+                          {index === 0 && (
+                            <>
+                              {product.condition && (
+                                <span className="absolute top-4 left-4 bg-black bg-opacity-80 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-sm">
+                                  {product.condition.toUpperCase()}
+                                </span>
+                              )}
+                              {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                                <span className="absolute top-12 left-4 bg-gray-800 text-white text-xs font-medium px-2 py-1 rounded-sm shadow-md">
+                                  {(typeof product.brand === 'string' ? product.brand : 
+                                  (product.brandDetails && product.brandDetails[0]?.name) || 
+                                  (product.brand?.name || 'Brand')).toUpperCase()}
+                                </span>
+                              )}
+                            </>
+                          )}
                         </div>
                       </div>
                     ))}

@@ -921,8 +921,8 @@ function ProductList() {
       </div>
 
       <div className="flex flex-col md:flex-row">
-        <aside className="w-full md:w-1/5 pr-0 md:pr-6 mb-6 md:mb-0 shrink-0">
-          <div className="sticky top-4 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+        <aside className="w-full md:w-1/6 pr-0 md:pr-4 mb-6 md:mb-0 shrink-0">
+          <div className="sticky top-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-serif tracking-wide">FILTERS</h2>
               <button 
@@ -933,7 +933,7 @@ function ProductList() {
               </button>
             </div>
             
-            <div className="space-y-5">
+            <div className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Categories</h3>
                 <ul className="space-y-1">
@@ -996,7 +996,7 @@ function ProductList() {
                 <select
                   value={selectedColor || ''}
                   onChange={(e) => setSelectedColor(e.target.value || null)}
-                  className="w-full p-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  className="w-full p-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
                 >
                   <option value="">All Colors</option>
                   {popularColors.map(color => (
@@ -1030,7 +1030,7 @@ function ProductList() {
                   {sizes.map((size) => (
                     <button
                       key={size}
-                      className={`px-3 py-1 text-xs rounded ${
+                      className={`px-2 py-1 text-xs rounded ${
                         selectedSize === size 
                           ? 'bg-black text-white' 
                           : 'bg-gray-100 hover:bg-gray-200'
@@ -1054,7 +1054,7 @@ function ProductList() {
                     <select
                       value={selectedBrand || ''}
                       onChange={(e) => setSelectedBrand(e.target.value || null)}
-                      className="w-full p-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                      className="w-full p-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
                     >
                       <option value="">All Brands</option>
                       {brands.map(brand => (
@@ -1088,7 +1088,7 @@ function ProductList() {
               <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Condition</h3>
                 <select
-                  className="w-full p-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  className="w-full p-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
                   value={selectedCondition}
                   onChange={(e) => setSelectedCondition(e.target.value)}
                 >
@@ -1105,8 +1105,8 @@ function ProductList() {
           </div>
         </aside>
         
-        <main className="w-full md:w-4/5 pl-0 md:pl-8">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-white p-4 rounded-lg shadow-sm">
+        <main className="w-full md:w-5/6 pl-0 md:pl-6">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-lg shadow-sm">
             <p className="text-gray-600 text-sm">
               {totalProducts > 0 ? (
                 `Showing ${Math.min((currentPage - 1) * itemsPerPage + 1, totalProducts)} - ${Math.min(currentPage * itemsPerPage, totalProducts)} of ${totalProducts} products`
@@ -1118,12 +1118,12 @@ function ProductList() {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="w-full md:w-64 p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50 transition-all duration-300"
+                className="w-full md:w-64 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50 transition-all duration-300"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <select
-                className="w-full md:w-auto border border-gray-200 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-black/50 transition-all duration-300"
+                className="w-full md:w-auto border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-black/50 transition-all duration-300"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
@@ -1141,7 +1141,7 @@ function ProductList() {
           )}
 
           <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 mb-12"
+            className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
