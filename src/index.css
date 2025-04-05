@@ -1,3 +1,48 @@
+/* Import DM Sans font with different weights */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
 @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-dm-sans bg-premium-subtle;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-dm-sans font-medium;
+  }
+}
+
+/* Premium text styles */
+.text-premium-heading {
+  @apply font-dm-sans font-bold text-premium-dark;
+}
+
+.text-premium-subheading {
+  @apply font-dm-sans font-medium text-gray-800;
+}
+
+.text-premium-body {
+  @apply font-dm-sans text-gray-700;
+}
+
+/* Premium UI elements */
+.btn-premium {
+  @apply bg-premium-dark text-white font-dm-sans font-medium px-6 py-3 rounded hover:bg-black transition-colors;
+}
+
+.btn-premium-gold {
+  @apply bg-premium-gold text-white font-dm-sans font-medium px-6 py-3 rounded hover:bg-yellow-600 transition-colors;
+}
+
+.premium-card {
+  @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300;
+}
+
+    

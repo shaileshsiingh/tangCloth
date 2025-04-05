@@ -14,6 +14,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import emailjs from '@emailjs/browser';
+import axios from 'axios';
 
 // Helper function to convert title to Title Case
 function toTitleCase(str) {
@@ -180,6 +181,8 @@ function ProductDetails() {
     message: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [conditionModalOpen, setConditionModalOpen] = useState(false);
   
   // Format the product name in title case
   const formattedProductName = product ? toTitleCase(product.product_name) : '';
@@ -187,6 +190,50 @@ function ProductDetails() {
   // Add state for image slider
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
+  // Create a ref for the slider
+  const sliderRef = React.useRef(null);
+  
+  const formatDescription = (text) => {
+    if (!text) return '';
+    
+    // First, add line breaks at key section boundaries
+    const formattedText = text
+      .replace("SIZE:", "\nSIZE:")
+      .replace("FITS:", "FITS:")
+      .replace("LENGTH:", "\nLENGTH:")
+      .replace("CHEST:", "\nCHEST:")
+      .replace("COLOUR:", "\nCOLOUR:")
+      .replace("AUTHENTICITY CODE:", "\nAUTHENTICITY CODE:")
+      .replace("EXTERIOR:", "\nEXTERIOR:")
+      .trim();
+    
+    // Split by newlines to handle each line
+    const lines = formattedText.split('\n');
+    
+    return lines.map((line, lineIndex) => {
+      // Skip empty lines
+      if (!line.trim()) return null;
+      
+      // Check if the line contains a colon
+      if (line.includes(':')) {
+        const [before, ...after] = line.split(':');
+        return (
+          <React.Fragment key={lineIndex}>
+            <strong>{before}:</strong>{after.join(':')}
+            {lineIndex < lines.length - 1 && <br />}
+          </React.Fragment>
+        );
+      } else {
+        // Return line as is if no colon
+        return (
+          <React.Fragment key={lineIndex}>
+            {line}
+            {lineIndex < lines.length - 1 && <br />}
+          </React.Fragment>
+        );
+      }
+    });
+  };
   
   // Enhanced slider settings
   const sliderSettings = {
@@ -214,8 +261,42 @@ function ProductDetails() {
           arrows: false
         }
       }
-    ]
+    ],
+    ref: sliderRef
   };
+  
+  // Fetch related products
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      if (!product || !product.category_id) return;
+      
+      try {
+        setLoading(true);
+        const API_URL = '/api';
+        // const response = await fetch(`${API_URL}/product/list`);
+        const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
+
+        if (response.status === 200) {
+          const data = response.data;
+          if (data.success && data.data && data.data.products) {
+            // Filter products by the same category and exclude current product
+            const categoryProducts = data.data.products.filter(
+              item => item.category_id === product.category_id && item._id !== product._id
+            );
+            
+            // Limit to 4 products
+            setRelatedProducts(categoryProducts.slice(0, 4));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching related products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchRelatedProducts();
+  }, [product]);
   
   // Custom arrows for slider
   function NextArrow(props) {
@@ -243,38 +324,6 @@ function ProductDetails() {
       </div>
     );
   }
-  
-  // Updated mock data for related products to match the API structure
-  const relatedProductsData = [
-    {
-      _id: "related1",
-      product_name: "Related Product 1",
-      price: 899,
-      images: [product?.images],
-      description: "Description for related product 1",
-      sizes: [
-        { size: "S", quantity: 10 },
-        { size: "M", quantity: 15 },
-        { size: "L", quantity: 20 }
-      ],
-      isActive: true,
-      isSold: false
-    },
-    {
-      _id: "related2",
-      product_name: "Related Product 2",
-      price: 799,
-      images: [product?.images],
-      description: "Description for related product 2",
-      sizes: [
-        { size: "S", quantity: 5 },
-        { size: "M", quantity: 10 },
-        { size: "L", quantity: 15 }
-      ],
-      isActive: true,
-      isSold: false
-    }
-  ];
 
   const handleQuantityChange = (newQuantity) => {
     // Ensure quantity is a number and within valid range
@@ -502,7 +551,7 @@ function ProductDetails() {
                   className={`${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
                   onClick={() => setIsZoomed(!isZoomed)}
                 >
-                  <Slider {...sliderSettings}>
+                  <Slider {...sliderSettings} ref={sliderRef}>
                     {product.images.map((image, index) => (
                       <div key={index} className="outline-none">
                         <div className="aspect-w-1 aspect-h-1 relative">
@@ -520,32 +569,25 @@ function ProductDetails() {
                   </Slider>
                 </div>
                 <div className="absolute top-4 right-4 z-10">
-                  {/* <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="bg-white p-2 rounded-full shadow-md"
-                  > */}
-<button 
-                        className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToWishlist(product);
-                        }}
-                        title="Add to Wishlist"
-                      >
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          strokeWidth={1.5} 
-                          stroke="white" 
-                          className="w-5 h-5"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                      </button>    
-                      
-                                    {/* </motion.button> */}
+                  <button 
+                    className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToWishlist(product);
+                    }}
+                    title="Add to Wishlist"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      strokeWidth={1.5} 
+                      stroke="white" 
+                      className="w-5 h-5"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             ) : (
@@ -557,10 +599,39 @@ function ProductDetails() {
                 />
               </div>
             )}
+            
+            {/* Thumbnail Image Gallery */}
+            {product.images && product.images.length > 1 && (
+              <div className="flex justify-center mx-auto max-w-md overflow-x-auto py-2">
+                <div className="flex space-x-2">
+                  {product.images.map((image, index) => (
+                    <div 
+                      key={index}
+                      className={`cursor-pointer h-16 w-16 border-2 rounded transition-all duration-200 ${selectedImageIndex === index ? 'border-black' : 'border-transparent'}`}
+                      onClick={() => {
+                        // When a thumbnail is clicked, update the slider to show that image
+                        if (sliderRef && sliderRef.current) {
+                          sliderRef.current.slickGoTo(index);
+                        }
+                      }}
+                    >
+                      <img 
+                        src={image} 
+                        alt={`Thumbnail ${index + 1}`}
+                        className="h-full w-full object-contain"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/60';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column - Enhanced Product Info */}
-          <div className="flex flex-col space-y-6">
+          <div className="flex flex-col space-y-4 max-w-xl">
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">{product.product_name.toUpperCase()}</h1>
@@ -589,7 +660,7 @@ function ProductDetails() {
                         <span className="text-gray-600 mr-2">Estimated Retail Price:</span>
                         <span className="text-lg text-gray-500 line-through">
                           {formatPrice(product.estimated_price)}
-                        </span>
+                      </span>
                       </div>
                       <div className="flex items-center">
                         <span className="text-gray-800 mr-2 font-medium">Our Price:</span>
@@ -597,9 +668,9 @@ function ProductDetails() {
                           {formatPrice(product.discount_price || product.price)}
                         </span>
                         {product.estimated_price > (product.discount_price || product.price) && (
-                          <span className="ml-3 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                      <span className="ml-3 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
                             {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
-                          </span>
+                      </span>
                         )}
                       </div>
                     </>
@@ -610,6 +681,53 @@ function ProductDetails() {
                   )}
                 </div>
                 <p className="text-sm text-gray-500 mt-1">Price inclusive of all taxes</p>
+              </div>
+              
+              {/* Product Key Information - Vertical Layout */}
+              <div className="mb-8 bg-gray-50 p-5 rounded-lg border border-gray-100 shadow-sm">
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                    <span className="font-medium">EMI Available</span>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span className="font-medium">100% Guaranteed Authentic or Your Money Back</span>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span className="font-medium">TL Loyalty Program</span>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <button 
+                      onClick={() => setConditionModalOpen(true)}
+                      className="font-medium hover:text-gray-800 transition-colors flex items-center"
+                    >
+                      Product Condition: {product?.condition?.toUpperCase() || "New"}
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <div className="pt-2 border-t border-gray-200">
+                    <h4 className="font-medium mb-2">What is Layaway?</h4>
+                    <p className="text-sm text-gray-600">Split your payment into installments. Reserve your item with a deposit and pay the rest over time before delivery.</p>
+                    <Link to='/layaway'><button className="mt-2 text-sm font-medium text-blue-600 hover:text-blue-800">Learn More</button></Link>
+                  </div>
+                </div>
               </div>
               
               {/* Sizes */}
@@ -699,10 +817,10 @@ function ProductDetails() {
               <div className="border-t border-b py-6 space-y-4">
                 <div className="flex items-start space-x-3">
                   <TruckIcon className="h-6 w-6 text-gray-600 mt-0.5" />
-                  {/* <div>
-                    <p className="font-medium">Free Shipping & Returns</p>
-                    <p className="text-sm text-gray-600">Free shipping on orders over ₹999</p>
-                  </div> */}
+                  <div>
+                    <p className="font-medium">Fast Shipping</p>
+                    <p className="text-sm text-gray-600">7-10 business days within India</p>
+                  </div>
                 </div>
                 <div className="flex items-start space-x-3">
                   <ShieldCheckIcon className="h-6 w-6 text-gray-600 mt-0.5" />
@@ -713,19 +831,11 @@ function ProductDetails() {
                 </div>
               </div>
             </div>
-            
-            {/* Product Description */}
-            <div className="pt-6">
-              <h3 className="font-medium mb-3 text-gray-900">Description</h3>
-              <div className="prose prose-sm text-gray-700">
-                <p>{product.description.toUpperCase()}</p>
-              </div>
-            </div>
           </div>
         </div>
         
         {/* Enhanced Tabs Section */}
-        <div className="mt-16">
+        <div className="mt-12 max-w-4xl mx-auto">
           <Tab.Group>
             <Tab.List className="flex space-x-8 border-b">
               <Tab className={({ selected }) => 
@@ -735,13 +845,6 @@ function ProductDetails() {
               }>
                 Product Details
               </Tab>
-              {/* <Tab className={({ selected }) => 
-                `pb-4 font-medium text-sm focus:outline-none ${
-                  selected ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-700'
-                }`
-              }>
-                Reviews
-              </Tab> */}
               <Tab className={({ selected }) => 
                 `pb-4 font-medium text-sm focus:outline-none ${
                   selected ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-700'
@@ -749,10 +852,24 @@ function ProductDetails() {
               }>
                 Shipping & Returns
               </Tab>
+              <Tab className={({ selected }) => 
+                `pb-4 font-medium text-sm focus:outline-none ${
+                  selected ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-700'
+                }`
+              }>
+                Authenticity & Quality
+              </Tab>
             </Tab.List>
             <Tab.Panels className="mt-8">
               <Tab.Panel>
                 <div className="prose max-w-none">
+                  <div className="bg-gray-50 p-5 rounded-lg border border-gray-100 shadow-sm mb-8">
+                    <h3 className="text-xl font-medium mb-4">Product Description</h3>
+                    <p className="leading-relaxed">
+                      {formatDescription(product.description?.toUpperCase())}
+                    </p>
+                  </div>
+                
                   <h3 className="text-xl font-medium mb-4">Product Specifications</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
@@ -796,46 +913,121 @@ function ProductDetails() {
                       </div>
                     </div>
                   </div>
-                  
-                  <h3 className="text-xl font-medium mt-8 mb-4">Care Instructions</h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                    <li>Machine wash cold with similar colors</li>
-                    <li>Do not bleach</li>
-                    <li>Tumble dry low</li>
-                    <li>Iron on low heat if needed</li>
-                    <li>Do not dry clean</li>
-                  </ul>
                 </div>
               </Tab.Panel>
               
-             
+              
               <Tab.Panel>
-
                 <div className="prose max-w-none">
                   <h3 className="text-xl font-medium mb-4">Shipping Information</h3>
                   <div className="space-y-4">
-                    <p>We offer the following shipping options:</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium">Standard Shipping</h4>
-                        <p className="text-gray-600">5-7 business days</p>
-                        <p className="text-gray-600">₹100 (Free on orders over ₹999)</p>
+                    <div className="bg-gray-50 p-5 rounded-lg">
+                      <p className="mb-3">All orders will be shipped within 7-10 business days within India. International orders will be shipped within 10-15 business days. Additional shipping charges apply. Tangerine Luxury is not responsible for any shipping or delivery delays due to COVID-19/ shipping company delay.</p>
+                      
+                      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div className="bg-white p-4 rounded-lg shadow-sm">
+                          <h4 className="font-medium">Standard Shipping</h4>
+                          <p className="text-gray-600">5-7 business days</p>
+                          <p className="text-gray-600">₹500 (Free on orders over ₹999)</p>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg shadow-sm">
+                          <h4 className="font-medium">Express Shipping</h4>
+                          <p className="text-gray-600">2-3 business days</p>
+                          <p className="text-gray-600">₹250</p>
+                        </div>
+                      </div> */}
                       </div>
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium">Express Shipping</h4>
-                        <p className="text-gray-600">2-3 business days</p>
-                        <p className="text-gray-600">₹250</p>
+                      
+                    <h3 className="text-xl font-medium mt-8 mb-4">Cancellation & Returns</h3>
+                    <div className="bg-gray-50 p-5 rounded-lg">
+                      <p className="mb-3">To initiate a return, please inform us within 24 hours of receiving the order. We offer exchanges and store credits of the purchase value, valid for 6 months on all returns. Customers are responsible for return shipping charges, and the original purchase's shipping/handling fees are non-refundable. No exchanges/returns are accepted for sale products. For more details, please visit the Order & Returns section.</p>
+                    
+                      <h4 className="font-medium mt-6">Return Policy</h4>
+                      <ul className="list-disc pl-5 mt-2">
+                        <li>Items can be returned within 24 hours of delivery</li>
+                        <li>We offer exchanges and store credits of the purchase value</li>
+                        <li>Store credits are valid for 6 months</li>
+                        <li>Customers are responsible for return shipping charges</li>
+                        <li>Original shipping fees are non-refundable</li>
+                        <li>No returns accepted for sale products</li>
+                      </ul>
+                              </div>
+                    
+                    <h3 className="text-xl font-medium mt-8 mb-4">Need Help?</h3>
+                    <div className="bg-gray-50 p-5 rounded-lg">
+                      <p className="mb-3">If you have any other questions or concerns, feel free to contact us:</p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                          <h4 className="font-medium">Email</h4>
+                          <p className="text-gray-600">consign@tangerineluxury.com</p>
+                              </div>
+                        <div>
+                          <h4 className="font-medium">Phone</h4>
+                          <p className="text-gray-600">+91 704 2039009</p>
+                          <p className="text-gray-600">+91 704 2029009</p>
+                            </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </Tab.Panel>
+              
+              <Tab.Panel>
+                <div className="prose max-w-none">
+                  <h3 className="text-xl font-medium mb-4">Authenticity Guarantee</h3>
+                  <div className="bg-gray-50 p-5 rounded-lg mb-8">
+                    <p className="mb-3">Authenticity of a product holds topmost importance at Tangerine Luxury. Each consigned piece goes through a strenuous quality check by a panel of experts.</p>
                     
-                    <h3 className="text-xl font-medium mt-8 mb-4">Return Policy</h3>
-                    <p>We want you to be completely satisfied with your purchase. If you're not happy with your order, we offer a simple return process:</p>
-                    <ul className="list-disc pl-5">
-                      <li>Items can be returned within 30 days of delivery</li>
-                      <li>Products must be unused, unwashed, and in original packaging</li>
-                      <li>Return shipping is free for eligible items</li>
-                      <li>Refunds will be processed within 7-10 business days after we receive the returned item</li>
-                    </ul>
+                    <div className="flex items-center mt-4 bg-white p-4 rounded-lg shadow-sm">
+                      <div className="bg-gray-100 p-3 rounded-full mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                            </div>
+                      <div>
+                        <h4 className="font-medium">100% Guaranteed Authentic</h4>
+                        <p className="text-gray-600 text-sm">Or Your Money Back</p>
+                          </div>
+                        </div>
+                      </div>
+                  
+                  <h3 className="text-xl font-medium mb-4">Quality Control</h3>
+                  <div className="bg-gray-50 p-5 rounded-lg">
+                    <p>At Tangerine Luxury, our team of in-house experts, along with advanced authentication technology, ensures a rigorous verification and Quality Control process for all items sold.</p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                      <div className="bg-white p-4 rounded-lg shadow-sm text-center">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </div>
+                        <h4 className="font-medium">Expert Verification</h4>
+                        <p className="text-sm text-gray-600">Every product is examined by experts</p>
+                  </div>
+                  
+                      <div className="bg-white p-4 rounded-lg shadow-sm text-center">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                          </svg>
+                </div>
+                        <h4 className="font-medium">Rigorous Process</h4>
+                        <p className="text-sm text-gray-600">Multiple checkpoints ensure quality</p>
+                      </div>
+                      
+                      <div className="bg-white p-4 rounded-lg shadow-sm text-center">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                      </div>
+                        <h4 className="font-medium">Advanced Technology</h4>
+                        <p className="text-sm text-gray-600">Using the latest authentication tools</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </Tab.Panel>
@@ -844,10 +1036,16 @@ function ProductDetails() {
         </div>
 
         {/* Related Products - Enhanced */}
-        <div className="mt-16 border-t pt-12">
+        <div className="mt-16 border-t pt-12 max-w-6xl mx-auto">
           <h2 className="text-2xl font-bold mb-8 text-center">You May Also Like</h2>
+          {loading ? (
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {relatedProductsData.map(relatedProduct => (
+              {relatedProducts.length > 0 ? (
+                relatedProducts.map(relatedProduct => (
               <motion.div
                 key={relatedProduct._id}
                 className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
@@ -856,17 +1054,26 @@ function ProductDetails() {
               >
                 <div className="relative pb-[125%] overflow-hidden">
                   <img 
-                    src={relatedProduct.images[0]} 
+                        src={relatedProduct.images?.[0] || 'https://via.placeholder.com/400'} 
                     alt={relatedProduct.product_name}
-                    className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="absolute top-0 left-0 w-full h-full object-contain p-2"
                     onError={(e) => {
                       e.target.src = 'https://via.placeholder.com/400';
                     }}
                   />
                   
-                  {relatedProduct.original_price && relatedProduct.original_price > relatedProduct.price && (
-                    <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded">
-                      {Math.round((1 - relatedProduct.price / relatedProduct.original_price) * 100)}% OFF
+                      {relatedProduct.estimated_price && relatedProduct.estimated_price > (relatedProduct.discount_price || relatedProduct.price) && (
+                        <div className="absolute top-2 left-2 bg-black text-white text-xs font-semibold px-2 py-1 rounded">
+                          {Math.round((1 - (relatedProduct.discount_price || relatedProduct.price) / relatedProduct.estimated_price) * 100)}% OFF
+                        </div>
+                      )}
+                      
+                      {/* Brand Badge */}
+                      {(relatedProduct.brand || (relatedProduct.brandDetails && relatedProduct.brandDetails.length > 0)) && (
+                        <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm rounded-sm px-2 py-1 text-xs font-medium tracking-wide">
+                          {(typeof relatedProduct.brand === 'string' ? relatedProduct.brand : 
+                           (relatedProduct.brandDetails && relatedProduct.brandDetails[0]?.name) || 
+                           (relatedProduct.brand?.name || 'Brand')).toUpperCase()}
                     </div>
                   )}
                 </div>
@@ -874,27 +1081,24 @@ function ProductDetails() {
                   <h3 className="text-lg font-medium truncate">{toTitleCase(relatedProduct.product_name)}</h3>
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center">
-                      <p className="font-bold text-gray-900">{formatPrice(relatedProduct.price)}</p>
-                      {relatedProduct.original_price && relatedProduct.original_price > relatedProduct.price && (
+                          <p className="font-bold text-gray-900">{formatPrice(relatedProduct.discount_price || relatedProduct.price)}</p>
+                          {relatedProduct.estimated_price && relatedProduct.estimated_price > (relatedProduct.discount_price || relatedProduct.price) && (
                         <p className="text-sm text-gray-500 line-through ml-2">
-                          {formatPrice(relatedProduct.original_price)}
+                              {formatPrice(relatedProduct.estimated_price)}
                         </p>
                       )}
-                    </div>
-                    
-                    <div className="flex">
-                      {/* {[...Array(5)].map((_, i) => (
-                        <StarIcon 
-                          key={i} 
-                          className={`h-4 w-4 ${i < 4 ? 'text-yellow-400' : 'text-gray-300'}`}
-                        />
-                      ))} */}
                     </div>
                   </div>
                 </div>
               </motion.div>
-            ))}
+                ))
+              ) : (
+                <div className="col-span-4 text-center py-6">
+                  <p className="text-gray-500">No related products found</p>
           </div>
+              )}
+            </div>
+          )}
         </div>
         
         {/* Enhanced Services Section */}
@@ -902,19 +1106,6 @@ function ProductDetails() {
       <div className="bg-gray-50 py-12 mt-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature 1: Free Shipping */}
-            {/* <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
-              <img 
-                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-1.png" 
-                alt="Free Shipping" 
-                className="w-14 h-auto"
-              />
-              <div>
-                <h3 className="font-medium text-lg">Free Shipping</h3>
-                <p className="text-gray-600 text-sm">Free Shipping World wide</p>
-              </div>
-            </div> */}
-            
             {/* Feature 2: Secured Payment */}
             <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
               <img 
@@ -953,20 +1144,20 @@ function ProductDetails() {
                 <p className="text-gray-600 text-sm">Free Gift Cards & Vouchers</p>
               </div>
             </div>
+            {/* Feature 5: Premium Quality */}
+            <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+              <div>
+                <h3 className="font-medium text-lg">Premium Quality</h3>
+                <p className="text-gray-600 text-sm">Only The Best Products</p>
           </div>
         </div>
       </div>
-
-      {/* Share Button */}
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={handleShare}
-          className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-        >
-          <ShareIcon className="w-5 h-5" />
-          <span>Share</span>
-        </button>
+        </div>
       </div>
+      
 
       {/* Price Quote Form */}
       <Transition appear show={quoteFormOpen} as={Fragment}>
@@ -1128,6 +1319,101 @@ function ProductDetails() {
                       </button>
                     </div>
                   </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* Product Condition Modal */}
+      <Transition appear show={conditionModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={() => setConditionModalOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <div className="absolute top-0 right-0 pt-4 pr-4">
+                    <button
+                      type="button"
+                      className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
+                      onClick={() => setConditionModalOpen(false)}
+                    >
+                      <span className="sr-only">Close</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <Dialog.Title
+                    as="h3"
+                    className="text-xl font-semibold leading-6 text-gray-900 mb-4 font-serif tracking-wide border-b pb-2"
+                  >
+                    PRODUCT CONDITION GUIDELINES
+                  </Dialog.Title>
+
+                  <div className="mt-4 space-y-4">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 mb-1">New With Tags</h4>
+                      <p className="text-gray-700 text-sm">Products under the Condition New, have never been used. They come with tags, packaging and dustbags.</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 mb-1">New Without Tags</h4>
+                      <p className="text-gray-700 text-sm">Products under this category are new, have never been used or worn. They are in mint condition. Tags might be missing.</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 mb-1">Pristine</h4>
+                      <p className="text-gray-700 text-sm">Products are as good as new with insignificant sign of usage or no visible sign of usage. They are in pristine condition.</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 mb-1">Good Condition</h4>
+                      <p className="text-gray-700 text-sm">Products under this condition are previously worn with minor or no visible flaws and/or no significant wear & tear.</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 mb-1">Gently Used</h4>
+                      <p className="text-gray-700 text-sm">Products under this condition are previously worn with minor visible flaws and little wear & tear.</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 mb-1">Used Fairly Well</h4>
+                      <p className="text-gray-700 text-sm">Products under this category are fairly used and have some signs of usage. Some fading or cracks on the products are visible.</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      type="button"
+                      className="w-full inline-flex justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none"
+                      onClick={() => setConditionModalOpen(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
