@@ -1,10 +1,17 @@
 import React from 'react';
 import { Github, Linkedin, Twitter } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Footer() {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    window.scrollTo(0, 0);
+  };
+
   return (
-    <footer className="bg-white text-premium-dark py-16 border-t border-premium-beige">
+    <footer className="bg-gradient-to-b from-cyan-50 to-cyan-100 text-premium-dark py-16 border-t-4 border-premium-gold shadow-inner">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-1">
@@ -12,6 +19,8 @@ function Footer() {
               src={'https://tangerineluxury.com/wp-content/uploads/2023/09/Layer-1111111.png'} 
               alt="logo" 
               className="mb-6 max-w-[200px]"
+              onClick={() => handleNavigation('/')}
+              style={{ cursor: 'pointer' }}
             />
             <h2 className='text-2xl font-dm-sans font-bold mb-6'>
               Contact Info
@@ -57,7 +66,7 @@ function Footer() {
           </div>
           
           <div>
-            <h4 className="text-lg font-dm-sans font-semibold mb-5 border-b border-premium-gold pb-2">ABOUT TANGERINE LUXURY</h4>
+            <h4 className="text-lg font-dm-sans font-semibold mb-5 border-b-2 border-premium-gold pb-2">ABOUT TANGERINE LUXURY</h4>
             <ul className="space-y-3 font-dm-sans">
               {[
                 { text: 'About us', link: '/about' },
@@ -73,19 +82,19 @@ function Footer() {
                 { text: 'Contact Us', link: '/contact' }
               ].map((item, index) => (
                 <li key={index}>
-                  <Link 
-                    to={item.link} 
-                    className="text-gray-700 hover:text-premium-gold hover:pl-2 transition-all duration-300 inline-block"
+                  <span 
+                    onClick={() => handleNavigation(item.link)} 
+                    className="text-gray-700 hover:text-premium-gold hover:pl-2 transition-all duration-300 inline-block cursor-pointer"
                   >
                     • {item.text}
-                  </Link>
+                  </span>
                 </li>
               ))}
             </ul>
           </div>
           
           <div>
-            <h4 className="text-lg font-dm-sans font-semibold mb-5 border-b border-premium-gold pb-2">MY ACCOUNT</h4>
+            <h4 className="text-lg font-dm-sans font-semibold mb-5 border-b-2 border-premium-gold pb-2">MY ACCOUNT</h4>
             <ul className="space-y-3 font-dm-sans">
               {[
                 { text: 'Sign in', link: '/login' },
@@ -93,19 +102,30 @@ function Footer() {
                 { text: 'Track My Order', link: 'https://www.shiprocket.in/shipment-tracking/' }
               ].map((item, index) => (
                 <li key={index}>
-                  <a 
-                    href={item.link} 
-                    className="text-gray-700 hover:text-premium-gold hover:pl-2 transition-all duration-300 inline-block"
-                  >
-                    • {item.text}
-                  </a>
+                  {item.link.startsWith('http') ? (
+                    <a 
+                      href={item.link} 
+                      className="text-gray-700 hover:text-premium-gold hover:pl-2 transition-all duration-300 inline-block"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      • {item.text}
+                    </a>
+                  ) : (
+                    <span 
+                      onClick={() => handleNavigation(item.link)} 
+                      className="text-gray-700 hover:text-premium-gold hover:pl-2 transition-all duration-300 inline-block cursor-pointer"
+                    >
+                      • {item.text}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="text-lg font-dm-sans font-semibold mb-5 border-b border-premium-gold pb-2">FAQ'S</h4>
+            <h4 className="text-lg font-dm-sans font-semibold mb-5 border-b-2 border-premium-gold pb-2">FAQ'S</h4>
             <ul className="space-y-3 font-dm-sans">
               {[
                 { text: 'Buyer FAQ\'s', link: '/buyer-faqs' },
@@ -115,19 +135,19 @@ function Footer() {
                 { text: 'Layaway', link: '/layaway' }
               ].map((item, index) => (
                 <li key={index}>
-                  <a 
-                    href={item.link} 
-                    className="text-gray-700 hover:text-premium-gold hover:pl-2 transition-all duration-300 inline-block"
+                  <span 
+                    onClick={() => handleNavigation(item.link)} 
+                    className="text-gray-700 hover:text-premium-gold hover:pl-2 transition-all duration-300 inline-block cursor-pointer"
                   >
                     • {item.text}
-                  </a>
+                  </span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
         
-        <div className="border-t border-premium-beige mt-12 pt-8 text-center text-gray-600 font-dm-sans">
+        <div className="border-t-2 border-premium-gold mt-12 pt-8 text-center text-gray-600 font-dm-sans">
           <p>© {new Date().getFullYear()} Tangerine Luxury. All Rights Reserved</p>
         </div>
       </div>

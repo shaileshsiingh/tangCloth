@@ -419,7 +419,7 @@ function Navbar() {
         
       if (serviceItem && serviceItem.url) {
         console.log(`Service navigation to: ${serviceItem.url}`);
-        window.location.href = serviceItem.url; // Use direct window location as a fallback
+        navigate(serviceItem.url);
         return;
       }
     } else {
@@ -443,10 +443,10 @@ function Navbar() {
           return;
         }
         
-        // Use direct window location navigation as a fallback
+        // Use navigate
         const url = `/shop?subSubCategoryid=${item.id}`;
         console.log(`Category navigation to: ${url}`);
-        window.location.href = url;
+        navigate(url);
       } catch (error) {
         console.error('Navigation error:', error);
       }
@@ -486,7 +486,8 @@ function Navbar() {
       setIsSearching(false);
     }
   };
-const API_URL = '/api'
+
+  const API_URL = '/api'
   const fetchSearchResults = async (query) => {
     try {
       //  const response = await axios.get(`http://91.203.135.152:2001/api/product/list?search=${encodeURIComponent(query)}`);

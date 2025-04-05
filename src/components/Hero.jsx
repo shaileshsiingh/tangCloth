@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -31,8 +31,13 @@ const slides = [
 ];
 
 function Hero() {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -138,12 +143,12 @@ function Hero() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
               >
-                <Link
-                  to="/shop"
-                  className="inline-block bg-white text-black px-8 py-3 rounded-none hover:bg-gray-100 transition"
+                <button
+                  onClick={() => handleNavigation('/shop')}
+                  className="inline-block bg-white text-black px-8 py-3 rounded-none hover:bg-gray-100 transition cursor-pointer"
                 >
                   {slides[currentSlide].buttonText}
-                </Link>
+                </button>
               </motion.div>
             </div>
           </div>

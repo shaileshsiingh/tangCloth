@@ -50,11 +50,30 @@ function FeaturedProducts() {
     navigate(`/product/${productId}`, { state: { product } });
   };
 
+  // Helper function to determine badge color based on condition
+  const getConditionBadgeColor = (condition) => {
+    switch (condition?.toLowerCase()) {
+      case 'pristine':
+        return 'bg-green-600';
+      case 'new':
+        return 'bg-red-600';
+      case 'sale':
+        return 'bg-black';
+      case 'used':
+        return 'bg-orange-500';
+      case 'refurbished':
+        return 'bg-blue-600';
+      default:
+        return 'bg-gray-600';
+    }
+  };
+
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">Featured Products</h2>
+          <div className="w-24 h-1 bg-premium-gold mx-auto mb-6"></div>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Explore our most luxurious items, crafted with exceptional quality and attention to detail
           </p>
@@ -62,7 +81,7 @@ function FeaturedProducts() {
         
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-premium-gold"></div>
           </div>
         ) : error ? (
           <div className="text-center text-red-500">
@@ -77,32 +96,69 @@ function FeaturedProducts() {
             {products.map((product) => (
               <motion.div 
                 key={product._id} 
-                className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
-                whileHover={{ y: -5 }}
+                className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+                whileHover={{ y: -7 }}
                 onClick={() => handleProductClick(product._id, product)}
               >
                 <div className="relative overflow-hidden">
                   <img
                     src={product.images?.[0] || 'https://via.placeholder.com/400x500'}
                     alt={product.product_name}
-                    className="w-full h-[300px] object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       e.target.src = 'https://via.placeholder.com/400x500';
                     }}
                   />
-                  <div className="absolute top-0 right-0 bg-black text-white px-3 py-1 m-2 text-sm font-medium">
+                  {product.condition && (
+                    <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1 rounded shadow-md`}>
+                      {product.condition.toUpperCase()}
+                    </span>
+                  )}
+                  <div className="absolute top-0 right-0 bg-premium-gold text-white px-3 py-1 m-2 text-sm font-medium">
                     Premium
                   </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-75 flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full py-4 text-white font-medium text-center"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProductClick(product._id, product);
+                      }}
+                    >
+                      SHOP NOW
+                    </motion.button>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-medium">{product.product_name}</h3>
-                  <p className="text-gray-900 font-bold mt-1">₹{product.price}</p>
-                  <div className="flex gap-1 mt-2">
+                <div className="p-5 text-center">
+                  <h3 className="text-lg font-medium mb-1 transition-colors duration-300 group-hover:text-premium-gold">{product.product_name}</h3>
+                  
+                  {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                    <p className="text-gray-600 text-sm mb-3">
+                      {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
+                    </p>
+                  )}
+                  
+                  {product.estimated_price ? (
+                    <div className="flex flex-col items-center">
+                      <span className="text-gray-500 text-xs">Estimated Retail Price</span>
+                      <span className="text-gray-500 line-through mb-1">₹{product.estimated_price}</span>
+                      <span className="text-xs text-gray-700">Our Price</span>
+                      <span className="text-gray-900 font-bold mt-1">₹{product.discount_price || product.price}</span>
+                    </div>
+                  ) : (
+                    <div className="mt-2">
+                      <span className="text-gray-900 font-bold">₹{product.price}</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-center gap-1 mt-3">
                     {[...Array(5)].map((_, i) => (
                       <span
                         key={i}
                         className={`w-4 h-4 ${
-                          i < (product.averageRating || 0) ? 'text-black-400' : 'text-gray-300'
+                          i < (product.averageRating || 4) ? 'text-premium-gold' : 'text-gray-300'
                         }`}
                       >
                         ★
@@ -112,30 +168,20 @@ function FeaturedProducts() {
                   
                   {/* Available sizes */}
                   {product.sizes && product.sizes.length > 0 && (
-                    <div className="flex gap-1 mt-2">
+                    <div className="flex justify-center gap-1 mt-3">
                       {product.sizes.slice(0, 4).map((sizeObj, idx) => (
                         <span 
                           key={idx}
-                          className="text-xs border px-1 rounded"
+                          className="text-xs border border-gray-300 px-2 py-1 rounded-sm hover:border-premium-gold transition-colors duration-300"
                         >
                           {sizeObj.size}
                         </span>
                       ))}
                       {product.sizes.length > 4 && (
-                        <span className="text-xs">+{product.sizes.length - 4}</span>
+                        <span className="text-xs flex items-center justify-center">+{product.sizes.length - 4}</span>
                       )}
                     </div>
                   )}
-                  
-                  <button 
-                    className="mt-4 w-full bg-black text-white py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProductClick(product._id, product);
-                    }}
-                  >
-                    View Details
-                  </button>
                 </div>
               </motion.div>
             ))}

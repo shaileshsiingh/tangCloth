@@ -1,8 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 function VersatileClothing() {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <section className="relative py-20 bg-gray-100">
       <div className="container mx-auto px-4">
@@ -35,15 +41,14 @@ function VersatileClothing() {
               attire. Amet ut convallis est. Nam nunc erat, quis tempus ultrices
               ligula et amet, malesuada pellentesque diam.
             </p>
-            <Link to="/shop">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-black text-white px-16 py-4 text-lg font-semibold border border-black rounded-lg hover:bg-white hover:text-black hover:shadow-xl transition-all duration-300 ease-in-out"
-              >
-                SHOP COLLECTION
-              </motion.button>
-            </Link>
+            <motion.button
+              onClick={() => handleNavigation('/shop')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-black text-white px-16 py-4 text-lg font-semibold border border-black rounded-lg hover:bg-white hover:text-black hover:shadow-xl transition-all duration-300 ease-in-out cursor-pointer"
+            >
+              SHOP COLLECTION
+            </motion.button>
           </motion.div>
         </div>
       </div>
