@@ -201,7 +201,7 @@ function FeaturedProducts() {
                   </div>
                   
                   {/* Available sizes */}
-                  {product.sizes && product.sizes.length > 0 && (
+                  {/* {product.sizes && product.sizes.length > 0 && (
                     <div className="flex justify-center gap-1 mt-3">
                       {product.sizes.slice(0, 4).map((sizeObj, idx) => (
                         <span 
@@ -215,7 +215,7 @@ function FeaturedProducts() {
                         <span className="text-xs flex items-center justify-center">+{product.sizes.length - 4}</span>
                       )}
                     </div>
-                  )}
+                  )} */}
                 </div>
               </motion.div>
             ))}
