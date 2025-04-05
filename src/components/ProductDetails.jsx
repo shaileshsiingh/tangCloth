@@ -637,7 +637,7 @@ function ProductDetails() {
                 <h1 className="text-2xl font-bold">{product.product_name.toUpperCase()}</h1>
                 {/* Share Icon */}
                 <ShareIcon 
-                  className="w-6 h-6 text-gray-600 cursor-pointer hover:text-gray-800 transition-colors"
+                  className="w-10 h-10 text-gray-600 cursor-pointer hover:text-blue-800 transition-colors"
                   onClick={handleShare}
                 />
               </div>
