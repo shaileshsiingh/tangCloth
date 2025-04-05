@@ -877,7 +877,7 @@ const API_URL = '/api'
                     // src={tangerine} 
                     src="https://wamani.vercel.app/wp-content/uploads/2023/05/Logo.svg" 
                     alt="Tangerine Luxury" 
-                    className="h-12"
+                    className="h-10"
                   />
                 </Link>
               </div>
