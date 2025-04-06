@@ -5,6 +5,19 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import axios from 'axios';
 
+// Styled button component for consistent styling across the application
+// const StyledButton = ({ children, onClick, className = "", ...props }) => (
+//   <motion.button
+//     className={`bg-[#B2FFFF] hover:bg-[#8EEAEA] text-gray-800 font-medium px-6 py-2.5 rounded-lg shadow-md transition-all duration-300 flex items-center ${className}`}
+//     whileHover={{ scale: 1.05 }}
+//     whileTap={{ scale: 0.95 }}
+//     onClick={onClick}
+//     {...props}
+//   >
+//     {children}
+//   </motion.button>
+// );
+
 function ProductList() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -855,14 +868,11 @@ function ProductList() {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-50">
-      <div className="product-list-controls flex justify-between items-center mb-8">
-        <button 
-          className="refresh-button px-5 py-2.5 bg-white rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-sm border border-gray-200 text-sm font-medium" 
-          onClick={fetchProducts}
-        >
+      {/* <div className="product-list-controls flex justify-between items-center mb-8">
+        <StyledButton onClick={fetchProducts}>
           Refresh Products
-        </button>
-      </div>
+        </StyledButton>
+      </div> */}
 
       <div className="mb-10 border-b border-gray-200 pb-6">
         <h2 className="text-2xl font-medium tracking-wide">
@@ -1344,6 +1354,20 @@ function ProductList() {
           </div>
         </div>
       </div>
+      
+      {/* Show more products CTA
+      <div className="text-center mt-16 mb-12">
+        <h3 className="text-xl font-medium mb-6">Explore More Premium Collections</h3>
+        <StyledButton
+          onClick={() => navigate('/shop', { state: { resetFilters: true } })}
+          className="mx-auto"
+        >
+          Show more products
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </StyledButton>
+      </div> */}
     </div>
   );
 }
