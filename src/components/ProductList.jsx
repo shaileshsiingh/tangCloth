@@ -957,21 +957,25 @@ function ProductList() {
             </ul>
           </div>
 
-          {/* Subcategories */}
-          <div>
-            <h3 className="font-semibold mb-2 text-sm uppercase">Subcategories</h3>
-            <div className="flex flex-wrap gap-2">
-              {renderSubcategories()}
+          {/* Subcategories - Only show when a category is selected */}
+          {selectedCategory !== 'all' && (
+            <div>
+              <h3 className="font-semibold mb-2 text-sm uppercase">Subcategories</h3>
+              <div className="flex flex-wrap gap-2">
+                {renderSubcategories()}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Types */}
-          <div>
-            <h3 className="font-semibold mb-2 text-sm uppercase">Types</h3>
-            <div className="flex flex-wrap gap-2">
-              {renderSubSubcategories()}
+          {/* Types - Only show when a subcategory is selected */}
+          {selectedSubcategory && (
+            <div>
+              <h3 className="font-semibold mb-2 text-sm uppercase">Types</h3>
+              <div className="flex flex-wrap gap-2">
+                {renderSubSubcategories()}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Price Range */}
           <div>
@@ -1231,6 +1235,111 @@ function ProductList() {
       </motion.div>
 
       {renderPagination()}
+
+      {/* Shopping Experience Section */}
+      <div className="mt-16 mb-12">
+        <h2 className="text-2xl font-medium text-center mb-12">The Shopping Experience</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium mb-2">Authenticity Guaranteed</h3>
+            <p className="text-gray-600">Every item is thoroughly verified by our expert team to ensure 100% authenticity.</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium mb-2">Premium Selection</h3>
+            <p className="text-gray-600">Carefully curated collection of items from the world's most prestigious brands.</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium mb-2">Personalized Service</h3>
+            <p className="text-gray-600">Our team is available to assist with any inquiries or special requests.</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Enhanced Services Section */}
+      <div className="bg-white py-12 rounded-lg shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Feature 2: Secured Payment */}
+            <div className="flex items-center space-x-4 p-4">
+              <img 
+                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-2.png" 
+                alt="Secured Payment" 
+                className="w-9 h-auto"
+              />
+              <div>
+                <h3 className="font-medium text-lg">Secured Payment</h3>
+                <p className="text-gray-600 text-sm">Safe & Secured Payments</p>
+              </div>
+            </div>
+            
+            {/* Feature 3: 24/7 Support */}
+            <div className="flex items-center space-x-4 p-4">
+              <img 
+                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-3.png" 
+                alt="24/7 Support" 
+                className="w-14 h-auto"
+              />
+              <div>
+                <h3 className="font-medium text-lg">24/7 Support</h3>
+                <p className="text-gray-600 text-sm">Support Around The Clock</p>
+              </div>
+            </div>
+            
+            {/* Feature 4: Surprise Gifts */}
+            <div className="flex items-center space-x-4 p-4">
+              <img 
+                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-4.png" 
+                alt="Surprise Gifts" 
+                className="w-8 h-auto"
+              />
+              <div>
+                <h3 className="font-medium text-lg">Surprise Gifts</h3>
+                <p className="text-gray-600 text-sm">Free Gift Cards & Vouchers</p>
+              </div>
+            </div>
+            
+            {/* Feature 5: Premium Quality */}
+            <div className="flex items-center space-x-4 p-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+              <div>
+                <h3 className="font-medium text-lg">Premium Quality</h3>
+                <p className="text-gray-600 text-sm">Only The Best Products</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Show more products CTA */}
+      <div className="text-center mt-16 mb-12">
+        <h3 className="text-xl font-medium mb-6">Explore More Premium Collections</h3>
+        <StyledButton
+          onClick={() => navigate('/shop', { state: { resetFilters: true } })}
+          className="mx-auto"
+        >
+          Show more products
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </StyledButton>
+      </div>
     </div>
   );
 }
