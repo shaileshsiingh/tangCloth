@@ -199,7 +199,7 @@ function ProductDetails() {
     // First, add line breaks at key section boundaries
     const formattedText = text
       .replace("SIZE:", "\nSIZE:")
-      .replace("FITS:", "FITS:")
+      .replace("FITS:", "\nFITS:")
       .replace("LENGTH:", "\nLENGTH:")
       .replace("CHEST:", "\nCHEST:")
       .replace("COLOUR:", "\nCOLOUR:")
@@ -210,29 +210,37 @@ function ProductDetails() {
     // Split by newlines to handle each line
     const lines = formattedText.split('\n');
     
-    return lines.map((line, lineIndex) => {
-      // Skip empty lines
-      if (!line.trim()) return null;
-      
-      // Check if the line contains a colon
-      if (line.includes(':')) {
-        const [before, ...after] = line.split(':');
-        return (
-          <React.Fragment key={lineIndex}>
-            <strong>{before}:</strong>{after.join(':')}
-            {lineIndex < lines.length - 1 && <br />}
-          </React.Fragment>
-        );
-      } else {
-        // Return line as is if no colon
-        return (
-          <React.Fragment key={lineIndex}>
-            {line}
-            {lineIndex < lines.length - 1 && <br />}
-          </React.Fragment>
-        );
-      }
-    });
+    // Create a table component
+    return (
+      <table className="w-full border-collapse">
+        <tbody>
+          {lines.map((line, lineIndex) => {
+            // Skip empty lines
+            if (!line.trim()) return null;
+            
+            // Check if the line contains a colon
+            if (line.includes(':')) {
+              const [label, ...valueParts] = line.split(':');
+              const value = valueParts.join(':'); // Rejoin in case the value itself contains colons
+              
+              return (
+                <tr key={lineIndex} className="border-b">
+                  <td className="py-2 pr-4 font-bold align-top whitespace-nowrap">{label}:</td>
+                  <td className="py-2">{value.trim()}</td>
+                </tr>
+              );
+            } else {
+              // Return line as is if no colon (as full width row)
+              return (
+                <tr key={lineIndex} className="border-b">
+                  <td colSpan="2" className="py-2">{line}</td>
+                </tr>
+              );
+            }
+          })}
+        </tbody>
+      </table>
+    );
   };
   
   // Enhanced slider settings
@@ -921,12 +929,12 @@ function ProductDetails() {
                       </div>
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Style</span>
-                        <span className="font-medium">{product.product_details?.style || "Casual"}</span>
+                        <span className="font-medium">{product.condition || "Casual"}</span>
                       </div>
-                      <div className="grid grid-cols-2 border-b pb-2">
+                      {/* <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Season</span>
                         <span className="font-medium">{product.product_details?.season || "All Season"}</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
