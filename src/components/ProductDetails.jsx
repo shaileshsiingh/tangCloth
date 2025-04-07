@@ -276,21 +276,39 @@ function ProductDetails() {
   // Fetch related products
   useEffect(() => {
     const fetchRelatedProducts = async () => {
-      if (!product || !product.category_id) return;
+      if (!product) return;
       
       try {
         setLoading(true);
         const API_URL = '/api';
         const response = await fetch(`${API_URL}/product/list`);
-        // const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
 
         if (response.status === 200) {
-          const data = response.data;
+          const data = await response.json();
           if (data.success && data.data && data.data.products) {
-            // Filter products by the same category and exclude current product
-            const categoryProducts = data.data.products.filter(
+            // First try to get products from the same category
+            let categoryProducts = data.data.products.filter(
               item => item.category_id === product.category_id && item._id !== product._id
             );
+            
+            // If not enough products from same category, get products from same subcategory
+            if (categoryProducts.length < 4 && product.sub_category_id) {
+              const subCategoryProducts = data.data.products.filter(
+                item => item.sub_category_id === product.sub_category_id && 
+                       item._id !== product._id &&
+                       !categoryProducts.some(p => p._id === item._id)
+              );
+              categoryProducts = [...categoryProducts, ...subCategoryProducts];
+            }
+            
+            // If still not enough products, get any other products
+            if (categoryProducts.length < 4) {
+              const otherProducts = data.data.products.filter(
+                item => item._id !== product._id &&
+                       !categoryProducts.some(p => p._id === item._id)
+              );
+              categoryProducts = [...categoryProducts, ...otherProducts];
+            }
             
             // Limit to 4 products
             setRelatedProducts(categoryProducts.slice(0, 4));
@@ -356,7 +374,6 @@ function ProductDetails() {
 
   const handleAddToCart = async () => {
     const token = localStorage.getItem('authToken');
-    console.log(token);
     if (!token) {
       toast.error('Please login to add the item in the cart', {
         position: "top-center",
@@ -368,6 +385,7 @@ function ProductDetails() {
         progress: undefined,
         style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
       });
+      navigate('/login');
       return;
     }
     if (product && selectedSize) {
@@ -597,6 +615,21 @@ function ProductDetails() {
                     className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
                     onClick={(e) => {
                       e.stopPropagation();
+                      const token = localStorage.getItem('authToken');
+                      if (!token) {
+                        toast.error('Please login to add the item to wishlist', {
+                          position: "top-center",
+                          autoClose: 3000,
+                          hideProgressBar: true,
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          draggable: true,
+                          progress: undefined,
+                          style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+                        });
+                        navigate('/login');
+                        return;
+                      }
                       addToWishlist(product);
                     }}
                     title="Add to Wishlist"
@@ -724,12 +757,12 @@ function ProductDetails() {
                     <span className="font-medium">100% Guaranteed Authentic or Your Money Back</span>
                   </div>
                   
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     <span className="font-medium">TL Loyalty Program</span>
-                  </div>
+                  </div> */}
                   
                   <div className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -931,10 +964,10 @@ function ProductDetails() {
                         <span className="text-gray-600">Style</span>
                         <span className="font-medium">{product.condition || "Casual"}</span>
                       </div>
-                      {/* <div className="grid grid-cols-2 border-b pb-2">
+                      <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Season</span>
                         <span className="font-medium">{product.product_details?.season || "All Season"}</span>
-                      </div> */}
+                      </div>
                     </div>
                   </div>
                 </div>
