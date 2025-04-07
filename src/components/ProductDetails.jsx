@@ -426,7 +426,7 @@ function ProductDetails() {
   const handleBuyNow = () => {
     const token = localStorage.getItem('authToken');
     if (!token) {
-      toast.error('Please login to add the item in the cart', {
+      toast.error('Please login to proceed with checkout', {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
@@ -436,8 +436,10 @@ function ProductDetails() {
         progress: undefined,
         style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
       });
+      navigate('/login');
       return;
     }
+    window.scrollTo(0, 0);
     navigate('/checkout');
   };
 
@@ -962,12 +964,12 @@ function ProductDetails() {
                       </div>
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Style</span>
-                        <span className="font-medium">{product.condition || "Casual"}</span>
+                        <span className="font-medium">{product?.condition?.toUpperCase() || "Casual"}</span>
                       </div>
-                      <div className="grid grid-cols-2 border-b pb-2">
+                      {/* <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Season</span>
                         <span className="font-medium">{product.product_details?.season || "All Season"}</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
