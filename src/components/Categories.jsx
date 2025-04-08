@@ -49,6 +49,7 @@ function Categories() {
 
   // Function to navigate to shop with selected category
   const handleCategoryClick = (category) => {
+    window.scrollTo(0, 0);
     const categoryName = category.name.toLowerCase();
     const categoryId = categoryIds[categoryName];
     

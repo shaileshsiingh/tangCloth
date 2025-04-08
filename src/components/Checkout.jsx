@@ -169,6 +169,7 @@ function Checkout() {
       removeFromCart(cart[0]._id, cart[0].selectedSize);
       
       // Navigate to order success page
+      window.scrollTo(0, 0);
       navigate('/order');
     } catch (error) {
       console.error('Error placing order:', error);

@@ -6,6 +6,7 @@ function VersatileClothing() {
   const navigate = useNavigate();
 
   const handleNavigation = (path) => {
+    window.scrollTo(0, 0);
     navigate(path);
   };
 

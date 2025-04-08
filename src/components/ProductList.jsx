@@ -503,7 +503,10 @@ function ProductList() {
                   ? 'bg-black text-white' 
                   : 'bg-gray-100 hover:bg-gray-200'
               }`}
-              onClick={() => handleSubcategoryChange(subcat.id)}
+              onClick={() => {
+                window.scrollTo(0, 0);
+                handleSubcategoryChange(subcat.id);
+              }}
             >
               {subcat.name}
             </button>
@@ -533,7 +536,10 @@ function ProductList() {
                   ? 'bg-black text-white' 
                   : 'bg-gray-100 hover:bg-gray-200'
               }`}
-              onClick={() => handleSubSubcategoryChange(subSubcat.id)}
+              onClick={() => {
+                window.scrollTo(0, 0);
+                handleSubSubcategoryChange(subSubcat.id);
+              }}
             >
               {subSubcat.name}
             </button>
@@ -550,7 +556,10 @@ function ProductList() {
     return (
       <div className="flex justify-center mt-8 space-x-2">
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
+          onClick={() => {
+            window.scrollTo(0, 0);
+            handlePageChange(currentPage - 1);
+          }}
           disabled={currentPage === 1}
           className={`px-3 py-1 rounded ${
             currentPage === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
@@ -564,7 +573,10 @@ function ProductList() {
           return (
             <button
               key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)}
+              onClick={() => {
+                window.scrollTo(0, 0);
+                handlePageChange(pageNumber);
+              }}
               className={`px-3 py-1 rounded ${
                 currentPage === pageNumber ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'
               }`}
@@ -575,7 +587,10 @@ function ProductList() {
         })}
         
         <button
-          onClick={() => handlePageChange(currentPage + 1)}
+          onClick={() => {
+            window.scrollTo(0, 0);
+            handlePageChange(currentPage + 1);
+          }}
           disabled={currentPage === totalPages}
           className={`px-3 py-1 rounded ${
             currentPage === totalPages ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
@@ -936,7 +951,10 @@ function ProductList() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-serif tracking-wide">FILTERS</h2>
               <button 
-                onClick={resetFilters}
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                  resetFilters();
+                }}
                 className="px-3 py-1 bg-gray-100 text-black text-xs rounded hover:bg-gray-200 transition-all duration-300"
               >
                 Reset All
@@ -951,7 +969,10 @@ function ProductList() {
                     <li key={key}>
                       <button
                         className={`text-left w-full text-sm py-1 ${selectedCategory === key ? 'font-bold' : ''}`}
-                        onClick={() => handleCategoryChange(key)}
+                        onClick={() => {
+                          window.scrollTo(0, 0);
+                          handleCategoryChange(key);
+                        }}
                       >
                         {value}
                       </button>
@@ -1023,7 +1044,10 @@ function ProductList() {
                     />
                     <span className="text-xs">{selectedColor}</span>
                     <button 
-                      onClick={() => setSelectedColor(null)} 
+                      onClick={() => {
+                        window.scrollTo(0, 0);
+                        setSelectedColor(null);
+                      }} 
                       className="ml-2 text-xs text-gray-500 hover:text-black"
                     >
                       ✕
@@ -1045,7 +1069,10 @@ function ProductList() {
                           ? 'bg-black text-white' 
                           : 'bg-gray-100 hover:bg-gray-200'
                       }`}
-                      onClick={() => setSelectedSize(selectedSize === size ? '' : size)}
+                      onClick={() => {
+                        window.scrollTo(0, 0);
+                        setSelectedSize(selectedSize === size ? '' : size);
+                      }}
                     >
                       {size}
                     </button>
@@ -1079,7 +1106,10 @@ function ProductList() {
                           {brands.find(b => b._id === selectedBrand)?.name || 'Selected Brand'}
                         </span>
                         <button 
-                          onClick={() => setSelectedBrand(null)} 
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                            setSelectedBrand(null);
+                          }} 
                           className="ml-2 text-xs text-gray-500 hover:text-black"
                         >
                           ✕
@@ -1163,6 +1193,7 @@ function ProductList() {
                   className="overflow-hidden cursor-pointer group relative bg-white border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1"
                   whileHover={{ scale: 1.02 }}
                   onClick={(e) => {
+                    window.scrollTo(0, 0);
                     e.stopPropagation();
                     navigate(`/product/${product._id}`, { state: { product } });
                   }}
@@ -1218,6 +1249,7 @@ function ProductList() {
                     <button 
                       className="w-full py-4 text-white font-medium tracking-wide letter-spacing transition-colors"
                       onClick={(e) => {
+                        window.scrollTo(0, 0);
                         e.stopPropagation();
                         navigate(`/product/${product._id}`, { state: { product } });
                       }}

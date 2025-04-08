@@ -57,6 +57,7 @@ function AbandonedCartReminder() {
   
   const goToCart = () => {
     console.log('Go to cart button clicked');
+    window.scrollTo(0, 0);
     navigate('/checkout');
     setShowReminder(false);
   };

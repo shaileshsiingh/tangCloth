@@ -33,6 +33,7 @@ function CategoryBanner() {
   // Function to navigate to subcategory across all categories
   const handleSubcategoryTypeClick = (subcategoryType) => {
     // Simply log what was clicked and navigate to shop
+    window.scrollTo(0, 0);
     console.log(`User clicked on ${subcategoryType} category`);
     navigate('/shop');
   };

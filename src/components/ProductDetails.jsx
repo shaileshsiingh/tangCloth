@@ -385,6 +385,7 @@ function ProductDetails() {
         progress: undefined,
         style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
       });
+      window.scrollTo(0, 0);
       navigate('/login');
       return;
     }
@@ -436,6 +437,7 @@ function ProductDetails() {
         progress: undefined,
         style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
       });
+      window.scrollTo(0, 0);
       navigate('/login');
       return;
     }

@@ -8,19 +8,19 @@ const saleItems = [
   {
     id: 1,
     name: 'Long-sleeve T-Shirt',
-    price: '$39.00',
+    price: 'Rs 3900',
     image: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
   },
   {
     id: 2,
     name: 'White Shorts',
-    price: '$29.00',
+    price: 'Rs 2500.00',
     image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
   },
   {
     id: 3,
     name: 'Sneakers',
-    price: '$159.00',
+    price: 'Rs4000.00',
     image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
   },
 ];
@@ -84,7 +84,10 @@ function BrandsSale() {
               ))}
             </div>
             
-            <motion.button onClick={() => navigate('/shop')} className="mt-8 bg-black text-white px-8 py-3 rounded-none hover:bg-gray-900 transition inline-flex items-center gap-2" whileHover={{ scale: 1.1 }}>
+            <motion.button onClick={() => {
+              window.scrollTo(0, 0);
+              navigate('/shop');
+            }} className="mt-8 bg-black text-white px-8 py-3 rounded-none hover:bg-gray-900 transition inline-flex items-center gap-2" whileHover={{ scale: 1.1 }}>
               SHOP COLLECTION
               <ArrowRight size={20} />
             </motion.button>
