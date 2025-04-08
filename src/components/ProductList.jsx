@@ -804,8 +804,7 @@ function ProductList() {
     }
   }, []);
 
-  // Add this effect to your ProductList component to handle brandId parameter
-
+  // Add this effect to handle brandId parameter
   useEffect(() => {
     // Get brandId from URL parameters
     const queryParams = new URLSearchParams(window.location.search);
@@ -817,14 +816,20 @@ function ProductList() {
       
       // If we already have products loaded, filter them by brand
       if (products.length > 0) {
-        const filteredByBrand = products.filter(product => 
-          product.brand_id === brandId || product.brand?._id === brandId);
+        const filteredByBrand = products.filter(product => {
+          // Check both brand_id and brand._id
+          const matchesBrandId = product.brand_id === brandId;
+          const matchesBrandObjectId = product.brand?._id === brandId;
+          const matchesBrandDetailsId = product.brandDetails?.some(detail => detail._id === brandId);
+          
+          return matchesBrandId || matchesBrandObjectId || matchesBrandDetailsId;
+        });
+        
         setFilteredProducts(filteredByBrand);
+        setTotalProducts(filteredByBrand.length);
+        setTotalPages(Math.ceil(filteredByBrand.length / itemsPerPage));
         console.log(`Found ${filteredByBrand.length} products for this brand`);
       }
-      
-      // If we don't have products loaded yet, we can add logic to fetch them by brand directly
-      // ...
     }
   }, [window.location.search, products]);
 

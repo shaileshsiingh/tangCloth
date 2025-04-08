@@ -53,6 +53,7 @@ function BrandSection() {
       try {
         setLoading(true);
         const response = await axios.get(`${API_URL}/brand/get-brands`);
+        // const response = await axios.get(`http://91.203.135.152:2001/api/brand/get-brands`);
         
         if (response.data && response.data.success) {
           const allBrands = response.data.data;
