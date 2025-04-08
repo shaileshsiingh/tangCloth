@@ -1,3 +1,4 @@
+import {useEffect} from 'react';  
 import Layout from './components/Layout';
 import Hero from './components/Hero';
 import FeaturedProducts from './components/FeaturedProducts';
@@ -49,6 +50,10 @@ import AbandonedCartReminder from './components/AbandonedCartReminder';
 
 
 function App() {
+   // Add scroll restoration effect
+   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   return (
     <CartProvider>
       <WishlistProvider>

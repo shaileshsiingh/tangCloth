@@ -444,6 +444,7 @@ function ProductDetails() {
   };
 
   const handleRelatedProductClick = (relatedProduct) => {
+    window.scrollTo(0, 0);
     navigate(`/product/${relatedProduct._id}`, { state: { product: relatedProduct } });
   };
 
@@ -538,6 +539,11 @@ function ProductDetails() {
       setSubmitting(false);
     }
   };
+
+  // Add scroll restoration effect
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   if (!product) {
     return <Navigate to="/404" replace />;
