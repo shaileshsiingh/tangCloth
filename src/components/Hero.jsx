@@ -44,7 +44,6 @@ function Hero() {
       setDirection(1);
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
-
     return () => clearInterval(timer);
   }, []);
 
@@ -66,9 +65,7 @@ function Hero() {
   };
 
   const swipeConfidenceThreshold = 10000;
-  const swipePower = (offset, velocity) => {
-    return Math.abs(offset) * velocity;
-  };
+  const swipePower = (offset, velocity) => Math.abs(offset) * velocity;
 
   const paginate = (newDirection) => {
     setDirection(newDirection);
@@ -76,7 +73,7 @@ function Hero() {
   };
 
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className="relative h-screen w-full overflow-hidden">
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={currentSlide}
@@ -94,7 +91,6 @@ function Hero() {
           dragElastic={1}
           onDragEnd={(e, { offset, velocity }) => {
             const swipe = swipePower(offset.x, velocity.x);
-
             if (swipe < -swipeConfidenceThreshold) {
               paginate(1);
             } else if (swipe > swipeConfidenceThreshold) {
@@ -104,21 +100,21 @@ function Hero() {
           className="absolute inset-0"
         >
           {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
-          >
-            <div className="absolute inset-0 bg-black bg-opacity-40" />
-          </div>
+          <img
+            src={slides[currentSlide].image}
+            alt={slides[currentSlide].title}
+            className="absolute inset-0 w-full h-full object-cover z-0"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-40 z-10" />
 
           {/* Content */}
-          <div className="relative h-full flex items-center justify-center text-white">
-            <div className="text-center px-4 max-w-4xl">
+          <div className="relative h-full z-20 flex items-center justify-center text-white px-4 sm:px-6 md:px-8">
+            <div className="text-center max-w-4xl mx-auto">
               <motion.h2
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-2xl md:text-3xl font-medium mb-4"
+                className="text-xl sm:text-2xl md:text-3xl font-medium mb-3 sm:mb-4"
               >
                 {slides[currentSlide].subtitle}
               </motion.h2>
@@ -126,7 +122,7 @@ function Hero() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-5xl md:text-7xl font-bold mb-6"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6"
               >
                 {slides[currentSlide].title}
               </motion.h1>
@@ -134,7 +130,7 @@ function Hero() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="text-lg md:text-xl mb-8 max-w-2xl mx-auto"
+                className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto px-2"
               >
                 {slides[currentSlide].description}
               </motion.p>
@@ -145,7 +141,7 @@ function Hero() {
               >
                 <button
                   onClick={() => handleNavigation('/shop')}
-                  className="inline-block bg-white text-black px-8 py-3 rounded-none hover:bg-gray-100 transition cursor-pointer"
+                  className="bg-white text-black text-sm sm:text-base px-6 sm:px-8 py-3 rounded-md hover:bg-gray-100 transition"
                 >
                   {slides[currentSlide].buttonText}
                 </button>
@@ -157,20 +153,20 @@ function Hero() {
 
       {/* Navigation Arrows */}
       <button
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition-colors"
+        className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full z-30"
         onClick={() => paginate(-1)}
       >
-        <ChevronLeft size={24} />
+        <ChevronLeft size={20} />
       </button>
       <button
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition-colors"
+        className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full z-30"
         onClick={() => paginate(1)}
       >
-        <ChevronRight size={24} />
+        <ChevronRight size={20} />
       </button>
 
       {/* Dots Navigation */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+      <div className="absolute bottom-5 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -179,7 +175,7 @@ function Hero() {
               setCurrentSlide(index);
             }}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index === currentSlide ? 'bg-white w-6' : 'bg-white/50'
+              index === currentSlide ? 'bg-white w-5' : 'bg-white/50'
             }`}
           />
         ))}
