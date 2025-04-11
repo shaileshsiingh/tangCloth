@@ -967,17 +967,23 @@ function ProductDetails() {
                     </div>
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 border-b pb-2">
+                        <span className="text-gray-600">Type</span>
+                        <span className="font-medium">{product?.type?.toUpperCase() || "Not Specified"}</span>
+                      </div>
+                      <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Color</span>
                         <span className="font-medium">{product.color || "Multiple"}</span>
                       </div>
+                    </div>
+                    <div className="space-y-3">
                       <div className="grid grid-cols-2 border-b pb-2">
-                        <span className="text-gray-600">Style</span>
-                        <span className="font-medium">{product?.condition?.toUpperCase() || "Casual"}</span>
+                        <span className="text-gray-600">Additional Information</span>
+                        <span className="font-medium">{product?.additional_info || "No additional information"}</span>
                       </div>
-                      {/* <div className="grid grid-cols-2 border-b pb-2">
-                        <span className="text-gray-600">Season</span>
-                        <span className="font-medium">{product.product_details?.season || "All Season"}</span>
-                      </div> */}
+                      <div className="grid grid-cols-2 border-b pb-2">
+                        <span className="text-gray-600">Condition</span>
+                        <span className="font-medium">{product?.condition?.toUpperCase() || "Not Specified"}</span>
+                      </div>
                     </div>
                   </div>
                 </div>

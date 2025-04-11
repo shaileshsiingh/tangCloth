@@ -1186,7 +1186,7 @@ function ProductList() {
           )}
 
           <motion.div 
-            className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -1195,7 +1195,7 @@ function ProductList() {
               displayedProducts.map((product) => (
                 <motion.div
                   key={product._id}
-                  className="overflow-hidden cursor-pointer group relative bg-white border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1"
+                  className="overflow-hidden cursor-pointer group relative bg-white border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 w-full"
                   whileHover={{ scale: 1.02 }}
                   onClick={(e) => {
                     window.scrollTo(0, 0);
