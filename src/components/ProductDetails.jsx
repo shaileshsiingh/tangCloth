@@ -320,51 +320,43 @@ function ProductDetails() {
   const formatDescription = (text) => {
     if (!text) return '';
   
-    // Split the text into lines using colon-based detection
-    const entries = text
+    // Split into original lines (including those with no colon but still valid info)
+    const rawLines = text
       .split('\n')
       .map(line => line.trim())
-      .filter(line => line.includes(':'))
-      .map(line => {
-        const [label, ...valueParts] = line.split(':');
-        const value = valueParts.join(':').trim();
-        return { label: label.trim(), value };
-      });
+      .filter(line => line.length > 0);
   
-    // Group into 2–3 lines based on approx character count
-    const maxCharsPerLine = 120; // You can adjust this for more or fewer lines
-    const lines = [];
-    let currentLine = [];
-    let currentLength = 0;
+    // Format each line individually
+    const formattedLines = rawLines.map((line) => {
+      const [label, ...valueParts] = line.split(':');
+      const value = valueParts.join(':').trim();
+      const hasValue = valueParts.length > 0;
   
-    entries.forEach(({ label, value }, idx) => {
-      const entryText = `${label}: ${value}`;
-      const estimatedLength = entryText.length + 2; // include comma and space
-  
-      if (currentLength + estimatedLength > maxCharsPerLine && currentLine.length > 0) {
-        lines.push(currentLine);
-        currentLine = [];
-        currentLength = 0;
-      }
-  
-      currentLine.push({ label, value });
-      currentLength += estimatedLength;
+      return hasValue ? (
+        <span key={line}>
+          <strong>{label.trim()}:</strong> {value},
+        </span>
+      ) : (
+        <span key={line}>
+          <strong>{label.trim()}:</strong>,
+        </span>
+      );
     });
   
-    if (currentLine.length) {
-      lines.push(currentLine);
+    // Group lines into 2–3 blocks for better UI readability
+    const groupCount = 3;
+    const itemsPerGroup = Math.ceil(formattedLines.length / groupCount);
+    const grouped = [];
+  
+    for (let i = 0; i < formattedLines.length; i += itemsPerGroup) {
+      grouped.push(formattedLines.slice(i, i + itemsPerGroup));
     }
   
     return (
       <div className="space-y-2 text-sm sm:text-base leading-relaxed">
-        {lines.map((line, index) => (
-          <div key={index}>
-            {line.map(({ label, value }, i) => (
-              <span key={i}>
-                <strong>{label}:</strong> {value}
-                {i !== line.length - 1 && ', '}
-              </span>
-            ))}
+        {grouped.map((group, index) => (
+          <div key={index} className="flex flex-wrap gap-x-2">
+            {group}
           </div>
         ))}
       </div>
@@ -504,18 +496,36 @@ function ProductDetails() {
   const API_URL = "/api";
 
   const handleAddToCart = async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      toast.error('Please login to add the item in the cart', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+      });
+      window.scrollTo(0, 0);
+      navigate('/login');
+      return;
+    }
     if (product && selectedSize) {
       const selectedSizeObj = product.sizes.find(s => s.size === selectedSize);
       if (selectedSizeObj && selectedSizeObj.quantity >= quantity) {
         try {
           const response = await fetch(`${API_URL}/cart/add-item`, {
+          // const response = await fetch(`http://91.203.135.152:2001/api/cart/add-item`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
             },
             body: JSON.stringify({
               product_id: product._id,
-              size_id: product._id,
+              size_id: product._id, // Assuming size_id is the same as size for simplicity
               size: selectedSize,
               quantity: parseInt(quantity, 10),
               price: product.price,
