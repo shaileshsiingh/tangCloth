@@ -1202,22 +1202,60 @@ function AddProduct() {
           <div className="mt-4 p-3 bg-gray-50 rounded-md">
             <h3 className="font-medium mb-2">Price Display Preview:</h3>
             <div className="flex items-center">
-              {formData.estimated_price > 0 ? (
+              {formData.estimated_price > 0 && (
                 <>
-                  <span className="text-gray-500 line-through mr-3">
-                    ₹{formData.estimated_price}
-                  </span>
-                  <span className="font-medium mr-2">
-                    Our Price: ₹{formData.discount_price > 0 ? formData.discount_price : formData.price}
-                  </span>
-                  {(formData.estimated_price > (formData.discount_price > 0 ? formData.discount_price : formData.price)) && (
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                      {Math.round((1 - (formData.discount_price > 0 ? formData.discount_price : formData.price) / formData.estimated_price) * 100)}% OFF
-                    </span>
+                  {formData.price > 0 && formData.discount_price > 0 ? (
+                    <>
+                      <span className="text-gray-500 line-through mr-3">
+                        ₹{formData.estimated_price}
+                      </span>
+                      <span className="font-medium mr-2">
+                        Our Price: ₹{formData.discount_price}
+                      </span>
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                        {Math.round((1 - formData.discount_price / formData.estimated_price) * 100)}% OFF
+                      </span>
+                    </>
+                  ) : formData.price > 0 ? (
+                    <>
+                      <span className="text-gray-500 line-through mr-3">
+                        ₹{formData.estimated_price}
+                      </span>
+                      <span className="font-medium mr-2">
+                        Our Price: ₹{formData.price}
+                      </span>
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                        {Math.round((1 - formData.price / formData.estimated_price) * 100)}% OFF
+                      </span>
+                    </>
+                  ) : formData.discount_price > 0 ? (
+                    <>
+                      <span className="text-gray-500 line-through mr-3">
+                        ₹{formData.estimated_price}
+                      </span>
+                      <span className="font-medium mr-2">
+                        Our Price: ₹{formData.discount_price}
+                      </span>
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                        {Math.round((1 - formData.discount_price / formData.estimated_price) * 100)}% OFF
+                      </span>
+                    </>
+                  ) : (
+                    <span className="font-medium">₹{formData.estimated_price}</span>
                   )}
                 </>
               ) : (
-                <span className="font-medium">₹{formData.price}</span>
+                <>
+                  {formData.price > 0 && formData.discount_price > 0 ? (
+                    <span className="font-medium">
+                      Our Price: ₹{formData.discount_price}
+                    </span>
+                  ) : formData.price > 0 ? (
+                    <span className="font-medium">₹{formData.price}</span>
+                  ) : formData.discount_price > 0 ? (
+                    <span className="font-medium">₹{formData.discount_price}</span>
+                  ) : null}
+                </>
               )}
             </div>
           </div>
