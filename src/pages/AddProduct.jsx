@@ -1202,7 +1202,7 @@ function AddProduct() {
           <div className="mt-4 p-3 bg-gray-50 rounded-md">
             <h3 className="font-medium mb-2">Price Display Preview:</h3>
             <div className="flex items-center">
-              {formData.estimated_price > 0 && (
+              {formData.estimated_price > 0 ? (
                 <>
                   {formData.price > 0 && formData.discount_price > 0 ? (
                     <>
