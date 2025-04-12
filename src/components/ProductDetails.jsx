@@ -317,56 +317,61 @@ function ProductDetails() {
     fetchSubSubcategories();
   }, []);
   
- const formatDescription = (text) => {
-  if (!text) return '';
-
-  const fieldLabels = [
-    'SIZE', 'FITS', 'LENGTH', 'CHEST', 'COLOUR',
-    'AUTHENTICITY CODE', 'EXTERIOR'
-  ];
-
-  // Ensure line breaks before known fields
-  let formattedText = text;
-  fieldLabels.forEach((label) => {
-    const regex = new RegExp(`${label}:`, 'g');
-    formattedText = formattedText.replace(regex, `\n${label}:`);
-  });
-
-  // Split into lines, filter empty ones
-  const lines = formattedText.split('\n').map(line => line.trim()).filter(Boolean);
-
-  // Extract specific fields to show in same row
-  const groupOneLabels = ['FITS', 'LENGTH', 'CHEST', 'COLOUR'];
-  const groupOne = [];
-  const groupTwo = [];
-
-  lines.forEach((line) => {
-    const [label, ...rest] = line.split(':');
-    const value = rest.join(':').trim();
-    const cleanLabel = label.trim().toUpperCase();
-
-    if (groupOneLabels.includes(cleanLabel)) {
-      groupOne.push(`${cleanLabel}: ${value}`);
-    } else {
-      groupTwo.push({ label: cleanLabel, value });
+  const formatDescription = (text) => {
+    if (!text) return '';
+  
+    // Split the text into lines using colon-based detection
+    const entries = text
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.includes(':'))
+      .map(line => {
+        const [label, ...valueParts] = line.split(':');
+        const value = valueParts.join(':').trim();
+        return { label: label.trim(), value };
+      });
+  
+    // Group into 2–3 lines based on approx character count
+    const maxCharsPerLine = 120; // You can adjust this for more or fewer lines
+    const lines = [];
+    let currentLine = [];
+    let currentLength = 0;
+  
+    entries.forEach(({ label, value }, idx) => {
+      const entryText = `${label}: ${value}`;
+      const estimatedLength = entryText.length + 2; // include comma and space
+  
+      if (currentLength + estimatedLength > maxCharsPerLine && currentLine.length > 0) {
+        lines.push(currentLine);
+        currentLine = [];
+        currentLength = 0;
+      }
+  
+      currentLine.push({ label, value });
+      currentLength += estimatedLength;
+    });
+  
+    if (currentLine.length) {
+      lines.push(currentLine);
     }
-  });
-
-  return (
-    <div className="space-y-2 text-sm sm:text-base">
-      {groupOne.length > 0 && (
-        <div>
-          {groupOne.join(', ')}
-        </div>
-      )}
-      {groupTwo.map((item, index) => (
-        <div key={index}>
-          <strong>{item.label}:</strong> {item.value}
-        </div>
-      ))}
-    </div>
-  );
-};
+  
+    return (
+      <div className="space-y-2 text-sm sm:text-base leading-relaxed">
+        {lines.map((line, index) => (
+          <div key={index}>
+            {line.map(({ label, value }, i) => (
+              <span key={i}>
+                <strong>{label}:</strong> {value}
+                {i !== line.length - 1 && ', '}
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  };
+  
+  
 
   
   // Enhanced slider settings
@@ -499,36 +504,18 @@ function ProductDetails() {
   const API_URL = "/api";
 
   const handleAddToCart = async () => {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      toast.error('Please login to add the item in the cart', {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
-      });
-      window.scrollTo(0, 0);
-      navigate('/login');
-      return;
-    }
     if (product && selectedSize) {
       const selectedSizeObj = product.sizes.find(s => s.size === selectedSize);
       if (selectedSizeObj && selectedSizeObj.quantity >= quantity) {
         try {
           const response = await fetch(`${API_URL}/cart/add-item`, {
-          // const response = await fetch(`http://91.203.135.152:2001/api/cart/add-item`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               product_id: product._id,
-              size_id: product._id, // Assuming size_id is the same as size for simplicity
+              size_id: product._id,
               size: selectedSize,
               quantity: parseInt(quantity, 10),
               price: product.price,
