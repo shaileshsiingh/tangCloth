@@ -641,7 +641,7 @@ function AddProduct() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Price*
+                Price
               </label>
               <input
                 type="number"
@@ -650,13 +650,28 @@ function AddProduct() {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
                 min="0"
-                required
+                placeholder="Regular price"
               />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Discount Price (optional)
+                Estimated Price
+              </label>
+              <input
+                type="number"
+                name="estimated_price"
+                value={formData.estimated_price}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                min="0"
+                placeholder="Original market price"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Discount Price
               </label>
               <input
                 type="number"
@@ -665,19 +680,7 @@ function AddProduct() {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
                 min="0"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Material (optional)
-              </label>
-              <input
-                type="text"
-                name="material"
-                value={formData.material}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Special offer price"
               />
             </div>
           </div>
@@ -692,6 +695,21 @@ function AddProduct() {
               onChange={handleInputChange}
               rows="4"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Product description..."
+            ></textarea>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Additional Information
+            </label>
+            <textarea
+              name="additionalInfo"
+              value={formData.additionalInfo}
+              onChange={handleInputChange}
+              rows="4"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Any additional details about the product..."
             ></textarea>
           </div>
         </div>
