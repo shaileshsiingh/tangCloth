@@ -621,10 +621,10 @@ function ProductDetails() {
                   </Slider>
                 </div>
                 <div className="absolute top-4 right-4 z-10">
-                  <button 
-                    className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
-                    onClick={(e) => {
-                      e.stopPropagation();
+<button 
+                        className="bg-black rounded-full p-2 shadow-md hover:bg-gray-800"
+                        onClick={(e) => {
+                          e.stopPropagation();
                       const token = localStorage.getItem('authToken');
                       if (!token) {
                         toast.error('Please login to add the item to wishlist', {
@@ -640,21 +640,21 @@ function ProductDetails() {
                         navigate('/login');
                         return;
                       }
-                      addToWishlist(product);
-                    }}
-                    title="Add to Wishlist"
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      strokeWidth={1.5} 
-                      stroke="white" 
-                      className="w-5 h-5"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                    </svg>
-                  </button>
+                          addToWishlist(product);
+                        }}
+                        title="Add to Wishlist"
+                      >
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          strokeWidth={1.5} 
+                          stroke="white" 
+                          className="w-5 h-5"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                      </button>    
                 </div>
               </div>
             ) : (
@@ -968,7 +968,13 @@ function ProductDetails() {
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Type</span>
-                        <span className="font-medium">{product?.type?.toUpperCase() || "Not Specified"}</span>
+                        <span className="font-medium">
+                          {product?.sub_sub_category_id ? 
+                            subSubcategories.find(sub => sub.id === product.sub_sub_category_id)?.name.toUpperCase() || 
+                            "Not Specified" : 
+                            "Not Specified"
+                          }
+                        </span>
                       </div>
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Color</span>
@@ -977,8 +983,17 @@ function ProductDetails() {
                     </div>
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 border-b pb-2">
-                        <span className="text-gray-600">Additional Information</span>
-                        <span className="font-medium">{product?.additionalInfo || "No additional information"}</span>
+                        <span className="text-gray-600">Description</span>
+                        <div className="space-y-1">
+                          {product?.description?.split('\n').slice(0, 3).map((point, index) => (
+                            <span key={index} className="block">
+                              • {point.trim()}
+                            </span>
+                          ))}
+                          {product?.description?.split('\n').length > 3 && (
+                            <span className="text-sm text-gray-500">+ {product.description.split('\n').length - 3} more points</span>
+                          )}
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Condition</span>

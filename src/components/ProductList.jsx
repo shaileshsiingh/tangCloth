@@ -249,11 +249,11 @@ function ProductList() {
         setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
         console.log('Total products loaded:', allProducts.length);
       }
-    } catch (error) {
+      } catch (error) {
       console.error('Error loading products:', error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       setDataLoaded(true);
     }
   }, []);
@@ -757,7 +757,7 @@ function ProductList() {
         setBrandsLoading(true);
         const token = localStorage.getItem('authToken');
 
-        const response = await fetch(`${API_URL}/brand/get-brands`, {
+                const response = await fetch(`${API_URL}/brand/get-brands`, {
               // const response = await fetch(`http://91.203.135.152:2001/brand/get-brands`,{
 
           headers: {
@@ -955,119 +955,119 @@ function ProductList() {
           <div className="sticky top-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-serif tracking-wide">FILTERS</h2>
-              <button 
+            <button 
                 onClick={() => {
                   window.scrollTo(0, 0);
                   resetFilters();
                 }}
                 className="px-3 py-1 bg-gray-100 text-black text-xs rounded hover:bg-gray-200 transition-all duration-300"
-              >
-                Reset All
-              </button>
-            </div>
-            
+            >
+              Reset All
+            </button>
+          </div>
+          
             <div className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Categories</h3>
                 <ul className="space-y-1">
-                  {Object.entries(categories).map(([key, value]) => (
+              {Object.entries(categories).map(([key, value]) => (
                     <li key={key}>
-                      <button
+                  <button
                         className={`text-left w-full text-sm py-1 ${selectedCategory === key ? 'font-bold' : ''}`}
                         onClick={() => {
                           window.scrollTo(0, 0);
                           handleCategoryChange(key);
                         }}
-                      >
-                        {value}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  >
+                    {value}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
               
               <hr className="border-gray-200" />
-              
-              {renderSubcategories()}
-              {renderSubSubcategories()}
-              
+          
+          {renderSubcategories()}
+          {renderSubSubcategories()}
+          
               <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Price Range</h3>
-                <div className="flex justify-between mb-2">
-                  <input
-                    type="number"
-                    value={priceRange[0]}
-                    onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+            <div className="flex justify-between mb-2">
+              <input
+                type="number"
+                value={priceRange[0]}
+                onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
                     className="w-2/5 border p-1 mr-2 text-sm rounded"
-                    min="0"
-                    max="18000"
-                  />
-                  <input
-                    type="number"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                min="0"
+                max="18000"
+              />
+              <input
+                type="number"
+                value={priceRange[1]}
+                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
                     className="w-2/5 border p-1 text-sm rounded"
-                    min="0"
-                    max="18000"
-                  />
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="18000"
-                  value={priceRange[1]}
-                  onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                min="0"
+                max="18000"
+              />
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="18000"
+              value={priceRange[1]}
+              onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
                   className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                />
+            />
                 <div className="flex justify-between text-xs mt-1">
                   <span>₹{priceRange[0]}</span>
-                  <span>₹{priceRange[1]}</span>
-                </div>
-              </div>
-              
+              <span>₹{priceRange[1]}</span>
+            </div>
+          </div>
+          
               <hr className="border-gray-200" />
               
               <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Color</h3>
-                <select
-                  value={selectedColor || ''}
-                  onChange={(e) => setSelectedColor(e.target.value || null)}
+            <select
+              value={selectedColor || ''}
+              onChange={(e) => setSelectedColor(e.target.value || null)}
                   className="w-full p-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
-                >
-                  <option value="">All Colors</option>
-                  {popularColors.map(color => (
-                    <option key={color} value={color}>
-                      {color}
-                    </option>
-                  ))}
-                </select>
-                {selectedColor && (
-                  <div className="mt-2 flex items-center">
-                    <div 
+            >
+              <option value="">All Colors</option>
+              {popularColors.map(color => (
+                <option key={color} value={color}>
+                  {color}
+                </option>
+              ))}
+            </select>
+            {selectedColor && (
+              <div className="mt-2 flex items-center">
+                <div 
                       className="w-3 h-3 rounded-full mr-2" 
-                      style={{backgroundColor: selectedColor.toLowerCase()}}
-                    />
+                  style={{backgroundColor: selectedColor.toLowerCase()}}
+                />
                     <span className="text-xs">{selectedColor}</span>
-                    <button 
+                <button 
                       onClick={() => {
                         window.scrollTo(0, 0);
                         setSelectedColor(null);
                       }} 
-                      className="ml-2 text-xs text-gray-500 hover:text-black"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                )}
+                  className="ml-2 text-xs text-gray-500 hover:text-black"
+                >
+                  ✕
+                </button>
               </div>
-              
+            )}
+          </div>
+          
               <hr className="border-gray-200" />
               
               <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Size</h3>
                 <div className="flex flex-wrap gap-2">
-                  {sizes.map((size) => (
-                    <button
+              {sizes.map((size) => (
+                  <button
                       key={size}
                       className={`px-2 py-1 text-xs rounded ${
                         selectedSize === size 
@@ -1078,54 +1078,54 @@ function ProductList() {
                         window.scrollTo(0, 0);
                         setSelectedSize(selectedSize === size ? '' : size);
                       }}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                  >
+                    {size}
+                  </button>
+              ))}
                 </div>
-              </div>
-              
+          </div>
+          
               <hr className="border-gray-200" />
               
               <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Brand</h3>
-                {brandsLoading ? (
-                  <p className="text-sm text-gray-500">Loading brands...</p>
-                ) : (
-                  <>
-                    <select
-                      value={selectedBrand || ''}
-                      onChange={(e) => setSelectedBrand(e.target.value || null)}
+            {brandsLoading ? (
+              <p className="text-sm text-gray-500">Loading brands...</p>
+            ) : (
+              <>
+                <select
+                  value={selectedBrand || ''}
+                  onChange={(e) => setSelectedBrand(e.target.value || null)}
                       className="w-full p-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
-                    >
-                      <option value="">All Brands</option>
-                      {brands.map(brand => (
-                        <option key={brand._id} value={brand._id}>
-                          {brand.name.toUpperCase()}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedBrand && (
-                      <div className="mt-2 flex items-center">
+                >
+                  <option value="">All Brands</option>
+                  {brands.map(brand => (
+                    <option key={brand._id} value={brand._id}>
+                      {brand.name.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+                {selectedBrand && (
+                  <div className="mt-2 flex items-center">
                         <span className="text-xs">
-                          {brands.find(b => b._id === selectedBrand)?.name || 'Selected Brand'}
-                        </span>
-                        <button 
+                      {brands.find(b => b._id === selectedBrand)?.name || 'Selected Brand'}
+                    </span>
+                    <button 
                           onClick={() => {
                             window.scrollTo(0, 0);
                             setSelectedBrand(null);
                           }} 
-                          className="ml-2 text-xs text-gray-500 hover:text-black"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    )}
-                    {brands.length === 0 && !brandsLoading && (
-                      <p className="text-xs text-gray-500 mt-1">No brands available</p>
-                    )}
-                  </>
+                      className="ml-2 text-xs text-gray-500 hover:text-black"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 )}
+                {brands.length === 0 && !brandsLoading && (
+                      <p className="text-xs text-gray-500 mt-1">No brands available</p>
+                )}
+              </>
+            )}
               </div>
 
               <hr className="border-gray-200" />
@@ -1270,7 +1270,7 @@ function ProductList() {
                         <div className="flex flex-col">
                           <span className="text-gray-500 text-sm">
                             Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
-                          </span>
+                            </span>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-gray-900 font-medium">
                               Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
@@ -1280,7 +1280,7 @@ function ProductList() {
                                 {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
                               </span>
                             )}
-                          </div>
+                        </div>
                         </div>
                       ) : (
                         <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
@@ -1332,9 +1332,9 @@ function ProductList() {
             <h3 className="text-lg font-medium mb-2">Personalized Service</h3>
             <p className="text-gray-600">Our team is available to assist with any inquiries or special requests.</p>
           </div>
-        </div>
-      </div>
-      
+              </div>
+            </div>
+            
       {/* Enhanced Services Section */}
       <div className="bg-white py-12 rounded-lg shadow-sm">
         <div className="container mx-auto px-4">
@@ -1386,9 +1386,9 @@ function ProductList() {
               <div>
                 <h3 className="font-medium text-lg">Premium Quality</h3>
                 <p className="text-gray-600 text-sm">Only The Best Products</p>
-              </div>
-            </div>
           </div>
+        </div>
+      </div>
         </div>
       </div>
       

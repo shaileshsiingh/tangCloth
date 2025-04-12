@@ -193,7 +193,7 @@ function FeaturedProducts() {
                         <span className="text-xs text-gray-700">Our Price</span>
                         <span className="text-gray-800 font-medium">
                           ₹{product.discount_price || product.price}
-                        </span>
+                      </span>
                       </div>
                     ) : (
                       <p className="text-gray-800 font-medium">₹{typeof product.price === 'number' ? product.price : product.price?.toFixed(2) || 0}</p>
