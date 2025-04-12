@@ -1107,24 +1107,34 @@ function ProductDetails() {
                         </span>
                       </div>
                       <div className="grid grid-cols-2 border-b pb-2">
-                        <span className="text-gray-600">Color</span>
-                        <span className="font-medium">{product.color || "Multiple"}</span>
+                        <span className="text-gray-600">Additional Info</span>
+                        <span className="font-medium">{product?.additionalInfo || "Not Specified"}</span>
+                      </div>
+                      <div className="grid grid-cols-2 border-b pb-2">
+                        <span className="text-gray-600">Description</span>
+                        <span className="font-medium">
+                          {(() => {
+                            const desc = product?.description || '';
+                            // Extract key information and format in a single line
+                            const fits = desc.match(/FITS:\s*([^\n]+)/i)?.[1]?.trim() || '';
+                            const length = desc.match(/LENGTH:\s*([^\n]+)/i)?.[1]?.trim() || '';
+                            const chest = desc.match(/CHEST:\s*([^\n]+)/i)?.[1]?.trim() || '';
+                            const color = desc.match(/COLOUR:\s*([^\n]+)/i)?.[1]?.trim() || '';
+                            
+                            const formattedInfo = [
+                              fits && `FITS: ${fits}`,
+                              length && `LENGTH: ${length}`,
+                              chest && `CHEST: ${chest}`,
+                              color && `COLOUR: ${color}`
+                            ].filter(Boolean).join(', ');
+                            
+                            return formattedInfo || "Not Specified";
+                          })()}
+                        </span>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <div className="grid grid-cols-2 border-b pb-2">
-                        <span className="text-gray-600">Description</span>
-                        <div className="space-y-1">
-                          {product?.description?.split('\n').slice(0, 3).map((point, index) => (
-                            <span key={index} className="block">
-                              • {point.trim()}
-                            </span>
-                          ))}
-                          {product?.description?.split('\n').length > 3 && (
-                            <span className="text-sm text-gray-500">+ {product.description.split('\n').length - 3} more points</span>
-                          )}
-                        </div>
-                      </div>
+                      
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Condition</span>
                         <span className="font-medium">{product?.condition?.toUpperCase() || "Not Specified"}</span>
