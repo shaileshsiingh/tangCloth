@@ -5,36 +5,28 @@ import { motion } from "framer-motion";
 function CategoryBanner() {
   const navigate = useNavigate();
 
-  // Fixed subcategory mapping with correct IDs
   const subcategoryMappings = {
-    // Accessories subcategories by main category
     accessories: {
-      men: "67d827fd03c676492cbbeb3c",    // Men's Accessories
-      women: "67d8277e03c676492cbbeb39",  // Women's All Accessories
-      kids: "67d828d103c676492cbbeb48"    // Kids' Accessories
+      men: "67d827fd03c676492cbbeb3c",
+      women: "67d8277e03c676492cbbeb39",
+      kids: "67d828d103c676492cbbeb48"
     },
-    // Clothing subcategories by main category
     clothing: {
-      men: "67d8282003c676492cbbeb40",    // Men's Clothing
-      women: "67d8276703c676492cbbeb33",  // Women's Clothing
-      kids: "67d828ed03c676492cbbeb4d"    // Kids' Clothing
+      men: "67d8282003c676492cbbeb40",
+      women: "67d8276703c676492cbbeb33",
+      kids: "67d828ed03c676492cbbeb4d"
     },
-    // Footwear subcategories by main category
     footwear: {
-      men: "67d8283003c676492cbbeb44",    // Men's Footwear
-      women: "67d8276003c676492cbbeb30",  // Women's Footwear
+      men: "67d8283003c676492cbbeb44",
+      women: "67d8276003c676492cbbeb30"
     },
-    // Special case - Women's Bags
     bags: {
-      women: "67d826ef03c676492cbbeb2d"   // Women's All Bags
+      women: "67d826ef03c676492cbbeb2d"
     }
   };
 
-  // Function to navigate to subcategory across all categories
   const handleSubcategoryTypeClick = (subcategoryType) => {
-    // Simply log what was clicked and navigate to shop
     window.scrollTo(0, 0);
-    console.log(`User clicked on ${subcategoryType} category`);
     navigate('/shop');
   };
 
@@ -66,34 +58,36 @@ function CategoryBanner() {
   ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 h-[600px] gap-2">
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 px-2 sm:px-4 py-4">
       {categories.map((category, index) => (
         <motion.div
           key={category.id}
-          className="relative group overflow-hidden cursor-pointer rounded-xl"
+          className="relative group cursor-pointer rounded-xl overflow-hidden aspect-[4/5]"
           onClick={() => handleSubcategoryTypeClick(category.id)}
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: index * 0.2 }}
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
           <motion.img
             src={category.image}
             alt={category.title}
-            className="w-full h-full object-cover transition-transform duration-500"
-            whileHover={{ scale: 1.1 }}
+            className="w-full h-full object-cover"
+            whileHover={{ scale: 1.05 }}
           />
-          <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-50 transition duration-500" />
+          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition duration-500" />
           <motion.div
-            className="absolute bottom-8 left-8 text-white"
+            className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.3 }}
           >
-            <h3 className="text-xl font-semibold mb-2">{category.title}</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">
+              {category.title}
+            </h3>
             <motion.span
-              className="text-sm uppercase tracking-wider border-b-2 border-white pb-1"
+              className="text-xs sm:text-sm uppercase tracking-wider border-b-2 border-white pb-0.5"
               whileHover={{ letterSpacing: "2px" }}
             >
               Shop Now
