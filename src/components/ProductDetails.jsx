@@ -317,55 +317,57 @@ function ProductDetails() {
     fetchSubSubcategories();
   }, []);
   
-  const formatDescription = (text) => {
-    if (!text) return '';
-    
-    // First, add line breaks at key section boundaries
-    const formattedText = text
-      .replace("SIZE:", "\nSIZE:")
-      .replace("FITS:", "\nFITS:")
-      .replace("LENGTH:", "\nLENGTH:")
-      .replace("CHEST:", "\nCHEST:")
-      .replace("COLOUR:", "\nCOLOUR:")
-      .replace("AUTHENTICITY CODE:", "\nAUTHENTICITY CODE:")
-      .replace("EXTERIOR:", "\nEXTERIOR:")
-      .trim();
-    
-    // Split by newlines to handle each line
-    const lines = formattedText.split('\n');
-    
-    // Create a table component
-    return (
-      <table className="w-full border-collapse">
-        <tbody>
-          {lines.map((line, lineIndex) => {
-            // Skip empty lines
-            if (!line.trim()) return null;
-            
-            // Check if the line contains a colon
-            if (line.includes(':')) {
-              const [label, ...valueParts] = line.split(':');
-              const value = valueParts.join(':'); // Rejoin in case the value itself contains colons
-              
-              return (
-                <tr key={lineIndex} className="border-b">
-                  <td className="py-2 pr-4 font-bold align-top whitespace-nowrap">{label}:</td>
-                  <td className="py-2">{value.trim()}</td>
-                </tr>
-              );
-            } else {
-              // Return line as is if no colon (as full width row)
-              return (
-                <tr key={lineIndex} className="border-b">
-                  <td colSpan="2" className="py-2">{line}</td>
-                </tr>
-              );
-            }
-          })}
-        </tbody>
-      </table>
-    );
-  };
+ const formatDescription = (text) => {
+  if (!text) return '';
+
+  const fieldLabels = [
+    'SIZE', 'FITS', 'LENGTH', 'CHEST', 'COLOUR',
+    'AUTHENTICITY CODE', 'EXTERIOR'
+  ];
+
+  // Ensure line breaks before known fields
+  let formattedText = text;
+  fieldLabels.forEach((label) => {
+    const regex = new RegExp(`${label}:`, 'g');
+    formattedText = formattedText.replace(regex, `\n${label}:`);
+  });
+
+  // Split into lines, filter empty ones
+  const lines = formattedText.split('\n').map(line => line.trim()).filter(Boolean);
+
+  // Extract specific fields to show in same row
+  const groupOneLabels = ['FITS', 'LENGTH', 'CHEST', 'COLOUR'];
+  const groupOne = [];
+  const groupTwo = [];
+
+  lines.forEach((line) => {
+    const [label, ...rest] = line.split(':');
+    const value = rest.join(':').trim();
+    const cleanLabel = label.trim().toUpperCase();
+
+    if (groupOneLabels.includes(cleanLabel)) {
+      groupOne.push(`${cleanLabel}: ${value}`);
+    } else {
+      groupTwo.push({ label: cleanLabel, value });
+    }
+  });
+
+  return (
+    <div className="space-y-2 text-sm sm:text-base">
+      {groupOne.length > 0 && (
+        <div>
+          {groupOne.join(', ')}
+        </div>
+      )}
+      {groupTwo.map((item, index) => (
+        <div key={index}>
+          <strong>{item.label}:</strong> {item.value}
+        </div>
+      ))}
+    </div>
+  );
+};
+
   
   // Enhanced slider settings
   const sliderSettings = {
@@ -1110,28 +1112,7 @@ function ProductDetails() {
                         <span className="text-gray-600">Additional Info</span>
                         <span className="font-medium">{product?.additionalInfo || "Not Specified"}</span>
                       </div>
-                      <div className="grid grid-cols-2 border-b pb-2">
-                        <span className="text-gray-600">Description</span>
-                        <span className="font-medium">
-                          {(() => {
-                            const desc = product?.description || '';
-                            // Extract key information and format in a single line
-                            const fits = desc.match(/FITS:\s*([^\n]+)/i)?.[1]?.trim() || '';
-                            const length = desc.match(/LENGTH:\s*([^\n]+)/i)?.[1]?.trim() || '';
-                            const chest = desc.match(/CHEST:\s*([^\n]+)/i)?.[1]?.trim() || '';
-                            const color = desc.match(/COLOUR:\s*([^\n]+)/i)?.[1]?.trim() || '';
-                            
-                            const formattedInfo = [
-                              fits && `FITS: ${fits}`,
-                              length && `LENGTH: ${length}`,
-                              chest && `CHEST: ${chest}`,
-                              color && `COLOUR: ${color}`
-                            ].filter(Boolean).join(', ');
-                            
-                            return formattedInfo || "Not Specified";
-                          })()}
-                        </span>
-                      </div>
+                    
                     </div>
                     <div className="space-y-3">
                       
