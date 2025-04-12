@@ -978,7 +978,7 @@ function ProductDetails() {
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Additional Information</span>
-                        <span className="font-medium">{product?.additional_info || "No additional information"}</span>
+                        <span className="font-medium">{product?.additionalInfo || "No additional information"}</span>
                       </div>
                       <div className="grid grid-cols-2 border-b pb-2">
                         <span className="text-gray-600">Condition</span>

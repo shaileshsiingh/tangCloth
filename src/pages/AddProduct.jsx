@@ -13,19 +13,20 @@ function AddProduct() {
   
   // Product form state
   const [formData, setFormData] = useState({
+    product_name: '',
     category_id: '',
     subCategory_id: '',
     subSubCategory_id: '',
     brand_id: '',
-    product_name: '',
     color: '',
-    price: 0,
-    estimated_price: 0,
-    discount_price: 0,
-    sizes: [{ size: '', quantity: 0 }],
-    images: [],
+    price: '',
+    estimated_price: '',
+    discount_price: '',
+    sizes: [{ size: '', quantity: '' }],
     description: '',
-    condition: ''
+    additionalInfo: '',
+    condition: '',
+    tags: []
   });
   
   // State for categories, brands, etc.
@@ -496,22 +497,24 @@ function AddProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Basic validation
-    if (!formData.product_name || !formData.category_id || !formData.color || !formData.price) {
+    // Validate required fields
+    if (!formData.product_name || !formData.category_id || !formData.color) {
       toast.error('Please fill in all required fields');
       return;
     }
-    
+
+    // Validate at least one price is provided
+    if (!formData.price && !formData.estimated_price && !formData.discount_price) {
+      toast.error('Please provide at least one price');
+      return;
+    }
+
+    // Validate sizes
     if (formData.sizes.length === 0 || formData.sizes.some(s => !s.size || !s.quantity)) {
       toast.error('Please add at least one size with quantity');
       return;
     }
-    
-    if (productImages.length === 0) {
-      toast.error('Please upload at least one product image');
-      return;
-    }
-    
+
     try {
       setLoading(true);
       
@@ -535,39 +538,38 @@ function AddProduct() {
         brand_id: formData.brand_id,
         product_name: formData.product_name,
         color: formData.color,
-        price: Number(formData.price),
-        estimated_price: Number(formData.estimated_price) || undefined,
-        discount_price: Number(formData.discount_price) || undefined,
+        price: formData.price ? Number(formData.price) : undefined,
+        estimated_price: formData.estimated_price ? Number(formData.estimated_price) : undefined,
+        discount_price: formData.discount_price ? Number(formData.discount_price) : undefined,
         sizes: formData.sizes.map(size => ({
           size: size.size,
-          quantity: parseInt(size.quantity, 10)
+          quantity: Number(size.quantity)
         })),
         images: base64Images,
         description: formData.description,
+        additionalInfo: formData.additionalInfo,
         condition: formData.condition
       };
       
       console.log('Submitting product with payload:', payload);
       const response = await axios.post(`${API_URL}/product/add`, payload, {
-        // const response = await axios.post(`http://91.203.135.152:2001/api/product/add`, payload, {
-
         headers: {
           'Content-Type': 'application/json'
         }
       });
       
       if (response.data.success) {
- toast.success('Product added successfully', {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
-      });  
-            navigate('/shop');
+        toast.success('Product added successfully', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          style: {backgroundColor: 'black', color: 'white', borderRadius: '10px'}
+        });  
+        navigate('/shop');
       } else {
         toast.error(response.data.message || 'Failed to add product');
       }
