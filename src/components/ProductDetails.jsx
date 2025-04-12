@@ -320,48 +320,52 @@ function ProductDetails() {
   const formatDescription = (text) => {
     if (!text) return '';
   
-    // Split into original lines (including those with no colon but still valid info)
-    const rawLines = text
+    const lines = text
       .split('\n')
       .map(line => line.trim())
       .filter(line => line.length > 0);
   
-    // Format each line individually
-    const formattedLines = rawLines.map((line) => {
-      const [label, ...valueParts] = line.split(':');
-      const value = valueParts.join(':').trim();
-      const hasValue = valueParts.length > 0;
+    const result = [];
+    let currentLine = [];
   
-      return hasValue ? (
-        <span key={line}>
-          <strong>{label.trim()}:</strong> {value},
-        </span>
-      ) : (
-        <span key={line}>
-          <strong>{label.trim()}:</strong>,
-        </span>
-      );
+    lines.forEach((line, idx) => {
+      const hasColon = line.includes(':');
+      const [label, ...rest] = line.split(':');
+      const value = rest.join(':').trim();
+  
+      const isSectionHeader = line.endsWith(':') || (!value && hasColon);
+  
+      if (isSectionHeader) {
+        // Flush current line if not empty
+        if (currentLine.length) {
+          result.push(currentLine.join(', ') + ',');
+          currentLine = [];
+        }
+        // Push the header in bold with line break
+        result.push(`<strong>${label.trim()}:</strong>`);
+      } else if (hasColon) {
+        currentLine.push(`<strong>${label.trim()}:</strong> ${value}`);
+      } else {
+        currentLine.push(`${line}`);
+      }
     });
   
-    // Group lines into 2–3 blocks for better UI readability
-    const groupCount = 3;
-    const itemsPerGroup = Math.ceil(formattedLines.length / groupCount);
-    const grouped = [];
-  
-    for (let i = 0; i < formattedLines.length; i += itemsPerGroup) {
-      grouped.push(formattedLines.slice(i, i + itemsPerGroup));
+    if (currentLine.length) {
+      result.push(currentLine.join(', ') + ',');
     }
   
     return (
-      <div className="space-y-2 text-sm sm:text-base leading-relaxed">
-        {grouped.map((group, index) => (
-          <div key={index} className="flex flex-wrap gap-x-2">
-            {group}
-          </div>
+      <div className="space-y-1 text-sm sm:text-base leading-relaxed">
+        {result.map((item, index) => (
+          <div
+            key={index}
+            dangerouslySetInnerHTML={{ __html: item }}
+          />
         ))}
       </div>
     );
   };
+  
   
   
 
