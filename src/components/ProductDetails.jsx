@@ -16,6 +16,111 @@ import { Fragment } from 'react';
 import emailjs from '@emailjs/browser';
 import axios from 'axios';
 
+// Import subSubcategoryStructure from AddProduct
+const subSubcategoryStructure = {
+  // Women's All Bags
+  '67d826ef03c676492cbbeb2d': [
+    { id: '67e1a5742328f40a1515b803', name: 'Tote Bags' },
+    { id: '67e1a6292328f40a1515b853', name: 'Shoulder Bags' },
+    { id: '67e1a6342328f40a1515b858', name: 'Clutch' },
+    { id: '67e1a63e2328f40a1515b85d', name: 'Sling Bags' },
+    { id: '67e1a6482328f40a1515b862', name: 'Mini Bags' },
+    { id: '67e5b3c25eb5e80a2ac15b95', name: 'Satchel Bags' },
+    { id: '67e5b3cc5eb5e80a2ac15b9a', name: 'Handbags' },
+    { id: '67e5b3d65eb5e80a2ac15b9f', name: 'Beltbags' },
+    { id: '67e5b3e05eb5e80a2ac15ba4', name: 'Wristlet' }
+  ],
+  
+  // Women's Clothing
+  '67d8276703c676492cbbeb33': [
+    { id: '67e5b3f35eb5e80a2ac15ba9', name: 'Dresses & Gowns' },
+    { id: '67e5b3fe5eb5e80a2ac15bae', name: 'Skirts & Shorts' },
+    { id: '67e5b4085eb5e80a2ac15bb3', name: 'T Shirts & Shirts' },
+    { id: '67e5b4125eb5e80a2ac15bb8', name: 'Trousers & Denims' },
+    { id: '67e5b41c5eb5e80a2ac15bbd', name: 'Jackets & Outerwear' },
+    { id: '67e5b4275eb5e80a2ac15bc2', name: 'Jumpsuits' },
+    { id: '67e5b4325eb5e80a2ac15bc7', name: 'Co-Ord Sets Womens' },
+    { id: '67e5b43c5eb5e80a2ac15bcc', name: 'Swim Suit' }
+  ],
+  
+  // Women's Footwear
+  '67d8276003c676492cbbeb30': [
+    { id: '67e5b4465eb5e80a2ac15bd1', name: 'Boots' },
+    { id: '67e5b4505eb5e80a2ac15bd6', name: 'Espadrilles & Loafers' },
+    { id: '67e5b45c5eb5e80a2ac15bdb', name: 'Flats & Slippers' },
+    { id: '67d8290a03c676492cbbeb59', name: 'Heels & Wedges' },
+    { id: '67e5b4705eb5e80a2ac15be5', name: 'Peeptoes' },
+    { id: '67e5b47a5eb5e80a2ac15bea', name: 'Sneakers' }
+  ],
+  
+  // Women's All Accessories
+  '67d8277e03c676492cbbeb39': [
+    { id: '67e5b4845eb5e80a2ac15bef', name: 'Belts' },
+    { id: '67e5b48f5eb5e80a2ac15bf4', name: 'Watches' },
+    { id: '67e5b4995eb5e80a2ac15bf9', name: 'Shawls & Scarves' },
+    { id: '67e5b4a35eb5e80a2ac15bfe', name: 'Sunglasses' },
+    { id: '67e5b4ae5eb5e80a2ac15c03', name: 'Small Accessories' }
+  ],
+  
+  // Women's Fine Jewellery
+  '67d8277203c676492cbbeb36': [
+    { id: '67e5b4b85eb5e80a2ac15c08', name: 'Earrings' },
+    { id: '67e5b4c25eb5e80a2ac15c0d', name: 'Rings' },
+    { id: '67e5b4cd5eb5e80a2ac15c12', name: 'Charms & Bracelets' },
+    { id: '67e5b4d75eb5e80a2ac15c17', name: 'Necklaces' }
+  ],
+  
+  // Men's Accessories
+  '67d827fd03c676492cbbeb3c': [
+    { id: '67e5b4e35eb5e80a2ac15c1c', name: 'Belts' },
+    { id: '67e5b4ed5eb5e80a2ac15c21', name: 'Sunglasses' },
+    { id: '67e5b4f75eb5e80a2ac15c26', name: 'Scarves' },
+    { id: '67e5b5015eb5e80a2ac15c2b', name: 'Caps' }
+  ],
+  
+  // Men's Clothing
+  '67d8282003c676492cbbeb40': [
+    { id: '67e1a5812328f40a1515b808', name: 'Shirts' },
+    { id: '67e1a58e2328f40a1515b80d', name: 'Track Suits' },
+    { id: '67e1a5982328f40a1515b812', name: 'T-Shirts' },
+    { id: '67e1a5a42328f40a1515b817', name: 'Trousers & Denims' },
+    { id: '67e1a5b32328f40a1515b81c', name: 'Jackets & Outerwear' },
+    { id: '67e1a5bd2328f40a1515b821', name: 'Shorts' }
+  ],
+  
+  // Men's Footwear
+  '67d8283003c676492cbbeb44': [
+    { id: '67e1a5c92328f40a1515b826', name: 'Boots' },
+    { id: '67e1a5d52328f40a1515b82b', name: 'Espadrilles' },
+    { id: '67e1a5e02328f40a1515b830', name: 'Loafers & Moccasins' },
+    { id: '67e1a5ec2328f40a1515b835', name: 'Sliders & Slippers' },
+    { id: '67e1a5f52328f40a1515b83a', name: 'Sneakers' }
+  ],
+  
+  // Kids' Accessories
+  '67d828d103c676492cbbeb48': [
+    { id: '67e5b50b5eb5e80a2ac15c30', name: 'Belts' },
+    { id: '67e5b5155eb5e80a2ac15c35', name: 'Caps' }
+  ],
+  
+  // Kids' Clothing
+  '67d828ed03c676492cbbeb4d': [
+    { id: '67e5b51f5eb5e80a2ac15c3a', name: 'T Shirts & Shirts' },
+    { id: '67e5b5295eb5e80a2ac15c3f', name: 'Denims & Trousers' },
+    { id: '67e5b5335eb5e80a2ac15c44', name: 'Shorts & Skirts' },
+    { id: '67e5b53d5eb5e80a2ac15c49', name: 'Playsuit & Jumpsuit' },
+    { id: '67e5b5475eb5e80a2ac15c4e', name: 'Onesies & Rompers' },
+    { id: '67e5b5515eb5e80a2ac15c53', name: 'Jackets & Outerwear' },
+    { id: '67e5b55b5eb5e80a2ac15c58', name: 'Dresses' },
+    { id: '67e5b5655eb5e80a2ac15c5d', name: 'Co-Ords Sets' }
+  ],
+  
+  // Kids' Footwear
+  '67d8292603c676492cbbeb65': [
+    { id: '67e5b56f5eb5e80a2ac15c62', name: 'Shoes' }
+  ]
+};
+
 // Helper function to convert title to Title Case
 function toTitleCase(str) {
   return str.replace(
@@ -192,6 +297,25 @@ function ProductDetails() {
   const [isZoomed, setIsZoomed] = useState(false);
   // Create a ref for the slider
   const sliderRef = React.useRef(null);
+  
+  // Add state for subSubcategories
+  const [subSubcategories, setSubSubcategories] = useState([]);
+  
+  // Add useEffect to fetch subSubcategories
+  useEffect(() => {
+    const fetchSubSubcategories = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/subSubCategory/sub-sub-category`);
+        if (response.data.success) {
+          setSubSubcategories(response.data.data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching sub-subcategories:', error);
+      }
+    };
+    
+    fetchSubSubcategories();
+  }, []);
   
   const formatDescription = (text) => {
     if (!text) return '';
@@ -776,7 +900,7 @@ function ProductDetails() {
                   
                   <div className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     <button 
                       onClick={() => setConditionModalOpen(true)}
@@ -970,8 +1094,14 @@ function ProductDetails() {
                         <span className="text-gray-600">Type</span>
                         <span className="font-medium">
                           {product?.sub_sub_category_id ? 
-                            subSubcategories.find(sub => sub.id === product.sub_sub_category_id)?.name.toUpperCase() || 
-                            "Not Specified" : 
+                            (() => {
+                              // Find the sub-sub-category in the structure
+                              for (const subCategories of Object.values(subSubcategoryStructure)) {
+                                const found = subCategories.find(sub => sub.id === product.sub_sub_category_id);
+                                if (found) return found.name.toUpperCase();
+                              }
+                              return "Not Specified";
+                            })() : 
                             "Not Specified"
                           }
                         </span>
