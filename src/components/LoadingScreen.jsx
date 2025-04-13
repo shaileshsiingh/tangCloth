@@ -8,7 +8,7 @@ function LoadingScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
-    }, 2500); // Reduced to 2.5 seconds
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -87,13 +87,13 @@ function LoadingScreen() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="flex items-center"
+        className="flex items-center px-4"
       >
         {text.split('').map((letter, index) => (
           <motion.span
             key={`letter-${index}`}
             variants={letterVariants}
-            className="text-5xl font-bold inline-block tracking-wider"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold inline-block tracking-wider"
             style={{ 
               color: '#000000',
               fontFamily: "'Playfair Display', serif",
@@ -110,7 +110,7 @@ function LoadingScreen() {
               key={`dot-${index}`}
               variants={dotVariants}
               animate={pulseAnimation}
-              className="inline-block text-5xl font-bold mx-0.5"
+              className="inline-block text-3xl sm:text-4xl md:text-5xl font-bold mx-0.5"
               style={{ 
                 color: '#000000',
                 fontFamily: "'Playfair Display', serif",

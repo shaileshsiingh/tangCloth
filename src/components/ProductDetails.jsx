@@ -686,22 +686,25 @@ function ProductDetails() {
     >
       {/* Enhanced Breadcrumb */}
       <div className="bg-gray-50 py-4">
-        <div className="container mx-auto px-4">
-          <nav className="text-sm">
-            <ol className="list-none p-0 inline-flex items-center">
-              <li className="flex items-center">
-                <Link to="/" className="text-gray-500 hover:text-black transition-colors">Home</Link>
-                <span className="mx-2 text-gray-400">/</span>
-              </li>
-              <li className="flex items-center">
-                <Link to="/shop" className="text-gray-500 hover:text-black transition-colors">Shop</Link>
-                <span className="mx-2 text-gray-400">/</span>
-              </li>
-              <li className="text-gray-800 font-medium truncate max-w-xs">{formattedProductName}</li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+  <div className="container mx-auto px-4">
+    <nav className="text-sm">
+      <ol className="flex flex-wrap items-center gap-x-1 gap-y-2 text-gray-500">
+        <li className="flex items-center">
+          <Link to="/" className="hover:text-black transition-colors">Home</Link>
+          <span className="mx-2 text-gray-400">/</span>
+        </li>
+        <li className="flex items-center">
+          <Link to="/shop" className="hover:text-black transition-colors">Shop</Link>
+          <span className="mx-2 text-gray-400">/</span>
+        </li>
+        <li className="text-gray-800 font-medium max-w-full truncate overflow-hidden text-ellipsis whitespace-nowrap">
+          {formattedProductName}
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
 
       {/* Product Section */}
       <div className="container mx-auto px-4 py-12">
