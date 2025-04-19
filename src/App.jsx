@@ -46,8 +46,7 @@ import Layway from './pages/Layway'
 import Authentication from './pages/Authentication';
 import ProductRequestForm from './components/ProductRequestForm';
 import AbandonedCartReminder from './components/AbandonedCartReminder';
-
-
+import SellOnBanner from './components/SellOnBanner';
 
 function App() {
    // Add scroll restoration effect
@@ -93,11 +92,7 @@ function App() {
           <Route path="/layaway" element={<Layway />} />
           <Route path="/authentication" element={<Authentication />} />
           <Route path="/request-product" element={<ProductRequestForm />} />
-
-
-
-
-
+          <Route path="/sell-on-banner" element={<SellOnBanner />} />
 
           <Route path="/404" element={
             <div className="min-h-screen flex items-center justify-center">

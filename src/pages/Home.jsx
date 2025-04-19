@@ -16,6 +16,7 @@ import PrelovedLuxury from '../components/PrelovedLuxury'
 import BrandSection from '../components/BrandSection';
 import ServicesSection from '../components/ServiceSection';
 import TangerineLuxuryHeader from '../components/TangerineLuxuryHeader';
+import SellOnBanner from '../components/SellOnBanner';
 
 function Home() {
   const [showPopup, setShowPopup] = useState(false);
@@ -80,7 +81,7 @@ function Home() {
         <BrandSection/>
         <ServicesSection/>
         <FeaturedProducts />
-
+<SellOnBanner/>
 
         {/* <PrelovedLuxury /> 
           */}
