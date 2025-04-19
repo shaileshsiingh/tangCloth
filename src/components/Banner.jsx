@@ -68,7 +68,7 @@ function Banner() {
                 onClick={() => navigate('/shop')}
                 className="bg-black text-white px-6 sm:px-10 py-3 sm:py-4 border border-white rounded-lg hover:bg-white hover:text-black hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 ease-in-out text-sm sm:text-base"
               >
-                SHOP COLLECTION
+                BUY AND SELL
               </motion.button>
             </div>
           </div>
