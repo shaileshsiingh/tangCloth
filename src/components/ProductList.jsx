@@ -1220,7 +1220,7 @@ function ProductList() {
           )}
 
           <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -1229,7 +1229,7 @@ function ProductList() {
               displayedProducts.map((product) => (
                 <motion.div
                   key={product._id}
-                  className="overflow-hidden cursor-pointer group relative bg-white border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 w-full"
+                  className="w-full bg-[#fafafa] border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 overflow-hidden cursor-pointer group relative"
                   whileHover={{ scale: 1.02 }}
                   onClick={(e) => {
                     window.scrollTo(0, 0);
@@ -1237,7 +1237,7 @@ function ProductList() {
                     navigate(`/product/${product._id}`, { state: { product } });
                   }}
                 >
-                  <div className="relative aspect-square">
+                  <div className="relative aspect-square w-full">
                     <img
                       src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
                       alt={product.product_name}
@@ -1297,14 +1297,14 @@ function ProductList() {
                     </button>
                   </div>
                   
-                  <div className="p-5">
+                  <div className="p-5 bg-white">
                     <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
                     <div className="mt-3 space-y-1.5">
                       {product.estimated_price ? (
                         <div className="flex flex-col">
                           <span className="text-gray-500 text-sm">
                             Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
-                            </span>
+                          </span>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-gray-900 font-medium">
                               Our Price: ₹{(product.discount_price || product.price).toLocaleString()}

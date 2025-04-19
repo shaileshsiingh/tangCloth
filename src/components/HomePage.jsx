@@ -93,7 +93,7 @@ function HomePage() {
        
         
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           initial={{ opacity: 0, y: -50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, ease: 'easeOut' }}
@@ -101,15 +101,15 @@ function HomePage() {
           {products.slice(0, 4).map((product) => (
             <motion.div
               key={product._id}
-              className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-200"
+              className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
               whileHover={{ y: -5 }}
               onClick={() => handleProductClick(product)}
             >
-              <div className="relative pb-[120%] bg-gray-50">
+              <div className="relative pb-[120%] w-full">
                 <img 
                   src={product.images?.[0] || 'https://via.placeholder.com/400'}
                   alt={product.product_name}
-                  className="absolute top-0 left-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
                 {product.condition && (
@@ -118,7 +118,7 @@ function HomePage() {
                   </span>
                 )}
                 {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <span className="absolute top-10 left-2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-md">
+                  <span className="absolute top-10 left-2 bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded shadow-md">
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
@@ -127,7 +127,7 @@ function HomePage() {
                 </div>
                 <div className="absolute right-2 top-14 flex flex-col gap-2">
                   <motion.button 
-                    className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
@@ -147,12 +147,10 @@ function HomePage() {
                     </svg>
                   </motion.button>
                   <motion.button 
-                    className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
-                      e.stopPropagation();
-                      // Quick view functionality
                       e.stopPropagation();
                       handleProductClick(product);
                     }}
@@ -170,12 +168,12 @@ function HomePage() {
                   </motion.button>
                 </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-70 flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
+              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-90 backdrop-blur-sm flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full py-4 text-white font-medium transition-colors text-center"
-                      onClick={(e) => {
+                  className="w-full py-4 text-white font-medium tracking-wide text-center"
+                  onClick={(e) => {
                     e.stopPropagation();
                     handleProductClick(product);
                   }}
@@ -183,22 +181,22 @@ function HomePage() {
                   SHOP NOW
                 </motion.button>
               </div>
-              <div className="p-5 text-center">
-                <h3 className="text-base font-medium mb-1 transition-all duration-200 group-hover:text-black group-hover:font-bold">
+              <div className="p-5 bg-white">
+                <h3 className="text-base font-medium mb-1 truncate transition-all duration-200 group-hover:text-black group-hover:font-bold">
                   {product.product_name.toUpperCase()}
                 </h3>
                 <div className="mt-2">
                   {product.estimated_price ? (
                     <div className="flex flex-col items-center">
                       <span className="text-gray-500 text-xs">Estimated Retail Price</span>
-                      <span className="text-gray-500 line-through mb-1">₹{product.estimated_price}</span>
+                      <span className="text-gray-500 line-through mb-1">₹{product.estimated_price.toLocaleString()}</span>
                       <span className="text-xs text-gray-700">Our Price</span>
-                      <span className="text-gray-800 font-medium">
-                        ₹{product.discount_price || product.price}
+                      <span className="text-gray-900 font-medium">
+                        ₹{(product.discount_price || product.price).toLocaleString()}
                       </span>
                     </div>
                   ) : (
-                    <p className="text-gray-800 font-medium">₹{typeof product.price === 'number' ? product.price : product.price?.toFixed(2) || 0}</p>
+                    <p className="text-gray-900 font-medium">₹{typeof product.price === 'number' ? product.price.toLocaleString() : product.price?.toFixed(2) || 0}</p>
                   )}
                 </div>
               </div>
@@ -227,7 +225,7 @@ function HomePage() {
       <section className="mb-16">
         <h2 className="text-3xl font-bold mb-8 mt-10 text-center">Trending Apparels</h2>
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           initial={{ opacity: 0, y: -50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, ease: 'easeOut' }}
@@ -235,15 +233,15 @@ function HomePage() {
           {products.slice(4, 8).map((product) => (
             <motion.div
               key={product._id}
-              className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-200"
+              className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
               whileHover={{ y: -5 }}
               onClick={() => handleProductClick(product)}
             >
-              <div className="relative pb-[120%] bg-gray-50">
+              <div className="relative pb-[120%] w-full">
                 <img 
                   src={product.images?.[0] || 'https://via.placeholder.com/400'}
-                  alt={product.product_name.toUpperCase()}
-                  className="absolute top-0 left-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  alt={product.product_name}
+                  className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
                 {product.condition && (
@@ -252,13 +250,16 @@ function HomePage() {
                   </span>
                 )}
                 {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <span className="absolute top-10 left-2 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-md">
+                  <span className="absolute top-10 left-2 bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded shadow-md">
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
-                <div className="absolute right-2 top-2 flex flex-col gap-2">
+                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                  SALE
+                </div>
+                <div className="absolute right-2 top-14 flex flex-col gap-2">
                   <motion.button 
-                    className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
@@ -278,12 +279,10 @@ function HomePage() {
                     </svg>
                   </motion.button>
                   <motion.button 
-                    className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
-                      e.stopPropagation();
-                      // Quick view functionality
                       e.stopPropagation();
                       handleProductClick(product);
                     }}
@@ -301,11 +300,11 @@ function HomePage() {
                   </motion.button>
                 </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-70 flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
+              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-90 backdrop-blur-sm flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full py-4 text-white font-medium transition-colors text-center"
+                  className="w-full py-4 text-white font-medium tracking-wide text-center"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleProductClick(product);
@@ -314,22 +313,22 @@ function HomePage() {
                   SHOP NOW
                 </motion.button>
               </div>
-              <div className="p-5 text-center">
-                <h3 className="text-base font-medium mb-1 transition-all duration-200 group-hover:text-black group-hover:font-bold">
+              <div className="p-5 bg-white">
+                <h3 className="text-base font-medium mb-1 truncate transition-all duration-200 group-hover:text-black group-hover:font-bold">
                   {product.product_name.toUpperCase()}
                 </h3>
                 <div className="mt-2">
                   {product.estimated_price ? (
                     <div className="flex flex-col items-center">
                       <span className="text-gray-500 text-xs">Estimated Retail Price</span>
-                      <span className="text-gray-500 line-through mb-1">₹{product.estimated_price}</span>
+                      <span className="text-gray-500 line-through mb-1">₹{product.estimated_price.toLocaleString()}</span>
                       <span className="text-xs text-gray-700">Our Price</span>
-                      <span className="text-gray-800 font-medium">
-                        ₹{product.discount_price || product.price}
+                      <span className="text-gray-900 font-medium">
+                        ₹{(product.discount_price || product.price).toLocaleString()}
                       </span>
                     </div>
                   ) : (
-                    <p className="text-gray-800 font-medium">₹{typeof product.price === 'number' ? product.price : product.price?.toFixed(2) || 0}</p>
+                    <p className="text-gray-900 font-medium">₹{typeof product.price === 'number' ? product.price.toLocaleString() : product.price?.toFixed(2) || 0}</p>
                   )}
                 </div>
               </div>
