@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -12,7 +12,8 @@ function BrandSection() {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [visibleBrands, setVisibleBrands] = useState(14); // Limit number of brands shown initially
+  const [visibleBrands, setVisibleBrands] = useState(14);
+  const [hoveredBrand, setHoveredBrand] = useState(null);
 
   // Brand logo URLs - add more as needed
   const brandLogos = {
@@ -179,7 +180,14 @@ function BrandSection() {
     <div className="flex flex-col w-full">
       {/* Brand section with soft peach background */}
       <div className="bg-rose-50 py-16 px-6">
-        <h2 className="text-4xl font-bold mb-8 text-center">SHOP BY BRANDS</h2>
+        <motion.h2 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-4xl font-bold mb-8 text-center"
+        >
+          SHOP BY BRANDS
+        </motion.h2>
         
         <div className="max-w-6xl mx-auto">
           {loading ? (
@@ -195,15 +203,30 @@ function BrandSection() {
                   <div key={brand.id} className="px-4">
                     <motion.div
                       className="flex flex-col items-center cursor-pointer relative group"
-                      whileHover={{ y: -10, scale: 1.1 }}
+                      whileHover={{ 
+                        y: -10, 
+                        scale: 1.1,
+                        filter: 'blur(0px)',
+                        zIndex: 10
+                      }}
+                      initial={{ 
+                        filter: currentSlide === index ? 'blur(0px)' : 'blur(2px)',
+                        opacity: currentSlide === index ? 1 : 0.7
+                      }}
+                      animate={{ 
+                        filter: currentSlide === index || hoveredBrand === brand.id ? 'blur(0px)' : 'blur(2px)',
+                        opacity: currentSlide === index || hoveredBrand === brand.id ? 1 : 0.7
+                      }}
                       transition={{ duration: 0.3 }}
                       onClick={() => handleBrandClick(brand.id)}
+                      onMouseEnter={() => setHoveredBrand(brand.id)}
+                      onMouseLeave={() => setHoveredBrand(null)}
                     >
                       <div className="flex items-center justify-center h-40 w-full">
                         <img 
                           src={brand.logoUrl} 
                           alt={brand.name} 
-                          className="max-h-24 max-w-full object-contain"
+                          className="max-h-24 max-w-full object-contain transition-transform duration-300"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.style.display = 'none';
@@ -211,10 +234,18 @@ function BrandSection() {
                           }}
                         />
                         
-                        {/* Show brand name on hover */}
-                        <div className="absolute bottom-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-70 text-white px-3 py-1 rounded">
-                          {brand.name}
-                        </div>
+                        <AnimatePresence>
+                          {(currentSlide === index || hoveredBrand === brand.id) && (
+                            <motion.div 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 10 }}
+                              className="absolute bottom-0 bg-black bg-opacity-70 text-white px-3 py-1 rounded"
+                            >
+                              {brand.name}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </motion.div>
                   </div>
@@ -222,14 +253,21 @@ function BrandSection() {
               </Slider>
               
               {/* Show More button */}
-              <div className="flex justify-center mt-12">
-                <button 
+              <motion.div 
+                className="flex justify-center mt-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <motion.button 
                   onClick={handleShowMoreClick}
                   className="bg-black text-white px-8 py-3 rounded hover:bg-gray-800 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   View All Brands
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             </>
           )}
         </div>
