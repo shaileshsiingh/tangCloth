@@ -804,51 +804,96 @@ function ProductList() {
     }
   }, []);
 
-  // Add this effect to handle brandId parameter
+  // Update the useEffect for brand parameter handling
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const brandId = queryParams.get('brandId');
     if (brandId) {
       setSelectedBrand(brandId);
-      const brandProducts = products.filter(product => 
-        product.brand_id === brandId || product.brand?._id === brandId
-      );
-      setDisplayedProducts(brandProducts);
     }
-  }, [products]);
+  }, [location.search]); // Changed dependency to location.search
 
+  // Update the filtering useEffect
   useEffect(() => {
+    if (!products.length) return;
+
     let filtered = [...products];
 
-    // Apply brand filter
+    // Apply brand filter first
     if (selectedBrand) {
       filtered = filtered.filter(product => 
-        product.brand_id === selectedBrand || product.brand?._id === selectedBrand
+        product.brand_id === selectedBrand || 
+        product.brand?._id === selectedBrand ||
+        (product.brand && product.brand.toString() === selectedBrand)
       );
     }
 
-    // Apply other filters
-    if (selectedCategory) {
-      filtered = filtered.filter(product => product.category_id === selectedCategory);
+    // Apply category filter
+    if (selectedCategory && selectedCategory !== 'all') {
+      const categoryId = categoryIds[selectedCategory];
+      filtered = filtered.filter(product => product.category_id === categoryId);
     }
+
+    // Apply subcategory filter
     if (selectedSubcategory) {
       filtered = filtered.filter(product => product.sub_category_id === selectedSubcategory);
     }
-    if (selectedSize) {
-      filtered = filtered.filter(product => product.size === selectedSize);
-    }
-    if (selectedColor) {
-      filtered = filtered.filter(product => product.color === selectedColor);
-    }
-    // if (selectedPriceRange) {
-    //   const [min, max] = selectedPriceRange.split('-').map(Number);
-    //   filtered = filtered.filter(product => 
-    //     product.price >= min && (max ? product.price <= max : true)
-    //   );
-    // }
 
-    setDisplayedProducts(filtered);
-  }, [products, selectedBrand, selectedCategory, selectedSubcategory, selectedSize, selectedColor]);//selectedPriceRange
+    // Apply sub-subcategory filter
+    if (selectedSubSubcategory) {
+      filtered = filtered.filter(product => product.sub_sub_category_id === selectedSubSubcategory);
+    }
+
+    // Apply size filter
+    if (selectedSize) {
+      filtered = filtered.filter(product => 
+        product.size === selectedSize || 
+        (product.sizes && product.sizes.includes(selectedSize))
+      );
+    }
+
+    // Apply color filter
+    if (selectedColor) {
+      filtered = filtered.filter(product => 
+        product.color === selectedColor || 
+        (product.colors && product.colors.includes(selectedColor))
+      );
+    }
+
+    // Apply condition filter
+    if (selectedCondition) {
+      filtered = filtered.filter(product => product.condition === selectedCondition);
+    }
+
+    setFilteredProducts(filtered);
+    setTotalProducts(filtered.length);
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+    
+    // Reset to first page when filters change
+    setCurrentPage(1);
+
+    // Update displayed products based on current page
+    const startIndex = 0;
+    const endIndex = itemsPerPage;
+    setDisplayedProducts(filtered.slice(startIndex, endIndex));
+
+  }, [products, selectedBrand, selectedCategory, selectedSubcategory, selectedSubSubcategory, 
+      selectedSize, selectedColor, selectedCondition, itemsPerPage]);
+
+  // Update the brand selection handler
+  const handleBrandChange = (brandId) => {
+    setSelectedBrand(brandId);
+    const searchParams = new URLSearchParams(window.location.search);
+    if (brandId) {
+      searchParams.set('brandId', brandId);
+    } else {
+      searchParams.delete('brandId');
+    }
+    navigate({
+      pathname: location.pathname,
+      search: searchParams.toString()
+    });
+  };
 
   if (loading && products.length === 0) {
     return (
@@ -1084,7 +1129,7 @@ function ProductList() {
               <>
                 <select
                   value={selectedBrand || ''}
-                  onChange={(e) => setSelectedBrand(e.target.value || null)}
+                  onChange={(e) => handleBrandChange(e.target.value || null)}
                       className="w-full p-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
                 >
                   <option value="">All Brands</option>
