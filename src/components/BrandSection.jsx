@@ -129,7 +129,7 @@ function BrandSection() {
     // Navigate using URL parameter instead of state
     window.scrollTo(0, 0)
     console.log(`Navigating to brand: ${brandid}`);
-    navigate(`/shop?brandid=${brandid}`);
+    navigate(`/shop?brandId=${brandid}`);
   };
 
   const handleShowMoreClick = () => {
