@@ -53,38 +53,18 @@ function BrandSection() {
     const fetchBrands = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_URL}/brand/get-brands`);
-        // const response = await axios.get(`http://91.203.135.152:2001/api/brand/get-brands`);
+        const response = await axios.get(`${API_URL}/brand/list`);
         
-        if (response.data && response.data.success) {
-          const allBrands = response.data.data;
+        if (response.data && response.data.data && response.data.data.brands) {
+          const featuredBrands = response.data.data.brands;
+          const featuredBrandNames = Object.keys(brandLogos);
           
-          // Filter to only include the featured brands
-          const featuredBrands = [];
-          
-          // For each featured brand name, find it in the API results
-          for (const featuredName of featuredBrandNames) {
-            const brandMatch = allBrands.find(brand => 
-              brand.name.toLowerCase().includes(featuredName));
-            
-            if (brandMatch) {
-              featuredBrands.push({
-                id: brandMatch._id,
-                name: brandMatch.name,
-                displayName: brandMatch.name.toUpperCase(),
-                logoUrl: brandLogos[featuredName]
-              });
-            }
-          }
-          
-          // If we didn't find all brands in the API, create fallbacks for missing ones
           if (featuredBrands.length < featuredBrandNames.length) {
             for (const featuredName of featuredBrandNames) {
               const exists = featuredBrands.some(brand => 
                 brand.name.toLowerCase().includes(featuredName));
                 
               if (!exists) {
-                // Create a fallback brand entry
                 featuredBrands.push({
                   id: `fallback-${featuredName}`,
                   name: featuredName.charAt(0).toUpperCase() + featuredName.slice(1),
@@ -98,8 +78,7 @@ function BrandSection() {
           setBrands(featuredBrands);
         } else {
           console.error('Failed to fetch brands, using fallback data');
-          // Create fallback data from the featuredBrandNames
-          const fallbackData = featuredBrandNames.map(name => ({
+          const fallbackData = Object.keys(brandLogos).map(name => ({
             id: `fallback-${name}`,
             name: name.charAt(0).toUpperCase() + name.slice(1),
             displayName: name.toUpperCase(),
@@ -110,8 +89,7 @@ function BrandSection() {
       } catch (error) {
         console.error('Error fetching brands:', error);
         setError('Failed to load brands');
-        // Create fallback data from the featuredBrandNames
-        const fallbackData = featuredBrandNames.map(name => ({
+        const fallbackData = Object.keys(brandLogos).map(name => ({
           id: `fallback-${name}`,
           name: name.charAt(0).toUpperCase() + name.slice(1),
           displayName: name.toUpperCase(),
@@ -127,8 +105,7 @@ function BrandSection() {
   }, []);
 
   const handleBrandClick = (brandid) => {
-    // Navigate using URL parameter instead of state
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
     console.log(`Navigating to brand: ${brandid}`);
     navigate(`/shop?brandId=${brandid}`);
   };
@@ -206,15 +183,12 @@ function BrandSection() {
                       whileHover={{ 
                         y: -10, 
                         scale: 1.1,
-                        filter: 'blur(0px)',
                         zIndex: 10
                       }}
                       initial={{ 
-                        filter: currentSlide === index ? 'blur(0px)' : 'blur(2px)',
                         opacity: currentSlide === index ? 1 : 0.7
                       }}
                       animate={{ 
-                        filter: currentSlide === index || hoveredBrand === brand.id ? 'blur(0px)' : 'blur(2px)',
                         opacity: currentSlide === index || hoveredBrand === brand.id ? 1 : 0.7
                       }}
                       transition={{ duration: 0.3 }}
@@ -261,7 +235,7 @@ function BrandSection() {
               >
                 <motion.button 
                   onClick={handleShowMoreClick}
-                  className="bg-black text-white px-8 py-3 rounded hover:bg-gray-800 transition-colors"
+                  className="bg-black text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-300 font-medium"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
