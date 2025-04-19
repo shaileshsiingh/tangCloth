@@ -840,15 +840,15 @@ function ProductList() {
     if (selectedColor) {
       filtered = filtered.filter(product => product.color === selectedColor);
     }
-    if (selectedPriceRange) {
-      const [min, max] = selectedPriceRange.split('-').map(Number);
-      filtered = filtered.filter(product => 
-        product.price >= min && (max ? product.price <= max : true)
-      );
-    }
+    // if (selectedPriceRange) {
+    //   const [min, max] = selectedPriceRange.split('-').map(Number);
+    //   filtered = filtered.filter(product => 
+    //     product.price >= min && (max ? product.price <= max : true)
+    //   );
+    // }
 
     setDisplayedProducts(filtered);
-  }, [products, selectedBrand, selectedCategory, selectedSubcategory, selectedSize, selectedColor, selectedPriceRange]);
+  }, [products, selectedBrand, selectedCategory, selectedSubcategory, selectedSize, selectedColor]);//selectedPriceRange
 
   if (loading && products.length === 0) {
     return (
