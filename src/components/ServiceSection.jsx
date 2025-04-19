@@ -8,23 +8,29 @@ function ServicesSection() {
     {
       title: "BIO CLEANING",
       description: "Professional cleaning services for luxury items.",
-      imageUrl: "https://tangerineluxury.com/wp-content/uploads/2024/04/Sr-11.webp",
+      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-01.jpg",
       link: "/bio-cleaning",
     },
     {
       title: "AUTHENTICATION",
       description: "Verify the authenticity of luxury products.",
-      imageUrl: "https://tangerineluxury.com/wp-content/uploads/2024/04/Sr-2.webp",
+      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-04.jpg",
       link: "/authentication",
     },
     {
       title: "PRIVATE VIEWING",
       description: "Exclusive appointments to view premium collections.",
-      imageUrl: "https://tangerineluxury.com/wp-content/uploads/2024/04/Ser-3.webp",
+      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-06.jpg",
       link: "/private-viewing",
     },
+    {
+      title: "REQUEST A PRODUCT",
+      description: "Exclusive appointments to view premium collections.",
+      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-03.jpg",
+      link: "/request-product",
+    },
   ];
-
+  
   const handleNavigation = (link) => {
     navigate(link);
   };
@@ -34,7 +40,7 @@ function ServicesSection() {
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-12">OUR SERVICES</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {services.map((service, index) => (
             <div key={index} className="flex flex-col items-center">
               <div className="relative w-full h-64 mb-4 overflow-hidden rounded-lg">

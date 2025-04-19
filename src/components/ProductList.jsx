@@ -806,60 +806,49 @@ function ProductList() {
 
   // Add this effect to handle brandId parameter
   useEffect(() => {
-    // Get brandId from URL parameters
     const queryParams = new URLSearchParams(window.location.search);
     const brandId = queryParams.get('brandId');
-    
     if (brandId) {
-      console.log(`Filtering products by brand ID: ${brandId}`);
       setSelectedBrand(brandId);
-      
-      // If we already have products loaded, filter them by brand
-      if (products.length > 0) {
-        const filteredByBrand = products.filter(product => {
-          // Check both brand_id and brand._id
-          const matchesBrandId = product.brand_id === brandId;
-          const matchesBrandObjectId = product.brand?._id === brandId;
-          const matchesBrandDetailsId = product.brandDetails?.some(detail => detail._id === brandId);
-          
-          return matchesBrandId || matchesBrandObjectId || matchesBrandDetailsId;
-        });
-        
-        setFilteredProducts(filteredByBrand);
-        setTotalProducts(filteredByBrand.length);
-        setTotalPages(Math.ceil(filteredByBrand.length / itemsPerPage));
-        console.log(`Found ${filteredByBrand.length} products for this brand`);
-      }
+      const brandProducts = products.filter(product => 
+        product.brand_id === brandId || product.brand?._id === brandId
+      );
+      setDisplayedProducts(brandProducts);
     }
-  }, [window.location.search, products]);
+  }, [products]);
 
-  // Update your applyAllFilters function to include brand filtering
-  const applyAllFilters = useCallback(() => {
-    let result = [...products];
-    
-    // Apply brand filter
-    if (selectedBrand) {
-      result = result.filter(product => 
-        product.brand_id === selectedBrand || product.brand?._id === selectedBrand);
-    }
-    
-    // Other filter logic...
-    // ...
-    
-    setFilteredProducts(result);
-    setTotalProducts(result.length);
-    setTotalPages(Math.ceil(result.length / itemsPerPage));
-    setCurrentPage(1);
-  }, [products, selectedBrand, /* other dependencies */]);
-
-  // Filter products by condition
   useEffect(() => {
     let filtered = [...products];
-    if (selectedCondition) {
-      filtered = filtered.filter(product => product.condition === selectedCondition);
+
+    // Apply brand filter
+    if (selectedBrand) {
+      filtered = filtered.filter(product => 
+        product.brand_id === selectedBrand || product.brand?._id === selectedBrand
+      );
     }
-    setFilteredProducts(filtered);
-  }, [selectedCondition, products]);
+
+    // Apply other filters
+    if (selectedCategory) {
+      filtered = filtered.filter(product => product.category_id === selectedCategory);
+    }
+    if (selectedSubcategory) {
+      filtered = filtered.filter(product => product.sub_category_id === selectedSubcategory);
+    }
+    if (selectedSize) {
+      filtered = filtered.filter(product => product.size === selectedSize);
+    }
+    if (selectedColor) {
+      filtered = filtered.filter(product => product.color === selectedColor);
+    }
+    if (selectedPriceRange) {
+      const [min, max] = selectedPriceRange.split('-').map(Number);
+      filtered = filtered.filter(product => 
+        product.price >= min && (max ? product.price <= max : true)
+      );
+    }
+
+    setDisplayedProducts(filtered);
+  }, [products, selectedBrand, selectedCategory, selectedSubcategory, selectedSize, selectedColor, selectedPriceRange]);
 
   if (loading && products.length === 0) {
     return (
@@ -991,7 +980,7 @@ function ProductList() {
           {renderSubcategories()}
           {renderSubSubcategories()}
           
-              <div>
+              {/* <div>
                 <h3 className="font-semibold mb-2 text-sm uppercase">Price Range</h3>
             <div className="flex justify-between mb-2">
               <input
@@ -1023,7 +1012,7 @@ function ProductList() {
                   <span>₹{priceRange[0]}</span>
               <span>₹{priceRange[1]}</span>
             </div>
-          </div>
+          </div> */}
           
               <hr className="border-gray-200" />
               
@@ -1172,7 +1161,7 @@ function ProductList() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
-                <option value="default">Default sorting</option>
+                <option value="default">PRICE RANGE</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
               </select>

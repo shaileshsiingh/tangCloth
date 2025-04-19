@@ -718,6 +718,16 @@ function Navbar() {
             <div className="hidden lg:flex lg:items-center lg:justify-between">
               {/* Left section: Search bar + Home, Men, Women */}
               <div className="flex items-center space-x-8 w-150 ">
+              <div className="flex justify-center items-center ">
+                <Link to="/" className="flex items-center">
+                  <img 
+                    // src={tangerine} 
+                    src="https://wamani.vercel.app/wp-content/uploads/2023/05/Logo.svg" 
+                    alt="Tangerine Luxury" 
+                    className="h-10"
+                  />
+                </Link>
+              </div>
                 {/* Search Bar */}
                 <div className="relative w-64 mr-10" style={{width: '200px', maxWidth: '100%', borderWidth: '2px'}}>
                   <form onSubmit={handleSearchSubmit} className="flex">
@@ -784,6 +794,7 @@ function Navbar() {
                     </div>
                   )}
                 </div>
+                
 
                 {/* Left Menu Items */}
                 <div className="hidden lg:flex lg:items-center lg:space-x-6">
@@ -826,7 +837,8 @@ function Navbar() {
                               initial="hidden"
                               animate="visible"
                               exit="exit"
-                              className="absolute top-full left-0 bg-white shadow-lg p-6 z-50 w-[800px]"
+                              className="absolute top-full left-1/2 transform -translate-x-1/2 bg-white shadow-lg p-6 z-50 w-[800px]"
+                              style={{left: '-150%'}}
                             >
                               <div className="flex">
                                 <div className="grid grid-cols-3 gap-8 flex-1">
@@ -872,7 +884,7 @@ function Navbar() {
               </div>
 
               {/* Center Logo */}
-              <div className="flex justify-center items-center ">
+              {/* <div className="flex justify-center items-center ">
                 <Link to="/" className="flex items-center">
                   <img 
                     // src={tangerine} 
@@ -881,12 +893,12 @@ function Navbar() {
                     className="h-10"
                   />
                 </Link>
-              </div>
+              </div> */}
 
               {/* Right section: Kids, Services, Contact + Icons */}
               <div className="flex items-center justify-end w-150">
                 {/* Right Menu Items */}
-                <div className="flex space-x-6 mr-12">
+                <div className="flex space-x-6 mr-12" style={{marginRight: '2rem'}}>
                   {Object.keys(menuItems)
                     .filter(key => ['kids', 'services'].includes(key))
                     .map((key) => (
@@ -912,6 +924,7 @@ function Navbar() {
                               animate="visible"
                               exit="exit"
                               className={`absolute top-full ${key === 'services' ? 'right-0 w-[300px]' : 'right-0 w-[800px]'} bg-white shadow-lg p-6 z-50`}
+                              style={{right: '-150%'}}
                             >
                               <div className="flex">
                                 <div className={`${key === 'services' ? 'w-full' : 'grid grid-cols-3 gap-8 flex-1'}`}>
@@ -955,7 +968,13 @@ function Navbar() {
                         </AnimatePresence>
                       </div>
                     ))}
-                  
+                   <Link 
+                    to="/shop" 
+                    className="text-gray-700 hover:text-orange-400 font-medium mr-4 hidden lg:block"
+                    style={{ fontSize: '15px' }}
+                  >
+                    Sale
+                  </Link>
                   <Link 
                     to="/contact" 
                     className="text-gray-700 hover:text-orange-400 font-medium"
@@ -1149,7 +1168,7 @@ function Navbar() {
                       </div>
                     </div>
                   ))}
-                  
+                  <Link to="/shop" className="block py-2 font-medium">Sale</Link>
                   <Link to="/contact" className="block py-2 font-medium">Contact</Link>
                   <Link to="/sell-with-us" className="block py-2 font-medium">Sell With Us</Link>
                   
