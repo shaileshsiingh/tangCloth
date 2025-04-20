@@ -730,7 +730,7 @@ function Navbar() {
                   </Link>
                 </div>
                 {/* Search Bar */}
-                <div className="relative w-64 mr-10" style={{width: '200px', maxWidth: '100%', borderWidth: '2px'}}>
+                <div className="relative w-64 mr-10" style={{width: '198px', maxWidth: '100%', borderWidth: '3px'}}>
                   <form onSubmit={handleSearchSubmit} className="flex">
                     <input
                       type="text"
