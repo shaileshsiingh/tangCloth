@@ -238,7 +238,7 @@ function BrandSection() {
       {/* Services section with icons background */}
       <div className="py-8 bg-white border-t border-gray-200 relative">
         <div className="bg-gray-50 bg-opacity-50 absolute inset-0 flex items-center justify-center">
-          <div className="grid grid-cols-6 gap-8 opacity-10">
+          {/* <div className="grid grid-cols-6 gap-8 opacity-10">
             {[...Array(24)].map((_, i) => (
               <div key={i} className="w-10 h-10">
                 {i % 6 === 0 && <div className="w-10 h-10 border border-gray-300 rounded-full" />}
@@ -249,7 +249,7 @@ function BrandSection() {
                 {i % 6 === 5 && <div className="w-10 h-10 transform rotate-45 border border-gray-300" />}
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
