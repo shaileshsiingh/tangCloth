@@ -718,17 +718,17 @@ function Navbar() {
           <div className="py-4 px-4">
             <div className="hidden lg:flex lg:items-center lg:justify-between">
               {/* Left section: Search bar + Home, Men, Women */}
-              <div className="flex items-center space-x-8 w-150 ">
-              <div className="flex justify-center items-center ">
-                <Link to="/" className="flex items-center">
-                  <img 
-                    // src={tangerine} 
-                    src="https://wamani.vercel.app/wp-content/uploads/2023/05/Logo.svg" 
-                    alt="Tangerine Luxury" 
-                    className="h-10"
-                  />
-                </Link>
-              </div>
+              <div className="flex items-center space-x-8 w-150" style={{marginLeft: window.innerWidth >= 1534 ? '120px' : '0'}}>
+                <div className="flex justify-center items-center">
+                  <Link to="/" className="flex items-center">
+                    <img 
+                      // src={tangerine} 
+                      src="https://wamani.vercel.app/wp-content/uploads/2023/05/Logo.svg" 
+                      alt="Tangerine Luxury" 
+                      className="h-10"
+                    />
+                  </Link>
+                </div>
                 {/* Search Bar */}
                 <div className="relative w-64 mr-10" style={{width: '200px', maxWidth: '100%', borderWidth: '2px'}}>
                   <form onSubmit={handleSearchSubmit} className="flex">
@@ -897,7 +897,7 @@ function Navbar() {
               </div> */}
 
               {/* Right section: Kids, Services, Contact + Icons */}
-              <div className="flex items-center justify-end w-150">
+              <div className="flex items-center justify-end w-150" style={{marginRight: window.innerWidth >= 1534 ? '120px' : '0'}}>
                 {/* Right Menu Items */}
                 <div className="flex space-x-6 mr-12" style={{marginRight: '2rem'}}>
                   {Object.keys(menuItems)
