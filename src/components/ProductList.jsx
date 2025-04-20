@@ -1231,6 +1231,7 @@ function ProductList() {
                   key={product._id}
                   className="w-full bg-[#fafafa] border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 overflow-hidden cursor-pointer group relative"
                   whileHover={{ scale: 1.02 }}
+                  style={{backgroundColor:'white'}}
                   onClick={(e) => {
                     window.scrollTo(0, 0);
                     e.stopPropagation();

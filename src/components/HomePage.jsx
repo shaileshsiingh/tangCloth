@@ -104,6 +104,7 @@ function HomePage() {
               className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
               whileHover={{ y: -5 }}
               onClick={() => handleProductClick(product)}
+              style={{backgroundColor:'white'}}
             >
               <div className="relative pb-[120%] w-full">
                 <img 
@@ -235,6 +236,7 @@ function HomePage() {
               key={product._id}
               className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
               whileHover={{ y: -5 }}
+              style={{backgroundColor:'white'}}
               onClick={() => handleProductClick(product)}
             >
               <div className="relative pb-[120%] w-full">

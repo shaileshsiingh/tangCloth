@@ -96,6 +96,7 @@ function FeaturedProducts() {
             {products.map((product) => (
               <motion.div 
                 key={product._id} 
+                style={{backgroundColor:'white'}}
                 className="overflow-hidden cursor-pointer group relative bg-white shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-200"
                 whileHover={{ y: -5 }}
                 onClick={() => handleProductClick(product._id, product)}
