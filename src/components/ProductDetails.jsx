@@ -1264,6 +1264,7 @@ function ProductDetails() {
                 key={relatedProduct._id}
                 className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
                 whileHover={{ y: -5 }}
+                style={{backgroundColor:'white'}}
                 onClick={() => handleRelatedProductClick(relatedProduct)}
               >
                 <div className="relative pb-[125%] overflow-hidden">
