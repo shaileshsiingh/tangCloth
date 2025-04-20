@@ -34,8 +34,8 @@ function HomePage() {
 
     const interval = setInterval(() => {
       setShowCard(true);
-      setTimeout(() => setShowCard(false), 5000);
-    }, 8000);
+      setTimeout(() => setShowCard(false), 7000);
+    }, 15000);
 
     // Set up the rotation animation interval
     const rotationInterval = setInterval(() => {
