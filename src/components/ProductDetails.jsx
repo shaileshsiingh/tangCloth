@@ -532,7 +532,7 @@ function ProductDetails() {
               size_id: product._id, // Assuming size_id is the same as size for simplicity
               size: selectedSize,
               quantity: parseInt(quantity, 10),
-              price: product.price,
+              price: product.discount_price || product.estimated_price,
             }),
           });
 
