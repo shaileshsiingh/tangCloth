@@ -164,7 +164,7 @@ const AboutPage = () => {
                   className="h-10"
                 />
               </div>
-              <h3 className="text-lg font-bold mb-4">CONTACT INFO</h3>
+              {/* <h3 className="text-lg font-bold mb-4">CONTACT INFO</h3>
               <div className="text-gray-600">
                 <p>C Dass Group, 156, KC Road, New</p>
                 <p>Industrial Township 5, Faridabad,</p>
@@ -173,7 +173,7 @@ const AboutPage = () => {
                 <p>+91 7042039009</p>
                 <p className="my-2">hello@tangerineluxury.com</p>
                 <p>Open Time: 11:00 AM - 7:00 PM</p>
-              </div>
+              </div> */}
             </motion.div>
           </div>
         </div>
