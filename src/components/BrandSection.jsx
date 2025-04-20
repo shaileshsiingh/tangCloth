@@ -178,7 +178,7 @@ function BrandSection() {
   return (
     <div className="flex flex-col w-full">
       {/* Brand section with soft peach background */}
-      <div className="bg-rose-50 py-16 px-6">
+      <div className="bg-rose-50 py-16 px-6"  style={{backgroundColor:'#FAF9F6'}}>
         <h2 className="text-4xl font-bold mb-8 text-center">SHOP BY BRANDS</h2>
         
         <div className="max-w-6xl mx-auto">

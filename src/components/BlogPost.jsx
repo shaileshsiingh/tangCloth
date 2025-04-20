@@ -8,6 +8,7 @@ function BlogPost({ title, excerpt, image, date, category }) {
     <motion.div 
       whileHover={{ y: -5 }}
       className="group cursor-pointer"
+      style={{backgroundColor:'#FAF9F6'}}
     >
       <div className="relative overflow-hidden mb-4">
         <img

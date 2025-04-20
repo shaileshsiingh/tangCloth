@@ -36,7 +36,7 @@ function TermsAndConditions() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-16"  style={{backgroundColor:'#FAF9F6'}}>
       <motion.h1 
         className="text-4xl font-bold text-center mb-8"
         initial="hidden"

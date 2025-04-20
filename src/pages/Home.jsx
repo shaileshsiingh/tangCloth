@@ -66,7 +66,7 @@ function Home() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative"  style={{backgroundColor:'#FAF9F6'}}>
       <LoadingScreen />
       
       {/* Popup is rendered outside the main content flow */}

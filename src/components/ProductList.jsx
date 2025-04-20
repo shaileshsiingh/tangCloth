@@ -905,7 +905,7 @@ function ProductList() {
 
   if (error && products.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor:'#FAF9F6'}}>
         <div className="text-red-600 text-center">
           <h2 className="text-2xl font-bold mb-2">Error</h2>
           <p>{error}</p>
@@ -921,7 +921,7 @@ function ProductList() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-gray-50">
+    <div className="container mx-auto px-4 py-8 bg-gray-50" style={{backgroundColor:'#FAF9F6'}}>
       {/* <div className="product-list-controls flex justify-between items-center mb-8">
         <StyledButton onClick={fetchProducts}>
           Refresh Products

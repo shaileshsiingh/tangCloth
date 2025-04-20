@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function PrivateViewing() {
   return (
-    <div className="relative min-h-screen bg-gray-100 text-gray-900 py-16">
+    <div className="relative min-h-screen bg-gray-100 text-gray-900 py-16"  style={{backgroundColor:'#FAF9F6'}}>
       {/* Background Image only behind PRIVATE VIEWING title */}
       <div 
         className="w-full h-48 bg-cover bg-center flex items-center justify-center" 

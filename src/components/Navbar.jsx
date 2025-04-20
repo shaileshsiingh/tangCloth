@@ -709,6 +709,7 @@ function Navbar() {
       <TopBar />
       <motion.nav 
         className={`bg-white sticky top-0 z-40 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
+        style={{backgroundColor:'#FAF9F6'}}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}

@@ -129,6 +129,7 @@ export function WishlistProvider({ children }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             className="fixed top-0 right-0 h-full w-96 bg-white shadow-lg z-50"
+            style={{backgroundColor:'#FAF9F6'}}
           >
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">

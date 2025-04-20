@@ -67,7 +67,7 @@ function Wishlist() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor:'#FAF9F6'}}>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
       </div>
     );
@@ -75,7 +75,7 @@ function Wishlist() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor:'#FAF9F6'}}>
         <div className="text-red-600 text-center">
           <p className="text-xl font-semibold mb-2">Error Loading Wishlist</p>
           <p>{error}</p>
@@ -85,7 +85,7 @@ function Wishlist() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl">
+    <div className="container mx-auto px-4 py-12 max-w-7xl" style={{backgroundColor:'#FAF9F6'}}>
       <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">Your Wishlist</h1>
       
       {wishlist.length === 0 ? (

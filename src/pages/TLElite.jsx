@@ -5,7 +5,7 @@ const TLElite = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" style={{backgroundColor:'#FAF9F6'}}>
       <div className="container mx-auto px-4 py-12">
         <motion.h1 
           initial={{ opacity: 0, y: -50 }}

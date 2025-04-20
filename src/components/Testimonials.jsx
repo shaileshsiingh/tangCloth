@@ -18,7 +18,7 @@ function Testimonials() {
   ];
 
   return (
-    <div className="bg-gray-50 py-16">
+    <div className="bg-gray-50 py-16"  style={{backgroundColor:'#FAF9F6'}}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

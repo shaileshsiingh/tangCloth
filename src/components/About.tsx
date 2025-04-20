@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 // About Page Component with Animations
 const AboutPage = () => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col"  style={{backgroundColor:'#FAF9F6'}}>
       {/* Hero Section with About Us */}
       <motion.div 
         className="relative w-full h-56 bg-gray-900 flex items-center"

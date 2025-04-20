@@ -40,7 +40,7 @@ const Layaway = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white"  style={{backgroundColor:'#FAF9F6'}}>
       {/* Banner Section */}
       <div 
         className="h-[500px] bg-cover bg-center flex items-center justify-center relative"

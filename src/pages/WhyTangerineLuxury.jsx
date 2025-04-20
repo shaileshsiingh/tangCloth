@@ -4,7 +4,7 @@ import { Camera, ShieldCheck, Globe, Leaf, Gift } from 'lucide-react';
 
 export default function WhyTangerineLuxury() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 bg-gradient-to-b from-white to-orange-50">
+    <div className="max-w-6xl mx-auto px-4 py-12 bg-gradient-to-b from-white to-orange-50" style={{backgroundColor:'#FAF9F6'}}>
       <motion.div 
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}

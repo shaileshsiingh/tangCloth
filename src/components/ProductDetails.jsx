@@ -683,6 +683,7 @@ function ProductDetails() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="bg-white"
+      style={{backgroundColor:'#FAF9F6'}}
     >
       {/* Enhanced Breadcrumb */}
       <div className="bg-gray-50 py-4">

@@ -11,7 +11,7 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-white-50 to-white-100 text-premium-dark py-16 border-t-4 border-premium-gold shadow-inner" style={{backgroundColor:'white'}}>
+    <footer className="bg-gradient-to-b from-white-50 to-white-100 text-premium-dark py-16 border-t-4 border-premium-gold shadow-inner"  style={{backgroundColor:'#FAF9F6'}}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-1">

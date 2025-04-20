@@ -6,7 +6,7 @@ function TangerineLuxuryHeader() {
 
   return (
     <div 
-      className="w-full bg-white py-8 cursor-pointer" 
+      className="w-full bg-white py-8 cursor-pointer"  style={{backgroundColor:'#FAF9F6'}}
     >
       {/* Logo and Brand Name */}
       <div className="flex flex-col items-center mb-12">

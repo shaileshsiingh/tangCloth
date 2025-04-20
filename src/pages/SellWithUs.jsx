@@ -118,7 +118,7 @@ const SellWithUsForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div className="min-h-screen bg-white flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden"  style={{backgroundColor:'#FAF9F6'}}>
       {/* Hero Banner with animation */}
       <div 
   className={`w-full relative mb-12 transition-all duration-1000 transform ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}

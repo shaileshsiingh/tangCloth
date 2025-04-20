@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const BioCleaning = () => {
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-16"  style={{backgroundColor:'#FAF9F6'}}>
       <div className="relative w-full h-[400px] mb-10">
         <img
           src="https://tangerineluxury.com/wp-content/uploads/2023/11/top-10-bag-cleaning-services-in-singapore.png"

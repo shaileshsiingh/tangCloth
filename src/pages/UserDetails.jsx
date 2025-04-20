@@ -137,7 +137,7 @@ function UserDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-50">
+      <div className="min-h-screen flex justify-center items-center bg-gray-50"  style={{backgroundColor:'#FAF9F6'}}>
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-black"></div>
       </div>
     );
@@ -145,7 +145,7 @@ function UserDetails() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-50">
+      <div className="min-h-screen flex justify-center items-center bg-gray-50" style={{backgroundColor:'#FAF9F6'}}>
         <div className="bg-white p-8 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-red-600">User not found</h2>
           <p className="mt-2 text-gray-600">Please try logging in again.</p>
@@ -161,7 +161,7 @@ function UserDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" style={{backgroundColor:'#FAF9F6'}}>
       <ToastContainer 
         position="top-right"
         autoClose={3000}

@@ -36,7 +36,7 @@ function ServicesSection() {
   };
 
   return (
-    <div className="w-full bg-white py-12">
+    <div className="w-full bg-white py-12"  style={{backgroundColor:'#FAF9F6'}}>
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-12">OUR SERVICES</h2>
         

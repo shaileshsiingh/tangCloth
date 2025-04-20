@@ -19,7 +19,7 @@ function ShippingAndDelivery() {
   };
   
   return (
-    <div className="py-12 px-4 max-w-7xl mx-auto">
+    <div className="py-12 px-4 max-w-7xl mx-auto"  style={{backgroundColor:'#FAF9F6'}}>
       <motion.div
         ref={ref}
         initial="hidden"

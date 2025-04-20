@@ -58,7 +58,7 @@ function CategoryBanner() {
   ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 px-2 sm:px-4 py-4">
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 px-2 sm:px-4 py-4"  style={{backgroundColor:'#FAF9F6'}}>
       {categories.map((category, index) => (
         <motion.div
           key={category.id}

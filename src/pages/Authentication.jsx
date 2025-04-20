@@ -40,7 +40,7 @@ const Authentication = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white"  style={{backgroundColor:'#FAF9F6'}}>
       {/* Hero Section */}
       <div 
         className="relative h-[600px] bg-cover bg-center flex items-center justify-center"

@@ -243,7 +243,7 @@ function Checkout() {
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white"  style={{backgroundColor:'#FAF9F6'}}>
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4 border-b">
         <nav className="text-sm">

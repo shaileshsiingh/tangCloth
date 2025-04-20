@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 function OurMission() {
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-16"  style={{backgroundColor:'#FAF9F6'}}>
       <motion.h1 
         className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-800"
         initial={{ opacity: 0, y: -20 }}

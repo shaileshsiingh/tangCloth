@@ -78,7 +78,7 @@ const SellOnBanner = () => {
   };
 
   return (
-    <div className="relative bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <div className="relative bg-gradient-to-b from-gray-50 to-white overflow-hidden"  style={{backgroundColor:'#FAF9F6'}}>
       <div className="container mx-auto px-4 py-12 sm:py-20">
         {/* SELL WITH US Header with subtle zoom effect */}
         <motion.div

@@ -76,7 +76,7 @@ function OurFounder() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen"  style={{backgroundColor:'#FAF9F6'}}>
       <div className="container mx-auto px-4 py-24">
         <motion.h1 
           className="text-5xl font-bold text-center mb-16"

@@ -616,7 +616,7 @@ function AddProduct() {
   };
   
   return (
-    <div className="px-4 py-8 max-w-6xl mx-auto">
+    <div className="px-4 py-8 max-w-6xl mx-auto"  style={{backgroundColor:'#FAF9F6'}}>
       <h1 className="text-3xl font-bold mb-8">Add New Product</h1>
       
       <form onSubmit={handleSubmit} className="space-y-8">
