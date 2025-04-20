@@ -37,7 +37,7 @@ function TangerineLuxuryHeader() {
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6 mt-16">
         {/* Hassle Free Returns */}
         <div className="flex items-center">
-          <div className="text-orange-500 mr-4">
+          <div className="text-gray-400 mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
               <rect x="1" y="3" width="15" height="10" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="2"></rect>
               <path d="M16 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2" fill="none" stroke="currentColor" strokeWidth="2"></path>
@@ -49,7 +49,7 @@ function TangerineLuxuryHeader() {
         
         {/* Affordable Luxury */}
         <div className="flex items-center">
-          <div className="text-orange-500 mr-4">
+          <div className="text-gray-400 mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
@@ -59,7 +59,7 @@ function TangerineLuxuryHeader() {
         
         {/* 100% Guaranteed Authentic */}
         <div className="flex items-center">
-          <div className="text-orange-500 mr-4">
+          <div className="text-gray-400 mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 8l-10 8"></path>
               <path d="M7 8l10 8"></path>
@@ -72,7 +72,7 @@ function TangerineLuxuryHeader() {
         
         {/* Worldwide Shipping */}
         <div className="flex items-center">
-          <div className="text-orange-500 mr-4">
+          <div className="text-gray-400 mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <path d="M2 12h20"></path>
