@@ -223,6 +223,71 @@ function HomePage() {
         </div> */}
       </section>
       
+      {/* Comment out Sale Containers */}
+      {/* <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8 mt-10 text-center">Sale Items</h2>
+        <motion.div 
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          initial={{ opacity: 0, y: -50 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
+        >
+          {products.slice(0, 4).map((product) => (
+            <motion.div
+              key={product._id}
+              className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
+              whileHover={{ y: -5 }}
+              onClick={() => handleProductClick(product)}
+              style={{backgroundColor:'white'}}
+            >
+              <div className="relative pb-[120%] w-full">
+                <img 
+                  src={product.images?.[0] || 'https://via.placeholder.com/400'}
+                  alt={product.product_name}
+                  className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
+                />
+                {product.condition && (
+                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1 rounded shadow-md`}>
+                    {product.condition.toUpperCase()}
+                  </span>
+                )}
+                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                  <span className="absolute top-10 left-2 bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded shadow-md">
+                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <div className="p-5 bg-white">
+                <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
+                <div className="mt-3 space-y-1.5">
+                  {product.estimated_price ? (
+                    <div className="flex flex-col">
+                      <span className="text-gray-500 text-sm">
+                        Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
+                      </span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-gray-900 font-medium">
+                          Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
+                        </span>
+                        {product.estimated_price > (product.discount_price || product.price) && (
+                          <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
+                            {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section> */}
+
+      {/* Trending Apparels Section */}
       <section className="mb-16">
         <h2 className="text-3xl font-bold mb-8 mt-10 text-center">Trending Apparels</h2>
         <motion.div 
@@ -256,87 +321,31 @@ function HomePage() {
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
-                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
-                  SALE
-                </div>
-                <div className="absolute right-2 top-14 flex flex-col gap-2">
-                  <motion.button 
-                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addTowishlist(product);
-                    }}
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      strokeWidth={1.5} 
-                      stroke="currentColor" 
-                      className="w-5 h-5"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                    </svg>
-                  </motion.button>
-                  <motion.button 
-                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProductClick(product);
-                    }}
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      strokeWidth={1.5} 
-                      stroke="currentColor" 
-                      className="w-5 h-5"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-                    </svg>
-                  </motion.button>
-                </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-90 backdrop-blur-sm flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full py-4 text-white font-medium tracking-wide text-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleProductClick(product);
-                  }}
-                >
-                  SHOP NOW
-                </motion.button>
               </div>
               <div className="p-5 bg-white">
-                <h3 className="text-base font-medium mb-1 truncate transition-all duration-200 group-hover:text-black group-hover:font-bold">
-                  {product.product_name.toUpperCase()}
-                </h3>
-                <div className="mt-2">
+                <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
+                <div className="mt-3 space-y-1.5">
                   {product.estimated_price ? (
-                    <div className="flex flex-col items-center">
-                      <span className="text-gray-500 text-xs">Estimated Retail Price</span>
-                      <span className="text-gray-500 line-through mb-1">₹{product.estimated_price.toLocaleString()}</span>
-                      <span className="text-xs text-gray-700">Our Price</span>
-                      <span className="text-gray-900 font-medium">
-                        ₹{(product.discount_price || product.price).toLocaleString()}
+                    <div className="flex flex-col">
+                      <span className="text-gray-500 text-sm">
+                        Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
                       </span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-gray-900 font-medium">
+                          Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
                   ) : (
-                    <p className="text-gray-900 font-medium">₹{typeof product.price === 'number' ? product.price.toLocaleString() : product.price?.toFixed(2) || 0}</p>
+                    <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
                   )}
                 </div>
               </div>
             </motion.div>
           ))}
         </motion.div>
+      </section>
+
       {/* Show more button */}
       <div className="flex justify-center mb-12 mt-8">
           <motion.button
@@ -353,7 +362,6 @@ function HomePage() {
             </svg>
           </motion.button>
         </div>
-      </section>
 
       {showCard && (
         <motion.div 
