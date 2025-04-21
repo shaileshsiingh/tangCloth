@@ -47,6 +47,7 @@ import Authentication from './pages/Authentication';
 import ProductRequestForm from './components/ProductRequestForm';
 import AbandonedCartReminder from './components/AbandonedCartReminder';
 import SellOnBanner from './components/SellOnBanner';
+import SaleItems from './pages/SaleItems';
 
 function App() {
    // Add scroll restoration effect
@@ -93,6 +94,7 @@ function App() {
           <Route path="/authentication" element={<Authentication />} />
           <Route path="/request-product" element={<ProductRequestForm />} />
           <Route path="/sell-on-banner" element={<SellOnBanner />} />
+          <Route path="/sale-items" element={<SaleItems />} />
 
           <Route path="/404" element={
             <div className="min-h-screen flex items-center justify-center">

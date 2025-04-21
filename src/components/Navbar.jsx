@@ -970,11 +970,10 @@ function Navbar() {
                       </div>
                     ))}
                    <Link 
-                    to="/shop" 
-                    className="text-orange-800 hover:text-orange-300 font-medium mr-4 hidden lg:block"
-                    style={{ fontSize: '15px' }}
+                    to="/sale-items" 
+                    className="text-yellow-600 hover:text-orange-300 font-large mr-4 hidden lg:block underline decoration-2 underline-offset-4"                    style={{ fontSize: '16px' }}
                   >
-                    Sale
+                    SALE
                   </Link>
                   <Link 
                     to="/contact" 
