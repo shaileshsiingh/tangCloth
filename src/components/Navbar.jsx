@@ -971,7 +971,7 @@ function Navbar() {
                     ))}
                    <Link 
                     to="/shop" 
-                    className="text-gray-700 hover:text-orange-400 font-medium mr-4 hidden lg:block"
+                    className="text-orange-800 hover:text-orange-300 font-medium mr-4 hidden lg:block"
                     style={{ fontSize: '15px' }}
                   >
                     Sale
