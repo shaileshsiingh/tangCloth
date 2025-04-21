@@ -22,6 +22,7 @@ const SaleItems = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [pageSize, setPageSize] = useState(12);
   const API_URL = "/api";
   
   const { ref, inView } = useInView({
@@ -29,7 +30,7 @@ const SaleItems = () => {
     threshold: 0.3,
   });
 
-  const itemsPerPage = 12;
+  const itemsPerPage = pageSize;
 
   // Category mappings
   const categories = {
@@ -182,42 +183,121 @@ const SaleItems = () => {
   const renderPagination = () => {
     if (totalPages <= 1) return null;
     
+    const getPageNumbers = () => {
+      const pageNumbers = [];
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        return [...Array(totalPages)].map((_, i) => i + 1);
+      }
+      
+      // Always show first page
+      pageNumbers.push(1);
+      
+      // Calculate start and end of visible pages
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Adjust if we're near the start
+      if (currentPage <= 3) {
+        end = 4;
+      }
+      
+      // Adjust if we're near the end
+      if (currentPage >= totalPages - 2) {
+        start = totalPages - 3;
+      }
+      
+      // Add ellipsis and page numbers
+      if (start > 2) {
+        pageNumbers.push('...');
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
+      
+      if (end < totalPages - 1) {
+        pageNumbers.push('...');
+      }
+      
+      // Always show last page
+      if (totalPages > 1) {
+        pageNumbers.push(totalPages);
+      }
+      
+      return pageNumbers;
+    };
+    
     return (
-      <div className="flex justify-center mt-8 space-x-2">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`px-3 py-1 rounded ${
-            currentPage === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
-          }`}
-        >
-          <ChevronLeft size={16} />
-        </button>
+      <div className="flex flex-col items-center gap-4 mt-8">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">Show:</span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+            className="border border-gray-200 rounded px-2 py-1 text-sm"
+          >
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={36}>36</option>
+            <option value={48}>48</option>
+          </select>
+          <span className="text-sm text-gray-600">per page</span>
+        </div>
         
-        {[...Array(totalPages)].map((_, index) => {
-          const pageNumber = index + 1;
-          return (
-            <button
-              key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)}
-              className={`px-3 py-1 rounded ${
-                currentPage === pageNumber ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'
-              }`}
-            >
-              {pageNumber}
-            </button>
-          );
-        })}
+        <div className="flex justify-center items-center space-x-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded transition-colors ${
+              currentPage === 1 
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            }`}
+          >
+            <ChevronLeft size={16} />
+          </button>
+          
+          {getPageNumbers().map((pageNumber, index) => (
+            pageNumber === '...' ? (
+              <span key={`ellipsis-${index}`} className="px-2 text-gray-500">
+                ...
+              </span>
+            ) : (
+              <button
+                key={pageNumber}
+                onClick={() => handlePageChange(pageNumber)}
+                className={`px-3 py-1 rounded transition-colors ${
+                  currentPage === pageNumber
+                    ? 'bg-black text-white'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                }`}
+              >
+                {pageNumber}
+              </button>
+            )
+          ))}
+          
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded transition-colors ${
+              currentPage === totalPages
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            }`}
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
         
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`px-3 py-1 rounded ${
-            currentPage === totalPages ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
-          }`}
-        >
-          <ChevronRight size={16} />
-        </button>
+        <div className="text-sm text-gray-600">
+          Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalProducts)} - {Math.min(currentPage * itemsPerPage, totalProducts)} of {totalProducts} products
+        </div>
       </div>
     );
   };
@@ -348,9 +428,6 @@ const SaleItems = () => {
           <div className="text-center text-gray-600 py-8">No sale items available at the moment.</div>
         ) : (
           <>
-            <div className="text-sm text-gray-600 mb-4">
-              Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalProducts)} - {Math.min(currentPage * itemsPerPage, totalProducts)} of {totalProducts} products
-            </div>
             <motion.div 
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
               initial={{ opacity: 0, y: -50 }}
