@@ -263,7 +263,7 @@ const SaleItems = () => {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
-              <option value="default">Sort By</option>
+              <option value="default">PRICE RANGE</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
             </select>
@@ -318,7 +318,7 @@ const SaleItems = () => {
             </select>
 
             {/* Price Range */}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <input
                 type="number"
                 placeholder="Min"
@@ -334,7 +334,7 @@ const SaleItems = () => {
                 value={priceRange[1]}
                 onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
               />
-            </div>
+            </div> */}
           </div>
         </div>
         
