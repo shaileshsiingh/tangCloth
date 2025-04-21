@@ -225,7 +225,7 @@ const SaleItems = () => {
   return (
     <div ref={ref} className="container mx-auto px-4 py-12" style={{backgroundColor:'#FAF9F6'}}>
       <section className="mb-16">
-        <div className="flex justify-center items-center mb-12 mt-20">
+        <div className="flex justify-center items-center mb-12 mt-4">
           <motion.h2 
             className="text-5xl font-bold text-center relative inline-block"
             initial={{ opacity: 0, y: -20 }}
