@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Percent, Tag, ShoppingBag } from 'lucide-react';
 
 const SaleItems = () => {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ const SaleItems = () => {
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [pageSize, setPageSize] = useState(12);
+  const [currentBannerImage, setCurrentBannerImage] = useState(0);
   const API_URL = "/api";
   
   const { ref, inView } = useInView({
@@ -31,6 +32,42 @@ const SaleItems = () => {
   });
 
   const itemsPerPage = pageSize;
+
+  // Banner images for the marketing carousel
+  const bannerImages = [
+    {
+      imageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+      title: "Women's Collection",
+      subtitle: "Up to 70% Off",
+      ctaText: "Shop Women",
+      category: "women"
+    },
+    {
+      imageUrl: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+      title: "Men's Fashion",
+      subtitle: "Season's Best Deals",
+      ctaText: "Shop Men",
+      category: "men"
+    },
+    {
+      imageUrl: "https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+      title: "Kids Wear",
+      subtitle: "Special Sale for Little Ones",
+      ctaText: "Shop Kids",
+      category: "kids"
+    }
+  ];
+
+  // Auto-rotate banner images
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBannerImage((prev) => 
+        prev === bannerImages.length - 1 ? 0 : prev + 1
+      );
+    }, 5000);
+    
+    return () => clearInterval(timer);
+  }, [bannerImages.length]);
 
   // Category mappings
   const categories = {
@@ -180,6 +217,10 @@ const SaleItems = () => {
     navigate(`/product/${product._id}`, { state: { product } });
   };
 
+  const handleBannerClick = (category) => {
+    setSelectedCategory(category);
+  };
+
   const renderPagination = () => {
     if (totalPages <= 1) return null;
     
@@ -302,208 +343,352 @@ const SaleItems = () => {
     );
   };
 
-  return (
-    <div ref={ref} className="container mx-auto px-4 py-12" style={{backgroundColor:'#FAF9F6'}}>
-      <section className="mb-16">
-        <div className="flex justify-center items-center mb-12 mt-4">
-          <motion.h2 
-            className="text-5xl font-bold text-center relative inline-block"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+  // Sale Benefits Section
+  const renderSaleBenefits = () => {
+    const benefits = [
+      { icon: <Tag className="w-6 h-6" />, title: "MASSIVE DISCOUNTS", description: "Up to 70% off retail prices" },
+      { icon: <ShoppingBag className="w-6 h-6" />, title: "FREE SHIPPING", description: "On all orders above ₹999" },
+      { icon: <Percent className="w-6 h-6" />, title: "EXTRA 10% OFF", description: "On your first purchase" }
+    ];
+
+    return (
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        {benefits.map((benefit, index) => (
+          <motion.div 
+            key={index}
+            className="bg-white p-6 rounded-lg shadow-sm flex items-center space-x-4 border-l-4 border-red-600"
+            whileHover={{ scale: 1.03, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+            transition={{ duration: 0.2 }}
           >
-            <span className="bg-gradient-to-r from-red-600 to-black-500 text-transparent bg-clip-text">
-              SALE ITEMS
-            </span>
-            <motion.div 
-              className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              SALE
-            </motion.div>
-          </motion.h2>
-        </div>
+            <div className="bg-red-100 p-3 rounded-full text-red-600">
+              {benefit.icon}
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900">{benefit.title}</h3>
+              <p className="text-sm text-gray-600">{benefit.description}</p>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    );
+  };
 
-        {/* Filters Section */}
-        <div className="mb-8 bg-white p-6 rounded-lg shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search */}
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-
-            {/* Sort */}
-            <select
-              className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+  return (
+    <div className="min-h-screen" style={{backgroundColor: '#FAF9F6'}}>
+      {/* Hero Banner Carousel */}
+      <div className="relative overflow-hidden h-96 md:h-[500px]">
+        {bannerImages.map((banner, index) => (
+          <motion.div
+            key={index}
+            className="absolute inset-0 w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: currentBannerImage === index ? 1 : 0,
+              zIndex: currentBannerImage === index ? 10 : 0 
+            }}
+            transition={{ duration: 1 }}
+          >
+            <div 
+              className="absolute inset-0 bg-cover bg-center" 
+              style={{ backgroundImage: `url(${banner.imageUrl})` }}
             >
-              <option value="default">PRICE RANGE</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-            </select>
-
-            {/* Category */}
-            <select
-              className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              {Object.entries(categories).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
-
-            {/* Brand */}
-            <select
-              className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-              value={selectedBrand}
-              onChange={(e) => setSelectedBrand(e.target.value)}
-            >
-              <option value="">All Brands</option>
-              {brands.map((brand) => (
-                <option key={brand._id} value={brand._id}>{brand.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            {/* Size */}
-            <select
-              className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-              value={selectedSize}
-              onChange={(e) => setSelectedSize(e.target.value)}
-            >
-              <option value="">All Sizes</option>
-              {sizes.map((size) => (
-                <option key={size} value={size}>{size}</option>
-              ))}
-            </select>
-
-            {/* Color */}
-            <select
-              className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-              value={selectedColor}
-              onChange={(e) => setSelectedColor(e.target.value)}
-            >
-              <option value="">All Colors</option>
-              {popularColors.map((color) => (
-                <option key={color} value={color}>{color}</option>
-              ))}
-            </select>
-
-            {/* Price Range */}
-            {/* <div className="flex items-center gap-2">
-              <input
-                type="number"
-                placeholder="Min"
-                className="w-1/2 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-                value={priceRange[0]}
-                onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-              />
-              <span>-</span>
-              <input
-                type="number"
-                placeholder="Max"
-                className="w-1/2 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
-                value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-              />
-            </div> */}
-          </div>
-        </div>
-        
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
-          </div>
-        ) : error ? (
-          <div className="text-center text-red-600 py-8">{error}</div>
-        ) : displayedProducts.length === 0 ? (
-          <div className="text-center text-gray-600 py-8">No sale items available at the moment.</div>
-        ) : (
-          <>
-            <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-              initial={{ opacity: 0, y: -50 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.9, ease: 'easeOut' }}
-            >
-              {displayedProducts.map((product) => (
-                <motion.div
-                  key={product._id}
-                  className="w-full bg-[#fafafa] border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 overflow-hidden cursor-pointer group relative"
-                  whileHover={{ scale: 1.02 }}
-                  style={{backgroundColor:'white'}}
-                  onClick={() => handleProductClick(product)}
+              <div className="absolute inset-0 bg-black bg-opacity-40" />
+            </div>
+            
+            <div className="absolute inset-0 flex items-center px-6 md:px-16">
+              <motion.div 
+                className="text-white max-w-lg"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ 
+                  opacity: currentBannerImage === index ? 1 : 0,
+                  x: currentBannerImage === index ? 0 : -50
+                }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                <h1 className="text-4xl md:text-6xl font-bold mb-4">{banner.title}</h1>
+                <p className="text-xl md:text-2xl mb-6">{banner.subtitle}</p>
+                <motion.button 
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleBannerClick(banner.category)}
                 >
-                  <div className="relative aspect-square w-full">
-                    <img
-                      src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
-                      alt={product.product_name}
-                      className="absolute top-0 left-0 w-full h-full object-contain p-4"
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/300x300';
-                      }}
-                    />
-                    {/* Sale Badge */}
-                    <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
-                      SALE
-                    </div>
-                    {product.condition && (
-                      <span className="absolute top-3 left-3 bg-black bg-opacity-80 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-sm">
-                        {product.condition.replace(/_/g, ' ').toUpperCase()}
-                      </span>
-                    )}
-                    
-                    {/* Brand Logo/Badge */}
-                    {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm shadow-sm rounded-sm px-2.5 py-1.5 text-xs font-medium tracking-wide">
-                        {(typeof product.brand === 'string' ? product.brand : 
-                         (product.brandDetails && product.brandDetails[0]?.name) || 
-                         (product.brand?.name || 'Brand')).toUpperCase()}
+                  {banner.ctaText}
+                </motion.button>
+              </motion.div>
+            </div>
+          </motion.div>
+        ))}
+        
+        {/* Carousel Indicators */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+          {bannerImages.map((_, index) => (
+            <button
+              key={index}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                currentBannerImage === index ? "bg-white w-8" : "bg-white/50"
+              }`}
+              onClick={() => setCurrentBannerImage(index)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div ref={ref} className="container mx-auto px-4 py-12">
+        <section className="mb-16">
+          <div className="flex justify-center items-center mb-12">
+            <motion.h2 
+              className="text-5xl font-bold text-center relative inline-block"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className="bg-gradient-to-r from-red-600 to-black text-transparent bg-clip-text">
+                SALE ITEMS
+              </span>
+              <motion.div 
+                className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [12, 20, 12]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                SALE
+              </motion.div>
+            </motion.h2>
+          </div>
+
+          {/* Sale Benefits */}
+          {renderSaleBenefits()}
+
+          {/* Filters Section */}
+          <motion.div 
+            className="mb-8 bg-white p-6 rounded-lg shadow-sm"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Search */}
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+
+              {/* Sort */}
+              <select
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="default">PRICE RANGE</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+
+              {/* Category */}
+              <select
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                {Object.entries(categories).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+
+              {/* Brand */}
+              <select
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
+                value={selectedBrand}
+                onChange={(e) => setSelectedBrand(e.target.value)}
+              >
+                <option value="">All Brands</option>
+                {brands.map((brand) => (
+                  <option key={brand._id} value={brand._id}>{brand.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              {/* Size */}
+              <select
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+              >
+                <option value="">All Sizes</option>
+                {sizes.map((size) => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+
+              {/* Color */}
+              <select
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
+                value={selectedColor}
+                onChange={(e) => setSelectedColor(e.target.value)}
+              >
+                <option value="">All Colors</option>
+                {popularColors.map((color) => (
+                  <option key={color} value={color}>{color}</option>
+                ))}
+              </select>
+            </div>
+          </motion.div>
+          
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-600 py-8">{error}</div>
+          ) : displayedProducts.length === 0 ? (
+            <div className="text-center text-gray-600 py-8">No sale items available at the moment.</div>
+          ) : (
+            <>
+              <motion.div 
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, staggerChildren: 0.1 }}
+              >
+                {displayedProducts.map((product, index) => (
+                  <motion.div
+                    key={product._id}
+                    className="w-full bg-white border border-gray-100 rounded-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 overflow-hidden cursor-pointer group relative"
+                    whileHover={{ scale: 1.02 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    onClick={() => handleProductClick(product)}
+                  >
+                    <div className="relative aspect-square w-full overflow-hidden">
+                      <img
+                        src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
+                        alt={product.product_name}
+                        className="absolute top-0 left-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/300x300';
+                        }}
+                      />
+                      {/* Sale Badge */}
+                      <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+                        SALE
                       </div>
-                    )}
-                  </div>
-                  
-                  <div className="p-5 bg-white">
-                    <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
-                    <div className="mt-3 space-y-1.5">
-                      {product.estimated_price ? (
-                        <div className="flex flex-col">
-                          <span className="text-gray-500 text-sm">
-                            Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
-                          </span>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-gray-900 font-medium">
-                              Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
-                            </span>
-                            {product.estimated_price > (product.discount_price || product.price) && (
-                              <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
-                                {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
+                      {product.condition && (
+                        <span className="absolute top-3 left-3 bg-black bg-opacity-80 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-sm z-10">
+                          {product.condition.replace(/_/g, ' ').toUpperCase()}
+                        </span>
                       )}
+                      
+                      {/* Brand Logo/Badge */}
+                      {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm shadow-sm rounded-sm px-2.5 py-1.5 text-xs font-medium tracking-wide z-10">
+                          {(typeof product.brand === 'string' ? product.brand : 
+                           (product.brandDetails && product.brandDetails[0]?.name) || 
+                           (product.brand?.name || 'Brand')).toUpperCase()}
+                        </div>
+                      )}
+                      
+                      {/* Hover overlay with quick action button */}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 pointer-events-none flex items-center justify-center">
+                        <span className="bg-white text-black rounded-md px-4 py-2 font-medium text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 pointer-events-auto">
+                          View Details
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-            {renderPagination()}
-          </>
-        )}
-      </section>
+                    
+                    <div className="p-5 bg-white">
+                      <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
+                      <div className="mt-3 space-y-1.5">
+                        {product.estimated_price ? (
+                          <div className="flex flex-col">
+                            <span className="text-gray-500 text-sm">
+                              Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
+                            </span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-gray-900 font-medium">
+                                Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
+                              </span>
+                              {product.estimated_price > (product.discount_price || product.price) && (
+                                <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
+                                  {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+              
+              {/* Limited Time Offers Banner */}
+              <motion.div 
+                className="my-12 bg-gradient-to-r from-red-600 to-red-900 rounded-lg p-8 text-white text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <motion.h3 
+                  className="text-2xl md:text-3xl font-bold mb-3"
+                  animate={{ 
+                    scale: [1, 1.03, 1],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  LIMITED TIME OFFERS
+                </motion.h3>
+                <p className="text-lg mb-6">Additional 10% off on all sale items. Use code: <span className="font-bold">SALE10</span></p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <motion.div
+                    className="bg-black bg-opacity-20 backdrop-blur-sm rounded-lg p-4 px-6 inline-flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <div className="text-center">
+                      <span className="block text-3xl font-bold">24</span>
+                      <span className="text-xs opacity-80">HOURS</span>
+                    </div>
+                  </motion.div>
+                  <motion.div
+                    className="bg-black bg-opacity-20 backdrop-blur-sm rounded-lg p-4 px-6 inline-flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <div className="text-center">
+                      <span className="block text-3xl font-bold">36</span>
+                      <span className="text-xs opacity-80">MINUTES</span>
+                    </div>
+                  </motion.div>
+                  <motion.div
+                    className="bg-black bg-opacity-20 backdrop-blur-sm rounded-lg p-4 px-6 inline-flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <div className="text-center">
+                      <span className="block text-3xl font-bold">59</span>
+                      <span className="text-xs opacity-80">SECONDS</span>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </section>
+      </div>
     </div>
   );
 };
 
-export default SaleItems; 
+export default SaleItems;
