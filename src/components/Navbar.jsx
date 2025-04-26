@@ -899,7 +899,7 @@ function Navbar() {
               {/* Right section: Kids, Services, Contact + Icons */}
               <div className="flex items-center justify-end w-150" style={{marginRight: window.innerWidth >= 1534 ? '120px' : '0'}}>
                 {/* Right Menu Items */}
-                <div className="flex space-x-6 mr-12" style={{marginRight: '2rem'}}>
+                <div className="flex space-x-6 mr-12" style={{marginRight: '1.2rem'}}>
                   {Object.keys(menuItems)
                     .filter(key => ['kids', 'services'].includes(key))
                     .map((key) => (
