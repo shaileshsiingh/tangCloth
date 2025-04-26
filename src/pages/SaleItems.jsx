@@ -587,9 +587,9 @@ const SaleItems = () => {
                       
                       {/* Hover overlay with quick action button */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 pointer-events-none flex items-center justify-center">
-                        <span className="bg-white text-black rounded-md px-4 py-2 font-medium text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 pointer-events-auto">
+                        {/* <span className="bg-white text-black rounded-md px-4 py-2 font-medium text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 pointer-events-auto">
                           View Details
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                     
@@ -623,7 +623,7 @@ const SaleItems = () => {
               
               {/* Limited Time Offers Banner */}
               <motion.div 
-                className="my-12 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg p-8 text-white text-center"
+                className="my-12 bg-gradient-to-r from-white-200 to-white-300 rounded-lg p-8 text-white text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
