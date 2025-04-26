@@ -312,7 +312,7 @@ const SaleItems = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="bg-gradient-to-r from-red-600 to-yellow-500 text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-red-600 to-black-500 text-transparent bg-clip-text">
               SALE ITEMS
             </span>
             <motion.div 
