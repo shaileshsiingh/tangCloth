@@ -623,7 +623,7 @@ const SaleItems = () => {
               
               {/* Limited Time Offers Banner */}
               <motion.div 
-                className="my-12 bg-gradient-to-r from-white-200 to-white-300 rounded-lg p-8 text-white text-center"
+                className="my-12 bg-gradient-to-r from-cyan-200 to-cyan-300 rounded-lg p-8 text-white text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
