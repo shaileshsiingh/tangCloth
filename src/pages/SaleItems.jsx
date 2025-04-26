@@ -4,6 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { ChevronLeft, ChevronRight, Percent, Tag, ShoppingBag } from 'lucide-react';
 
+const HERO_IMAGES = [
+  {
+    src: "https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Slider-2.png",
+    alt: "Sale Hero 1"
+  },
+  {
+    src: "https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Slider-1.png",
+    alt: "Sale Hero 2"
+  },
+  {
+    src: "https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Slider-4.png",
+    alt: "Sale Hero 3"
+  }
+];
+
 const SaleItems = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -23,7 +38,8 @@ const SaleItems = () => {
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [pageSize, setPageSize] = useState(12);
-  const [currentBannerImage, setCurrentBannerImage] = useState(0);
+  const [selectedHero, setSelectedHero] = useState(0);
+  const productListRef = React.useRef(null);
   const API_URL = "/api";
   
   const { ref, inView } = useInView({
@@ -33,41 +49,16 @@ const SaleItems = () => {
 
   const itemsPerPage = pageSize;
 
-  // Banner images for the marketing carousel
-  const bannerImages = [
-    {
-      imageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-      title: "Women's Collection",
-      subtitle: "Up to 70% Off",
-      ctaText: "Shop Women",
-      category: "women"
-    },
-    {
-      imageUrl: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-      title: "Men's Fashion",
-      subtitle: "Season's Best Deals",
-      ctaText: "Shop Men",
-      category: "men"
-    },
-    {
-      imageUrl: "https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-      title: "Kids Wear",
-      subtitle: "Special Sale for Little Ones",
-      ctaText: "Shop Kids",
-      category: "kids"
-    }
-  ];
-
   // Auto-rotate banner images
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentBannerImage((prev) => 
-        prev === bannerImages.length - 1 ? 0 : prev + 1
+      setSelectedHero((prev) => 
+        prev === HERO_IMAGES.length - 1 ? 0 : prev + 1
       );
     }, 5000);
     
     return () => clearInterval(timer);
-  }, [bannerImages.length]);
+  }, [HERO_IMAGES.length]);
 
   // Category mappings
   const categories = {
@@ -219,6 +210,12 @@ const SaleItems = () => {
 
   const handleBannerClick = (category) => {
     setSelectedCategory(category);
+  };
+
+  const handleScrollToProducts = () => {
+    if (productListRef.current) {
+      productListRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const renderPagination = () => {
@@ -380,69 +377,57 @@ const SaleItems = () => {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#FAF9F6'}}>
-      {/* Hero Banner Carousel */}
-      <div className="relative overflow-hidden h-96 md:h-[500px]">
-        {bannerImages.map((banner, index) => (
-          <motion.div
-            key={index}
-            className="absolute inset-0 w-full h-full"
-            initial={{ opacity: 0 }}
-            animate={{ 
-              opacity: currentBannerImage === index ? 1 : 0,
-              zIndex: currentBannerImage === index ? 10 : 0 
-            }}
-            transition={{ duration: 1 }}
-          >
-            <div 
-              className="absolute inset-0 bg-cover bg-center" 
-              style={{ backgroundImage: `url(${banner.imageUrl})` }}
-            >
-              <div className="absolute inset-0 bg-black bg-opacity-40" />
+      {/* Custom Hero Section */}
+      <div className="w-full flex flex-col md:flex-row items-stretch gap-0 bg-[#FAF9F6] min-h-[420px] md:min-h-[520px] mb-12">
+        {/* Left: Heading + Thumbnails + Button */}
+        <div className="w-full md:w-1/2 flex flex-col justify-center items-start px-6 md:pl-16 md:pr-8 py-8">
+          <div className="w-full max-w-lg mb-8 md:mb-12">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-black mb-4 leading-tight tracking-tight" style={{letterSpacing: '-0.03em'}}>
+              Sale Items
+            </h1>
+            <p className="text-base md:text-lg text-gray-600 mb-8">
+              Discover the best deals on trending fashion. Limited time offers, exclusive discounts, and more!
+            </p>
+            {/* Horizontal Thumbnails */}
+            <div className="flex flex-row gap-4 overflow-x-auto pb-2 mb-12 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2 ">
+              {HERO_IMAGES.map((img, idx) => (
+                <img
+                  key={img.src}
+                  src={img.src}
+                  alt={img.alt}
+                  onClick={() => setSelectedHero(idx)}
+                  className={`w-28 h-28 md:w-32 md:h-32 object-cover rounded-lg border-2 cursor-pointer transition-all duration-300 ${
+                    idx === selectedHero ? 'border-black scale-105 shadow-lg' : 'border-gray-200 opacity-70 hover:opacity-100'
+                  }`}
+                  style={{ boxShadow: idx === selectedHero ? '0 4px 24px 0 rgba(0,0,0,0.10)' : undefined }}
+                />
+              ))}
             </div>
-            
-            <div className="absolute inset-0 flex items-center px-6 md:px-16">
-              <motion.div 
-                className="text-white max-w-lg"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ 
-                  opacity: currentBannerImage === index ? 1 : 0,
-                  x: currentBannerImage === index ? 0 : -50
-                }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              >
-                <h1 className="text-4xl md:text-6xl font-bold mb-4">{banner.title}</h1>
-                <p className="text-xl md:text-2xl mb-6">{banner.subtitle}</p>
-                <motion.button 
-                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleBannerClick(banner.category)}
-                >
-                  {banner.ctaText}
-                </motion.button>
-              </motion.div>
-            </div>
-          </motion.div>
-        ))}
-        
-        {/* Carousel Indicators */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-          {bannerImages.map((_, index) => (
             <button
-              key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                currentBannerImage === index ? "bg-white w-8" : "bg-white/50"
-              }`}
-              onClick={() => setCurrentBannerImage(index)}
+              className="bg-black text-white px-8 py-4 rounded-md font-semibold text-lg shadow hover:bg-gray-900 transition"
+              onClick={handleScrollToProducts}
+            >
+              Shop Collection
+            </button>
+          </div>
+        </div>
+        {/* Right: Main Image */}
+        <div className="w-full md:w-1/2 flex items-center justify-center bg-white py-8 md:py-0">
+          <div className="relative w-[98vw] max-w-[520px] md:w-[420px] md:max-w-[520px] h-[600px] md:h-[720px] flex items-center justify-center rounded-lg overflow-hidden shadow-xl border border-gray-100">
+            <img
+              src={HERO_IMAGES[selectedHero].src}
+              alt={HERO_IMAGES[selectedHero].alt}
+              className="w-full h-full object-cover object-center"
+              style={{ aspectRatio: '3/4' }}
             />
-          ))}
+          </div>
         </div>
       </div>
 
-      <div ref={ref} className="container mx-auto px-4 py-12">
+      <div ref={productListRef} className="container mx-auto px-4 py-12">
         <section className="mb-16">
           <div className="flex justify-center items-center mb-12">
-            <motion.h2 
+            {/* <motion.h2 
               className="text-5xl font-bold text-center relative inline-block"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -461,11 +446,11 @@ const SaleItems = () => {
               >
                 SALE
               </motion.div>
-            </motion.h2>
+            </motion.h2> */}
           </div>
 
           {/* Sale Benefits */}
-          {renderSaleBenefits()}
+          {/* {renderSaleBenefits()} */}
 
           {/* Filters Section */}
           <motion.div 
