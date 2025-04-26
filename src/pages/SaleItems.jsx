@@ -623,7 +623,7 @@ const SaleItems = () => {
               
               {/* Limited Time Offers Banner */}
               <motion.div 
-                className="my-12 bg-gradient-to-r from-red-600 to-red-900 rounded-lg p-8 text-white text-center"
+                className="my-12 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg p-8 text-white text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -637,8 +637,8 @@ const SaleItems = () => {
                 >
                   LIMITED TIME OFFERS
                 </motion.h3>
-                <p className="text-lg mb-6">Additional 10% off on all sale items. Use code: <span className="font-bold">SALE10</span></p>
-                <div className="flex flex-wrap justify-center gap-4">
+                {/* <p className="text-lg mb-6">Additional 10% off on all sale items. Use code: <span className="font-bold">SALE10</span></p> */}
+                {/* <div className="flex flex-wrap justify-center gap-4">
                   <motion.div
                     className="bg-black bg-opacity-20 backdrop-blur-sm rounded-lg p-4 px-6 inline-flex items-center justify-center"
                     whileHover={{ scale: 1.05 }}
@@ -666,7 +666,7 @@ const SaleItems = () => {
                       <span className="text-xs opacity-80">SECONDS</span>
                     </div>
                   </motion.div>
-                </div>
+                </div> */}
               </motion.div>
             </>
           )}
