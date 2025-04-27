@@ -378,51 +378,99 @@ const SaleItems = () => {
   return (
     <div className="min-h-screen" style={{backgroundColor: '#FAF9F6'}}>
       {/* Custom Hero Section */}
-      <div className="w-full flex flex-col md:flex-row items-stretch gap-0 bg-[#FAF9F6] min-h-[420px] md:min-h-[520px] mb-12">
-        {/* Left: Heading + Thumbnails + Button */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center items-start px-6 md:pl-16 md:pr-8 py-8">
-          <div className="w-full max-w-lg mb-8 md:mb-12">
-            <h1 className="text-4xl md:text-6xl font-extrabold text-black mb-4 leading-tight tracking-tight" style={{letterSpacing: '-0.03em'}}>
-              Sale Items
-            </h1>
-            <p className="text-base md:text-lg text-gray-600 mb-8">
-              Discover the best deals on trending fashion. Limited time offers, exclusive discounts, and more!
-            </p>
-            {/* Horizontal Thumbnails */}
-            <div className="flex flex-row gap-4 overflow-x-auto pb-2 mb-12 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2 ">
-              {HERO_IMAGES.map((img, idx) => (
-                <img
-                  key={img.src}
-                  src={img.src}
-                  alt={img.alt}
-                  onClick={() => setSelectedHero(idx)}
-                  className={`w-28 h-28 md:w-32 md:h-32 object-cover rounded-lg border-2 cursor-pointer transition-all duration-300 ${
-                    idx === selectedHero ? 'border-black scale-105 shadow-lg' : 'border-gray-200 opacity-70 hover:opacity-100'
-                  }`}
-                  style={{ boxShadow: idx === selectedHero ? '0 4px 24px 0 rgba(0,0,0,0.10)' : undefined }}
-                />
-              ))}
-            </div>
-            <button
-              className="bg-black text-white px-8 py-4 rounded-md font-semibold text-lg shadow hover:bg-gray-900 transition"
-              onClick={handleScrollToProducts}
-            >
-              Shop Collection
-            </button>
-          </div>
+      <div className="w-full flex flex-col md:flex-row items-stretch gap-0 bg-gray-50 min-h-screen mb-12 overflow-hidden">
+      {/* Left: Heading + Thumbnails + Button */}
+      <motion.div 
+        className="w-full md:w-1/2 flex flex-col justify-center items-start px-6 md:pl-16 md:pr-8 py-8"
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="w-full max-w-lg mb-8 md:mb-12">
+          <motion.h1 
+            className="text-4xl md:text-6xl font-extrabold text-black mb-4 leading-tight tracking-tight"
+            style={{letterSpacing: '-0.03em'}}
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            Sale Items
+          </motion.h1>
+          
+          <motion.p 
+            className="text-base md:text-lg text-gray-600 mb-8"
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            Discover the best deals on trending fashion. Limited time offers, exclusive discounts, and more!
+          </motion.p>
+          
+          {/* Horizontal Thumbnails */}
+          <motion.div 
+            className="flex flex-row gap-4 overflow-x-auto pb-2 mb-12 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
+            {HERO_IMAGES.map((img, idx) => (
+              <motion.img
+                key={img.src}
+                src={img.src}
+                alt={img.alt}
+                onClick={() => setSelectedHero(idx)}
+                className={`w-28 h-28 md:w-32 md:h-32 object-cover rounded-lg border-2 cursor-pointer transition-all duration-300 ${
+                  idx === selectedHero ? 'border-black scale-105 shadow-lg' : 'border-gray-200 opacity-70 hover:opacity-100'
+                }`}
+                style={{ boxShadow: idx === selectedHero ? '0 4px 24px 0 rgba(0,0,0,0.10)' : undefined }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.6 + idx * 0.1 }}
+              />
+            ))}
+          </motion.div>
+          
+          <motion.button
+            className="bg-black text-white px-8 py-4 rounded-md font-semibold text-lg shadow hover:bg-gray-900 transition"
+            onClick={handleScrollToProducts}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Shop Collection
+          </motion.button>
         </div>
-        {/* Right: Main Image */}
-        <div className="w-full md:w-1/2 flex items-center justify-center bg-white py-8 md:py-0">
-          <div className="relative w-[98vw] max-w-[520px] md:w-[420px] md:max-w-[520px] h-[600px] md:h-[720px] flex items-center justify-center rounded-lg overflow-hidden shadow-xl border border-gray-100">
-            <img
-              src={HERO_IMAGES[selectedHero].src}
-              alt={HERO_IMAGES[selectedHero].alt}
-              className="w-full h-full object-cover object-center"
-              style={{ aspectRatio: '3/4' }}
-            />
-          </div>
-        </div>
-      </div>
+      </motion.div>
+      
+      {/* Right: Main Image */}
+      <motion.div 
+        className="w-full md:w-1/2 flex items-center justify-center bg-white py-8 md:py-0"
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <motion.div 
+          className="relative w-full max-w-lg md:w-full md:max-w-xl h-96 md:h-full flex items-center justify-center rounded-lg overflow-hidden shadow-xl border border-gray-100"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+        >
+          <motion.img
+            key={selectedHero}
+            src={HERO_IMAGES[selectedHero].src}
+            alt={HERO_IMAGES[selectedHero].alt}
+            className="w-full h-full object-cover object-center"
+            style={{ aspectRatio: '3/4' }}
+            initial={{ scale: 1.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          />
+        </motion.div>
+      </motion.div>
+    </div>
 
       <div ref={productListRef} className="container mx-auto px-4 py-12">
         <section className="mb-16">
@@ -623,7 +671,7 @@ const SaleItems = () => {
               
               {/* Limited Time Offers Banner */}
               <motion.div 
-                className="my-12 bg-gradient-to-r from-cyan-200 to-cyan-300 rounded-lg p-8 text-white text-center"
+                className="my-12 bg-gradient-to-r from-gray-500 to-gray-600 rounded-lg p-8 text-white text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
