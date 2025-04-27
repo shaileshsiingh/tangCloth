@@ -138,7 +138,7 @@ function HeroSlider() {
     <div className="relative w-full max-h-[800px] overflow-hidden bg-gray-100 py-10" style={{backgroundColor:'#FAF9F6'}}>
       {/* Added header section */}
       <div className="text-center mb-1">
-        <h2 className="text-8xl md:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">
+        <h2 className="text-2xl md:text-2xl font-extrabold text-gray-900 mb-3 tracking-tight">
           Shop By Category
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto px-4">
