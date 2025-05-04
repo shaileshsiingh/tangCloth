@@ -247,7 +247,7 @@ function Categories2() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsToShow = 3;
+  const itemsToShow = 4;
 
   // Category ID mapping
   const categoryIds = {
