@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
@@ -241,16 +241,29 @@ import { useNavigate } from 'react-router-dom';
 
 // Categories Component
 function Categories2() {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.7,
-  });
-
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.7 });
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsToShow, setItemsToShow] = useState(3);
+
+  // Responsive itemsToShow
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth < 640) {
+        setItemsToShow(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsToShow(2);
+      } else {
+        setItemsToShow(3);
+      }
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Category ID mapping
   const categoryIds = {
@@ -270,62 +283,48 @@ function Categories2() {
   
   const API_URL = '/api';
   
-  const fetchCategories = useCallback(async () => {
-    try {
-      setLoading(true);
-      // const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`);
-      const response = await fetch(`${API_URL}/category/getAllCategory`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch categories');
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_URL}/category/getAllCategory`);
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        const data = await response.json();
+        const filteredCategories = data.data.category.filter(cat =>
+          ['men', 'women', 'kids'].includes(cat.name.toLowerCase())
+        );
+        const extendedCategories = [
+          ...filteredCategories,
+          { _id: 'shoes-category', name: 'shoes', image: categoryImages['shoes'] },
+          { _id: 'bags-category', name: 'bags', image: categoryImages['bags'] }
+        ];
+        const categoriesWithUpdatedImages = extendedCategories.map(cat => {
+          const categoryName = cat.name.toLowerCase();
+          return { ...cat, image: categoryImages[categoryName] || cat.image };
+        });
+        setCategories(categoriesWithUpdatedImages);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      
-      const data = await response.json();
-      
-      const filteredCategories = data.data.category.filter(cat =>
-        ['men', 'women', 'kids'].includes(cat.name.toLowerCase())
-      );
-      
-      const extendedCategories = [
-        ...filteredCategories,
-        {
-          _id: 'shoes-category',
-          name: 'shoes',
-          image: categoryImages['shoes']
-        },
-        {
-          _id: 'bags-category',
-          name: 'bags',
-          image: categoryImages['bags']
-        }
-      ];
-      
-      const categoriesWithUpdatedImages = extendedCategories.map(cat => {
-        const categoryName = cat.name.toLowerCase();
-        return {
-          ...cat,
-          image: categoryImages[categoryName] || cat.image
-        };
-      });
-      
-      setCategories(categoriesWithUpdatedImages);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
+    fetchCategories();
   }, []);
 
+  // Auto-scroll logic
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % categories.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [categories.length]);
 
   const goToNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide + 1) % 2);
+    setCurrentIndex((prev) => (prev + 1) % categories.length);
   };
-
   const goToPrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide - 1 + 2) % 2);
+    setCurrentIndex((prev) => (prev - 1 + categories.length) % categories.length);
   };
 
   const handleCategoryClick = (category) => {
@@ -341,6 +340,22 @@ function Categories2() {
       } else {
         navigate('/shop');
       }
+    }
+  };
+
+  // Get visible items for the current window
+  const getVisibleCategories = () => {
+    if (categories.length <= itemsToShow) return categories;
+    let start = currentIndex;
+    let end = start + itemsToShow;
+    if (end <= categories.length) {
+      return categories.slice(start, end);
+    } else {
+      // Wrap around
+      return [
+        ...categories.slice(start, categories.length),
+        ...categories.slice(0, end - categories.length)
+      ];
     }
   };
 
@@ -364,15 +379,12 @@ function Categories2() {
           <p className="text-red-600 text-lg font-semibold">{error}</p>
         </div>
       ) : (
-        <div className="relative overflow-hidden">
-          <div className="flex transition-transform duration-500 ease-in-out"
-               style={{ transform: `translateX(-${currentSlide * 50}%)` }}>
-            <div className="w-full flex justify-start space-x-8 px-4 min-h-[400px] items-center">
-              {categories.map((category) => (
-                <div 
-                  key={category._id}
-                  className="w-[250px] flex-shrink-0"
-                >
+        <div className="relative">
+          <div className="flex items-center justify-center overflow-hidden">
+            <div className="flex transition-transform duration-500 ease-in-out"
+              style={{ width: '100%', minHeight: 400 }}>
+              {getVisibleCategories().map((category) => (
+                <div key={category._id} className="w-[250px] flex-shrink-0 mx-2">
                   <motion.div
                     className="group text-center"
                     initial={{ opacity: 0, y: 50 }}
@@ -405,7 +417,6 @@ function Categories2() {
               ))}
             </div>
           </div>
-
           {/* Navigation Arrows */}
           <button
             onClick={goToPrevSlide}
@@ -418,7 +429,6 @@ function Categories2() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          
           <button
             onClick={goToNextSlide}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 
