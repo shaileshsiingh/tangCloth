@@ -247,23 +247,7 @@ function Categories2() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsToShow, setItemsToShow] = useState(3);
-
-  // Responsive itemsToShow
-  useEffect(() => {
-    function handleResize() {
-      if (window.innerWidth < 640) {
-        setItemsToShow(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsToShow(2);
-      } else {
-        setItemsToShow(3);
-      }
-    }
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const itemsToShow = 3;
 
   // Category ID mapping
   const categoryIds = {
@@ -287,7 +271,8 @@ function Categories2() {
     async function fetchCategories() {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/category/getAllCategory`);
+        // const response = await fetch(`${API_URL}/category/getAllCategory`);
+        const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`)
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         const filteredCategories = data.data.category.filter(cat =>
@@ -314,6 +299,7 @@ function Categories2() {
 
   // Auto-scroll logic
   useEffect(() => {
+    if (categories.length <= 3) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % categories.length);
     }, 4000);
@@ -330,7 +316,6 @@ function Categories2() {
   const handleCategoryClick = (category) => {
     window.scrollTo(0, 0);
     const categoryName = category.name.toLowerCase();
-    
     if (['shoes', 'bags'].includes(categoryName)) {
       navigate('/shop');
     } else {
@@ -343,20 +328,14 @@ function Categories2() {
     }
   };
 
-  // Get visible items for the current window
+  // Get visible items for the current window (classic carousel logic)
   const getVisibleCategories = () => {
     if (categories.length <= itemsToShow) return categories;
-    let start = currentIndex;
-    let end = start + itemsToShow;
-    if (end <= categories.length) {
-      return categories.slice(start, end);
-    } else {
-      // Wrap around
-      return [
-        ...categories.slice(start, categories.length),
-        ...categories.slice(0, end - categories.length)
-      ];
+    let visible = [];
+    for (let i = 0; i < itemsToShow; i++) {
+      visible.push(categories[(currentIndex + i) % categories.length]);
     }
+    return visible;
   };
 
   return (
@@ -369,7 +348,6 @@ function Categories2() {
           Discover our carefully curated collections designed for every style and age.
         </p>
       </div>
-
       {loading ? (
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500"></div>
@@ -379,14 +357,26 @@ function Categories2() {
           <p className="text-red-600 text-lg font-semibold">{error}</p>
         </div>
       ) : (
-        <div className="relative">
-          <div className="flex items-center justify-center overflow-hidden">
-            <div className="flex transition-transform duration-500 ease-in-out"
-              style={{ width: '100%', minHeight: 400 }}>
+        <div className="relative" style={{ minHeight: 380 }}>
+          {/* Carousel Row */}
+          <div className="flex items-center justify-center relative" style={{ minHeight: 340 }}>
+            {/* Left Arrow */}
+            <button
+              onClick={goToPrevSlide}
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full w-12 h-12 flex items-center justify-center shadow-lg z-20 hover:bg-opacity-100 transition-all duration-300 hover:scale-110"
+              aria-label="Previous slide"
+              style={{ transform: 'translateY(-50%)' }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            {/* Carousel Items */}
+            <div className="flex justify-center items-center w-full" style={{ minHeight: 340 }}>
               {getVisibleCategories().map((category) => (
-                <div key={category._id} className="w-[250px] flex-shrink-0 mx-2">
+                <div key={category._id} className="w-[300px] h-[340px] flex-shrink-0 mx-4 flex flex-col justify-center">
                   <motion.div
-                    className="group text-center"
+                    className="group text-center h-full"
                     initial={{ opacity: 0, y: 50 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.6, ease: "easeOut" }}
@@ -395,20 +385,16 @@ function Categories2() {
                   >
                     <div 
                       onClick={() => handleCategoryClick(category)}
-                      className="cursor-pointer flex flex-col items-center p-2"
+                      className="cursor-pointer flex flex-col items-center p-2 h-full"
                     >
-                      <div className="w-full aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 
-                        group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
+                      <div className="w-full h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
                         <img
                           src={category.image}
                           alt={category.name.toUpperCase()}
-                          className="w-full h-full object-cover transform transition-transform duration-300 
-                            group-hover:scale-110"
+                          className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
                         />
                       </div>
-                      <h3 className="text-sm md:text-base font-semibold tracking-wider text-gray-800 
-                        transition-colors duration-300 mt-4
-                        group-hover:text-blue-600 uppercase">
+                      <h3 className="text-sm md:text-base font-semibold tracking-wider text-gray-800 transition-colors duration-300 mt-4 group-hover:text-blue-600 uppercase">
                         {category.name.toUpperCase()}
                       </h3>
                     </div>
@@ -416,30 +402,18 @@ function Categories2() {
                 </div>
               ))}
             </div>
+            {/* Right Arrow */}
+            <button
+              onClick={goToNextSlide}
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full w-12 h-12 flex items-center justify-center shadow-lg z-20 hover:bg-opacity-100 transition-all duration-300 hover:scale-110"
+              aria-label="Next slide"
+              style={{ transform: 'translateY(-50%)' }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
-          {/* Navigation Arrows */}
-          <button
-            onClick={goToPrevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 
-              bg-white bg-opacity-90 rounded-full w-12 h-12 flex items-center justify-center 
-              shadow-lg z-20 hover:bg-opacity-100 transition-all duration-300 hover:scale-110"
-            aria-label="Previous slide"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={goToNextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 
-              bg-white bg-opacity-90 rounded-full w-12 h-12 flex items-center justify-center 
-              shadow-lg z-20 hover:bg-opacity-100 transition-all duration-300 hover:scale-110"
-            aria-label="Next slide"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
       )}
     </div>

@@ -347,7 +347,7 @@ function HomePage() {
       </section>
 
       {/* Show more button */}
-      <div className="flex justify-center mb-12 mt-8">
+      <div className="flex justify-center mb-0 mt-8">
           <motion.button
             className="bg-[#B2FFFF] hover:bg-[#8EEAEA] text-gray-800 font-medium px-8 py-3 rounded-lg shadow-md transition-all duration-300 flex items-center"
             whileHover={{ scale: 1.05 }}
