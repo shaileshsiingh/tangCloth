@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
+import img1 from '../assets/img1.jpg';
+import img2 from '../assets/img2.jpg';
+import img3 from '../assets/img3.jpg';
+import img4 from '../assets/img4.jpg';
+import img5 from '../assets/img5.jpg';
+import img6 from '../assets/img5.jpg';
 
 const influencerVideos = [
   {
     id: 1,
     title: "Luxury Fashion Haul | Tangerine Luxury",
     influencer: "@fashionista_diaries",
-    thumbnail: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    thumbnail: img1,
     videoUrl: "https://www.instagram.com/reel/C7D7vway-sR/?igsh=eXVheWhtNXZhN3ps",
     description: "Unboxing the most luxurious pieces from Tangerine Luxury's latest collection"
   },
@@ -16,7 +22,7 @@ const influencerVideos = [
     id: 2,
     title: "Summer Collection Styling Tips",
     influencer: "@style_with_me",
-    thumbnail: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    thumbnail: img2,
     videoUrl: "https://www.instagram.com/reel/DHOFqG2ykb7/?igsh=ZmVzZXo0NnFqbHh6",
     description: "How to style Tangerine Luxury's summer collection for different occasions"
   },
@@ -24,7 +30,7 @@ const influencerVideos = [
     id: 3,
     title: "Luxury Fashion Review",
     influencer: "@luxury_lover",
-    thumbnail: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    thumbnail: img3,
     videoUrl: "https://www.instagram.com/reel/DAA23D6SYAN/?igsh=ZzVtZ2F2aHQ2cTU3",
     description: "Detailed review of Tangerine Luxury's premium collection"
   },
@@ -32,7 +38,7 @@ const influencerVideos = [
     id: 4,
     title: "Street Style Inspiration",
     influencer: "@urban_fashion",
-    thumbnail: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    thumbnail: img4,
     videoUrl: "https://www.instagram.com/reel/DALZ55uSHfP/?igsh=c2JueGVsZ2F5cnJt",
     description: "Street style looks featuring Tangerine Luxury's latest pieces"
   },
@@ -40,7 +46,7 @@ const influencerVideos = [
     id: 5,
     title: "Luxury Fashion Tips",
     influencer: "@fashion_expert",
-    thumbnail: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    thumbnail: img5,
     videoUrl: "https://www.instagram.com/reel/Cy-38mbSYwl/?igsh=OWhidXE3bDhjcGho",
     description: "Expert tips on styling Tangerine Luxury's collection"
   },
@@ -48,7 +54,7 @@ const influencerVideos = [
     id: 6,
     title: "Fashion Haul & Review",
     influencer: "@style_icon",
-    thumbnail: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    thumbnail: img6,
     videoUrl: "https://www.instagram.com/reel/CzJA0_Sy1ml/?igsh=MWQwdXRoaWozZ2F6cw==",
     description: "Complete haul and review of Tangerine Luxury's new arrivals"
   }
