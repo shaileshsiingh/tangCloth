@@ -83,7 +83,7 @@ function Home() {
         <ServicesSection/>
         <FeaturedProducts />
         <InfluencerVideos />
-        <SellOnBanner/>
+<SellOnBanner/>
 
         {/* <PrelovedLuxury /> 
           */}
