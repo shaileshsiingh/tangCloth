@@ -271,8 +271,8 @@ function Categories2() {
     async function fetchCategories() {
       try {
         setLoading(true);
-        // const response = await fetch(`${API_URL}/category/getAllCategory`);
-        const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`)
+        const response = await fetch(`${API_URL}/category/getAllCategory`);
+        // const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`)
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         const filteredCategories = data.data.category.filter(cat =>
