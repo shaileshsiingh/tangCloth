@@ -46,14 +46,14 @@ const influencerVideos = [
     id: 5,
     title: "Luxury Fashion Tips",
     influencer: "@fashion_expert",
-    thumbnail: img5,
+    thumbnail: img1,
     videoUrl: "https://www.instagram.com/reel/Cy-38mbSYwl/?igsh=OWhidXE3bDhjcGho",
     description: "Expert tips on styling Tangerine Luxury's collection"
   },
   {
     id: 6,
     title: "Fashion Haul & Review",
-    influencer: "@style_icon",
+    influencer: "@ishitasapraa",
     thumbnail: img6,
     videoUrl: "https://www.instagram.com/reel/CzJA0_Sy1ml/?igsh=MWQwdXRoaWozZ2F6cw==",
     description: "Complete haul and review of Tangerine Luxury's new arrivals"
