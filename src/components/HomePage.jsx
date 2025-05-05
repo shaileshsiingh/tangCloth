@@ -79,7 +79,7 @@ function HomePage() {
             animate={{ rotate: rotate ? 360 : 0 }}
             transition={{ duration: 1, ease: "easeInOut" }}
           >
-            <span className="bg-gradient-to-r from-red-600 to-orange-500 text-transparent bg-clip-text">SALE IS LIVE</span>
+            <span className="bg-gradient-to-r from-red-600 to-orange-500 text-transparent bg-clip-text m-10">SALE IS LIVE</span>
             <motion.div 
               className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}

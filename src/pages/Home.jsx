@@ -82,7 +82,7 @@ function Home() {
         <BrandSection/>
         <SellOnBanner/>
         <ServicesSection/>
-        <FeaturedProducts />
+        {/* <FeaturedProducts /> */}
         <InfluencerVideos />
 
         {/* <PrelovedLuxury /> 
