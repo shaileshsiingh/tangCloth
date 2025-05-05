@@ -105,7 +105,7 @@ function OurFounder() {
               <div className="absolute inset-0 bg-orange-100 rounded-lg -rotate-3 scale-95 z-0"></div>
               <img
                 src="http://tangerineluxury.com/wp-content/uploads/2023/11/TANIYA-828x1024.jpeg"
-                alt="Taniya Bhatia - Founder of Tangerine Luxury"
+                alt="Tanya Bhatia - Founder of Tangerine Luxury"
                 className="w-full h-auto rounded-lg shadow-xl relative z-10 transform transition-transform duration-500 hover:scale-105"
               />
               
