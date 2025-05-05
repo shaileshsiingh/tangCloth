@@ -733,7 +733,7 @@ function ProductDetails() {
                           {index === 0 && (
                             <>
                               {product.condition && (
-                                <span className="absolute top-4 left-4 bg-black bg-opacity-80 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-sm">
+                                <span className="absolute top-4 left-4 bg-gray-200 bg-opacity-80 backdrop-blur-sm text-black text-xs font-medium px-2 py-1 rounded-sm">
                                   {product.condition.toUpperCase()}
                                 </span>
                               )}

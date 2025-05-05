@@ -619,7 +619,7 @@ const SaleItems = () => {
                         SALE
                       </div>
                       {product.condition && (
-                        <span className="absolute top-3 left-3 bg-black bg-opacity-80 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-sm z-10">
+                        <span className="absolute top-3 left-3 bg-gray-200 bg-opacity-80 backdrop-blur-sm text-black text-xs font-medium px-2 py-1 rounded-sm z-10">
                           {product.condition.replace(/_/g, ' ').toUpperCase()}
                         </span>
                       )}
