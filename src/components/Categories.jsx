@@ -261,8 +261,8 @@ function Categories2() {
     'women': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-1.png',
     'men': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-2.png',
     'kids': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-4.png',
-    'bags': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-5.png',
-    'shoes': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-3.png'
+    // 'bags': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-5.png',
+    // 'shoes': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-3.png'
   };
   
   const API_URL = '/api';

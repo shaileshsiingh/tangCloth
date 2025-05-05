@@ -80,10 +80,10 @@ function Home() {
         <Categories/>
         <CategoryBanner />
         <BrandSection/>
+        <SellOnBanner/>
         <ServicesSection/>
         <FeaturedProducts />
         <InfluencerVideos />
-<SellOnBanner/>
 
         {/* <PrelovedLuxury /> 
           */}
@@ -91,9 +91,9 @@ function Home() {
 
         <BrandsSale />
         <TangerineLuxuryHeader/>
-        <VersatileClothing />
+        {/* <VersatileClothing /> */}
         <Testimonials />
-        <FashionBlog />
+        {/* <FashionBlog /> */}
         <Newsletter />
       </div>
     </div>

@@ -237,8 +237,8 @@ function ProductList() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_URL}/product/list`);
-      // const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
+      // const response = await axios.get(`${API_URL}/product/list`);
+      const response = await axios.get(`http://91.203.135.152:2001/api/product/list`);
 
 
       if (response.data.success) {
@@ -1248,7 +1248,7 @@ function ProductList() {
                       }}
                     />
                     {product.condition && (
-                      <span className="absolute top-3 left-3 bg-black bg-opacity-80 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-sm">
+                      <span className="absolute top-3 left-3 bg-gray-200 bg-opacity-80 backdrop-blur-sm text-black text-xs font-medium px-2 py-1 rounded-sm">
                         {product.condition.replace(/_/g, ' ').toUpperCase()}
                       </span>
                     )}

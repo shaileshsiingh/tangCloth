@@ -56,17 +56,17 @@ function HomePage() {
   const getConditionBadgeColor = (condition) => {
     switch (condition?.toLowerCase()) {
       case 'pristine':
-        return 'bg-green-600';
+        return 'bg-gray-400';
       case 'new':
-        return 'bg-red-600';
+        return 'bg-gray-400';
       case 'sale':
-        return 'bg-black';
+        return 'bg-gray-400';
       case 'used':
-        return 'bg-orange-500';
+        return 'bg-gray-400';
       case 'refurbished':
-        return 'bg-blue-600';
+        return 'bg-gray-400';
       default:
-        return 'bg-gray-600';
+        return 'bg-gray-400';
     }
   };
 
@@ -79,14 +79,14 @@ function HomePage() {
             animate={{ rotate: rotate ? 360 : 0 }}
             transition={{ duration: 1, ease: "easeInOut" }}
           >
-            {/* <span className="bg-gradient-to-r from-red-600 to-yellow-500 text-transparent bg-clip-text">SALE IS LIVE</span> */}
-            {/* <motion.div 
+            <span className="bg-gradient-to-r from-red-600 to-orange-500 text-transparent bg-clip-text">SALE IS LIVE</span>
+            <motion.div 
               className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
               SALE
-            </motion.div> */}
+            </motion.div>
           </motion.h2>
         </div>
         
@@ -289,14 +289,17 @@ function HomePage() {
 
       {/* Trending Apparels Section */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 mt-10 text-center">Clothing & Accessories</h2>
+        {/* <h2 className="text-3xl font-bold mb-8 mt-10 text-center">Sale Items</h2> */}
         <motion.div 
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           initial={{ opacity: 0, y: -50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, ease: 'easeOut' }}
         >
-          {products.slice(4, 8).map((product) => (
+          {products
+            .filter(product => product.estimated_price && product.discount_price)
+            .slice(0, 4)
+            .map((product) => (
             <motion.div
               key={product._id}
               className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
@@ -321,24 +324,26 @@ function HomePage() {
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
+                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                  SALE
+                </div>
               </div>
               <div className="p-5 bg-white">
                 <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
                 <div className="mt-3 space-y-1.5">
-                  {product.estimated_price ? (
-                    <div className="flex flex-col">
-                      <span className="text-gray-500 text-sm">
-                        Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
+                  <div className="flex flex-col">
+                    <span className="text-gray-500 text-sm">
+                      Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
+                    </span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-gray-900 font-medium">
+                        Our Price: ₹{product.discount_price.toLocaleString()}
                       </span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-gray-900 font-medium">
-                          Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
-                        </span>
-                      </div>
+                      <span className="text-xs px-1.5 py-0.5 bg-red-600 text-white rounded-sm">
+                        {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
+                      </span>
                     </div>
-                  ) : (
-                    <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
-                  )}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -354,8 +359,9 @@ function HomePage() {
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               window.scrollTo(0, 0);
-              navigate('/shop');
-            }}          >
+              navigate('/sale-items');
+            }}
+          >
             Show more
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
