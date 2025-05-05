@@ -81,7 +81,7 @@ function HomePage() {
           >
             <span className="bg-gradient-to-r from-[#B2FFFF] to-[#8EEAEA] text-transparent bg-clip-text">SALE IS LIVE</span>
             <motion.div 
-              className="absolute -top-4 -right-10 bg-gray-400 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
+              className="absolute -top-4 -right-10 bg-gray-400 text-cyan text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -315,7 +315,7 @@ function HomePage() {
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
                 {product.condition && (
-                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1 rounded shadow-md`}>
+                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-black text-xs font-semibold px-2 py-1 rounded shadow-md`}>
                     {product.condition.toUpperCase()}
                   </span>
                 )}
