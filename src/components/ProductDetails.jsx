@@ -326,36 +326,47 @@ function ProductDetails() {
       .filter(line => line.length > 0);
   
     const result = [];
-    let currentLine = [];
+    let currentSection = null;
+    let currentItems = [];
   
-    lines.forEach((line, idx) => {
-      const hasColon = line.includes(':');
-      const [label, ...rest] = line.split(':');
-      const value = rest.join(':').trim();
-  
-      const isSectionHeader = line.endsWith(':') || (!value && hasColon);
-  
-      if (isSectionHeader) {
-        // Flush current line if not empty
-        if (currentLine.length) {
-          result.push(currentLine.join(', ') + ',');
-          currentLine = [];
+    lines.forEach((line) => {
+      // Check if this is a main title (like "Description")
+      if (!line.includes(':') && !currentSection) {
+        result.push(`<div className="text-lg font-medium">${line}</div>`);
+        return;
+      }
+      
+      // Check if this is a section header (ends with colon)
+      if (line.endsWith(':')) {
+        // If we have items from previous section, add them first
+        if (currentItems.length > 0) {
+          result.push(`<div className="pl-3">${currentItems.join('<br />')}</div>`);
+          currentItems = [];
         }
-        // Push the header in bold with line break
-        result.push(`<strong>${label.trim()}:</strong>`);
-      } else if (hasColon) {
-        currentLine.push(`<strong>${label.trim()}:</strong> ${value}`);
+        
+        // Add the new section header
+        currentSection = line;
+        result.push(`<div className="font-medium mt-2">${line}</div>`);
+        return;
+      }
+      
+      // Handle property with value (contains colon but not at the end)
+      if (line.includes(':')) {
+        const [key, value] = line.split(':').map(part => part.trim());
+        currentItems.push(`<span className="font-medium">${key}:</span> ${value}`);
       } else {
-        currentLine.push(`${line}`);
+        // Regular item under a section
+        currentItems.push(line);
       }
     });
   
-    if (currentLine.length) {
-      result.push(currentLine.join(', ') + ',');
+    // Add any remaining items
+    if (currentItems.length > 0) {
+      result.push(`<div className="pl-3">${currentItems.join('<br />')}</div>`);
     }
   
     return (
-      <div className="space-y-1 text-sm sm:text-base leading-relaxed">
+      <div className="space-y-1 text-sm sm:text-base">
         {result.map((item, index) => (
           <div
             key={index}
