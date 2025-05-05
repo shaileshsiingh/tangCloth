@@ -332,7 +332,7 @@ function ProductDetails() {
     lines.forEach((line) => {
       // Check if this is a main title (like "Description")
       if (!line.includes(':') && !currentSection) {
-        result.push(`<div className="text-lg font-medium">${line}</div>`);
+        result.push(`<div className="text-lg font-semibold mb-3">${line}</div>`);
         return;
       }
       
@@ -340,20 +340,20 @@ function ProductDetails() {
       if (line.endsWith(':')) {
         // If we have items from previous section, add them first
         if (currentItems.length > 0) {
-          result.push(`<div className="pl-3">${currentItems.join('<br />')}</div>`);
+          result.push(`<div className="pl-4 mb-4">${currentItems.join('<br />')}</div>`);
           currentItems = [];
         }
         
         // Add the new section header
         currentSection = line;
-        result.push(`<div className="font-medium mt-2">${line}</div>`);
+        result.push(`<div className="font-semibold mt-3 mb-2">${line}</div>`);
         return;
       }
       
       // Handle property with value (contains colon but not at the end)
       if (line.includes(':')) {
         const [key, value] = line.split(':').map(part => part.trim());
-        currentItems.push(`<span className="font-medium">${key}:</span> ${value}`);
+        currentItems.push(`<strong>${key}:</strong> ${value}`);
       } else {
         // Regular item under a section
         currentItems.push(line);
@@ -362,7 +362,7 @@ function ProductDetails() {
   
     // Add any remaining items
     if (currentItems.length > 0) {
-      result.push(`<div className="pl-3">${currentItems.join('<br />')}</div>`);
+      result.push(`<div className="pl-4 mb-4">${currentItems.join('<br />')}</div>`);
     }
   
     return (
