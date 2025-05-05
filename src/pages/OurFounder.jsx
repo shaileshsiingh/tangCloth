@@ -154,7 +154,7 @@ function OurFounder() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.6, duration: 0.5 }}
                   >
-                    Taniya Bhatia
+                    Tanya Bhatia
                   </motion.p>
                   <motion.div 
                     className="absolute bottom-0 left-0 h-3 bg-orange-200 z-0"

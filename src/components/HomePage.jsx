@@ -56,17 +56,17 @@ function HomePage() {
   const getConditionBadgeColor = (condition) => {
     switch (condition?.toLowerCase()) {
       case 'pristine':
-        return 'bg-gray-400';
+        return 'bg-gray-200';
       case 'new':
-        return 'bg-gray-400';
+        return 'bg-gray-200';
       case 'sale':
-        return 'bg-gray-400';
+        return 'bg-gray-200';
       case 'used':
-        return 'bg-gray-400';
+        return 'bg-gray-200';
       case 'refurbished':
-        return 'bg-gray-400';
+        return 'bg-gray-200';
       default:
-        return 'bg-gray-400';
+        return 'bg-gray-200';
     }
   };
 
@@ -75,13 +75,13 @@ function HomePage() {
       <section >
         <div className="flex justify-center items-center mb-8 mt-0">
           <motion.h2 
-            className="text-5xl font-bold text-center relative inline-block"
+            className="text-5xl font-bold text-center relative inline-block my-12"
             animate={{ rotate: rotate ? 360 : 0 }}
             transition={{ duration: 1, ease: "easeInOut" }}
           >
             <span className="bg-gradient-to-r from-[#B2FFFF] to-[#8EEAEA] text-transparent bg-clip-text">SALE IS LIVE</span>
             <motion.div 
-              className="absolute -top-4 -right-10 bg-[#B2FFFF] text-gray-800 text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
+              className="absolute -top-4 -right-10 bg-gray-400 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -324,7 +324,7 @@ function HomePage() {
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
-                <div className="absolute top-2 right-2 bg-[#B2FFFF] text-gray-800 text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                <div className="absolute top-2 right-2 bg-gray-400 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
                   SALE
                 </div>
               </div>
@@ -339,7 +339,7 @@ function HomePage() {
                       <span className="text-gray-900 font-medium">
                         Our Price: ₹{product.discount_price.toLocaleString()}
                       </span>
-                      <span className="text-xs px-1.5 py-0.5 bg-[#B2FFFF] text-gray-800 rounded-sm">
+                      <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
                         {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
                       </span>
                     </div>
