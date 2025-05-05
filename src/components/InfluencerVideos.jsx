@@ -201,7 +201,6 @@ function InfluencerVideos() {
                   <div className={`absolute inset-x-0 bottom-8 p-6 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
                     <div className="text-center">
                       <h3 className="text-white text-xl font-bold mb-2">{video.title}</h3>
-                      <p className="text-white text-sm mb-4">by {video.influencer}</p>
                       <p className="text-white text-sm">{video.description}</p>
                     </div>
                   </div>

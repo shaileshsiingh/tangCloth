@@ -79,9 +79,9 @@ function HomePage() {
             animate={{ rotate: rotate ? 360 : 0 }}
             transition={{ duration: 1, ease: "easeInOut" }}
           >
-            <span className="bg-gradient-to-r from-red-600 to-orange-500 text-transparent bg-clip-text mb-6 mt-6">SALE IS LIVE</span>
+            <span className="bg-gradient-to-r from-[#B2FFFF] to-[#8EEAEA] text-transparent bg-clip-text">SALE IS LIVE</span>
             <motion.div 
-              className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
+              className="absolute -top-4 -right-10 bg-[#B2FFFF] text-gray-800 text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -123,7 +123,7 @@ function HomePage() {
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
-                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                <div className="absolute top-2 right-2 bg-[#B2FFFF] text-gray-800 text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
                   SALE
                 </div>
                 <div className="absolute right-2 top-14 flex flex-col gap-2">
@@ -324,7 +324,7 @@ function HomePage() {
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
-                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                <div className="absolute top-2 right-2 bg-[#B2FFFF] text-gray-800 text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
                   SALE
                 </div>
               </div>
@@ -339,7 +339,7 @@ function HomePage() {
                       <span className="text-gray-900 font-medium">
                         Our Price: ₹{product.discount_price.toLocaleString()}
                       </span>
-                      <span className="text-xs px-1.5 py-0.5 bg-red-600 text-white rounded-sm">
+                      <span className="text-xs px-1.5 py-0.5 bg-[#B2FFFF] text-gray-800 rounded-sm">
                         {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
                       </span>
                     </div>

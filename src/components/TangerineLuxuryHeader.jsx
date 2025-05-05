@@ -64,7 +64,7 @@ function TangerineLuxuryHeader() {
           <img 
             src="https://tangerineluxury.com/wp-content/uploads/2023/09/Layer-1111111.png" 
             alt="Tangerine" 
-            className="transition-all duration-300 hover:brightness-110"
+            className="transition-all duration-300 hover:brightness-110 max-w-[200px]"
           />
         </motion.div>
       </motion.div>
