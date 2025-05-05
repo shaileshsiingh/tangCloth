@@ -260,9 +260,7 @@ function Categories2() {
   const categoryImages = {
     'women': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-1.png',
     'men': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-2.png',
-    'kids': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-4.png',
-    // 'bags': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-5.png',
-    // 'shoes': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-3.png'
+    'kids': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-4.png'
   };
   
   const API_URL = '/api';
@@ -272,18 +270,12 @@ function Categories2() {
       try {
         setLoading(true);
         const response = await fetch(`${API_URL}/category/getAllCategory`);
-        // const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`)
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         const filteredCategories = data.data.category.filter(cat =>
           ['men', 'women', 'kids'].includes(cat.name.toLowerCase())
         );
-        const extendedCategories = [
-          ...filteredCategories,
-          { _id: 'shoes-category', name: 'shoes', image: categoryImages['shoes'] },
-          { _id: 'bags-category', name: 'bags', image: categoryImages['bags'] }
-        ];
-        const categoriesWithUpdatedImages = extendedCategories.map(cat => {
+        const categoriesWithUpdatedImages = filteredCategories.map(cat => {
           const categoryName = cat.name.toLowerCase();
           return { ...cat, image: categoryImages[categoryName] || cat.image };
         });
@@ -298,13 +290,13 @@ function Categories2() {
   }, []);
 
   // Auto-scroll logic
-  useEffect(() => {
-    if (categories.length <= 3) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % categories.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [categories.length]);
+  // useEffect(() => {
+  //   if (categories.length <= 3) return;
+  //   const interval = setInterval(() => {
+  //     setCurrentIndex((prev) => (prev + 1) % categories.length);
+  //   }, 4000);
+  //   return () => clearInterval(interval);
+  // }, [categories.length]);
 
   const goToNextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % categories.length);
@@ -316,15 +308,11 @@ function Categories2() {
   const handleCategoryClick = (category) => {
     window.scrollTo(0, 0);
     const categoryName = category.name.toLowerCase();
-    if (['shoes', 'bags'].includes(categoryName)) {
-      navigate('/shop');
+    const categoryId = categoryIds[categoryName];
+    if (categoryId) {
+      navigate(`/shop?category_id=${categoryId}`);
     } else {
-      const categoryId = categoryIds[categoryName];
-      if (categoryId) {
-        navigate(`/shop?category_id=${categoryId}`);
-      } else {
-        navigate('/shop');
-      }
+      navigate('/shop');
     }
   };
 
