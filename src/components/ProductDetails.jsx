@@ -273,12 +273,20 @@ function formatDescription(text) {
   let lastKey = null;
   const result = [];
   lines.forEach((line, idx) => {
-    // Always work in uppercase
     const upperLine = line.toUpperCase();
+    // Check for EXTERIOR or INTERIOR section headers
+    if (upperLine === 'EXTERIOR:' || upperLine === 'EXTERIOR' || upperLine === 'INTERIOR:' || upperLine === 'INTERIOR') {
+      if (idx !== 0) result.push(<br key={`brh-${idx}`} />);
+      result.push(
+        <span key={`header-${idx}`} className="font-bold">{upperLine.replace(':', '')}</span>
+      );
+      result.push(<br key={`brh2-${idx}`} />);
+      lastKey = null;
+      return;
+    }
     if (upperLine.includes(':')) {
       const [key, ...rest] = upperLine.split(':');
       const value = rest.join(':').trim();
-      // Add a line break if the key changes (except for the first one)
       if (lastKey && key !== lastKey) {
         result.push(<br key={`br-${idx}`} />);
       }
@@ -291,7 +299,6 @@ function formatDescription(text) {
       result.push(<br key={`br2-${idx}`} />);
       lastKey = key;
     } else if (upperLine) {
-      // For lines without ':', treat as a section header
       if (idx !== 0) result.push(<br key={`brh-${idx}`} />);
       result.push(
         <span key={`header-${idx}`} className="font-bold">{upperLine}</span>
