@@ -270,43 +270,51 @@ function DescriptionBlock({ description }) {
 function formatDescription(text) {
   if (!text) return null;
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-  let lastKey = null;
   const result = [];
-  lines.forEach((line, idx) => {
-    const upperLine = line.toUpperCase();
-    // Check for EXTERIOR or INTERIOR section headers
+  let i = 0;
+  while (i < lines.length) {
+    const upperLine = lines[i].toUpperCase();
+    // Check for EXTERIOR or INTERIOR section headers (with or without colon)
     if (upperLine === 'EXTERIOR:' || upperLine === 'EXTERIOR' || upperLine === 'INTERIOR:' || upperLine === 'INTERIOR') {
-      if (idx !== 0) result.push(<br key={`brh-${idx}`} />);
+      if (i !== 0) result.push(<br key={`brh-${i}`} />);
+      // Always show with colon
+      const header = upperLine.replace(/:?$/, ':');
       result.push(
-        <span key={`header-${idx}`} className="font-bold">{upperLine.replace(':', '')}</span>
+        <span key={`header-${i}`} className="font-bold">{header}</span>
       );
-      result.push(<br key={`brh2-${idx}`} />);
-      lastKey = null;
-      return;
+      result.push(<br key={`brh2-${i}`} />);
+      // Show the next line as normal text if it exists and is not another header
+      if (i + 1 < lines.length && lines[i + 1].trim() && !lines[i + 1].includes(':')) {
+        result.push(
+          <span key={`content-${i + 1}`}>{lines[i + 1]}</span>
+        );
+        result.push(<br key={`brh3-${i}`} />);
+        i += 2;
+        continue;
+      }
+      i++;
+      continue;
     }
+    // Default logic for other lines
     if (upperLine.includes(':')) {
       const [key, ...rest] = upperLine.split(':');
       const value = rest.join(':').trim();
-      if (lastKey && key !== lastKey) {
-        result.push(<br key={`br-${idx}`} />);
-      }
       result.push(
-        <span key={`key-${idx}`} className="font-bold">{key}:</span>
+        <span key={`key-${i}`} className="font-bold">{key}:</span>
       );
       if (value) {
         result.push(' ' + value);
       }
-      result.push(<br key={`br2-${idx}`} />);
-      lastKey = key;
+      result.push(<br key={`br2-${i}`} />);
     } else if (upperLine) {
-      if (idx !== 0) result.push(<br key={`brh-${idx}`} />);
+      if (i !== 0) result.push(<br key={`brh-${i}`} />);
       result.push(
-        <span key={`header-${idx}`} className="font-bold">{upperLine}</span>
+        <span key={`header-${i}`} className="font-bold">{upperLine}</span>
       );
-      result.push(<br key={`brh2-${idx}`} />);
-      lastKey = null;
+      result.push(<br key={`brh2-${i}`} />);
     }
-  });
+    i++;
+  }
   return <div className="text-gray-800 text-sm whitespace-pre-line leading-relaxed">{result}</div>;
 }
 
