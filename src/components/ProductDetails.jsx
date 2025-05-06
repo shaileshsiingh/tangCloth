@@ -264,49 +264,43 @@ function ReviewForm({ productId, onReviewAdded }) {
 }
 
 function DescriptionBlock({ description }) {
-  if (!description) return null;
-  // Split by lines and parse sections
-  const lines = description.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-  const sections = [];
-  let currentSection = null;
-  let currentItems = [];
-  lines.forEach(line => {
-    if (/^[A-Z ]+:$/.test(line)) {
-      if (currentSection) {
-        sections.push({ title: currentSection, items: currentItems });
-        currentItems = [];
+  return formatDescription(description);
+}
+
+function formatDescription(text) {
+  if (!text) return null;
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  let lastKey = null;
+  const result = [];
+  lines.forEach((line, idx) => {
+    // Always work in uppercase
+    const upperLine = line.toUpperCase();
+    if (upperLine.includes(':')) {
+      const [key, ...rest] = upperLine.split(':');
+      const value = rest.join(':').trim();
+      // Add a line break if the key changes (except for the first one)
+      if (lastKey && key !== lastKey) {
+        result.push(<br key={`br-${idx}`} />);
       }
-      currentSection = line.replace(':', '');
-    } else if (/^[A-Z]+:/.test(line)) {
-      const [key, ...rest] = line.split(':');
-      currentItems.push({ key: key.trim(), value: rest.join(':').trim() });
-    } else {
-      currentItems.push({ value: line });
+      result.push(
+        <span key={`key-${idx}`} className="font-bold">{key}:</span>
+      );
+      if (value) {
+        result.push(' ' + value);
+      }
+      result.push(<br key={`br2-${idx}`} />);
+      lastKey = key;
+    } else if (upperLine) {
+      // For lines without ':', treat as a section header
+      if (idx !== 0) result.push(<br key={`brh-${idx}`} />);
+      result.push(
+        <span key={`header-${idx}`} className="font-bold">{upperLine}</span>
+      );
+      result.push(<br key={`brh2-${idx}`} />);
+      lastKey = null;
     }
   });
-  if (currentSection) {
-    sections.push({ title: currentSection, items: currentItems });
-  }
-  // If no sections found, just render the description as a paragraph
-  if (sections.length === 0 && description) {
-    return <p className="text-gray-700 whitespace-pre-line">{description}</p>;
-  }
-  return (
-    <div className="space-y-4">
-      {sections.map((section, idx) => (
-        <div key={idx}>
-          <div className="font-bold text-gray-800 mb-1">{section.title}</div>
-          <ul className="ml-4 list-disc">
-            {section.items.map((item, i) => (
-              <li key={i} className="text-gray-700">
-                {item.key ? <span className="font-semibold">{item.key}: </span> : null}{item.value}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-  );
+  return <div className="text-gray-800 text-sm whitespace-pre-line leading-relaxed">{result}</div>;
 }
 
 function ProductDetails() {
@@ -363,133 +357,7 @@ function ProductDetails() {
     fetchSubSubcategories();
   }, []);
   
-  // const formatDescription = (text) => {
-  //   if (!text) return '';
-  
-  //   const lines = text
-  //     .split('\n')
-  //     .map(line => line.trim())
-  //     .filter(line => line.length > 0);
-  
-  //   const result = [];
-  //   let currentSection = null;
-  //   let currentItems = [];
-  
-  //   lines.forEach((line) => {
-  //     // Check if this is a main title (like "Description")
-  //     if (!line.includes(':') && !currentSection) {
-  //       result.push(`<div className="text-lg font-semibold mb-3">${line}</div>`);
-  //       return;
-  //     }
-      
-  //     // Check if this is a section header (ends with colon)
-  //     if (line.endsWith(':')) {
-  //       // If we have items from previous section, add them first
-  //       if (currentItems.length > 0) {
-  //         result.push(`<div className="pl-4 mb-4">${currentItems.join('<br />')}</div>`);
-  //         currentItems = [];
-  //       }
-        
-  //       // Add the new section header
-  //       currentSection = line;
-  //       result.push(`<div className="font-semibold mt-3 mb-2">${line}</div>`);
-  //       return;
-  //     }
-      
-  //     // Handle property with value (contains colon but not at the end)
-  //     if (line.includes(':')) {
-  //       const [key, value] = line.split(':').map(part => part.trim());
-  //       currentItems.push(`<strong>${key}:</strong> ${value}`);
-  //     } else {
-  //       // Regular item under a section
-  //       currentItems.push(line);
-  //     }
-  //   });
-  
-  //   // Add any remaining items
-  //   if (currentItems.length > 0) {
-  //     result.push(`<div className="pl-4 mb-4">${currentItems.join('<br />')}</div>`);
-  //   }
-  
-  //   return (
-  //     <div className="space-y-1 text-sm sm:text-base">
-  //       {result.map((item, index) => (
-  //         <div
-  //           key={index}
-  //           dangerouslySetInnerHTML={{ __html: item }}
-  //         />
-  //       ))}
-  //     </div>
-  //   );
-  // };
-  
-  
-  
-  
-
-  
   // Enhanced slider settings
- 
-  const formatDescription = (text) => {
-    if (!text) return '';
-  
-    const lines = text
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
-  
-    const result = [];
-    let currentSection = null;
-    let currentItems = [];
-  
-    lines.forEach((line) => {
-      // Check if this is a main title (like "Description")
-      if (!line.includes(':') && !currentSection) {
-        result.push(`<div className="text-lg font-medium">${line}</div>`);
-        return;
-      }
-      
-      // Check if this is a section header (ends with colon)
-      if (line.endsWith(':')) {
-        // If we have items from previous section, add them first
-        if (currentItems.length > 0) {
-          result.push(`<div className="pl-3">${currentItems.join('<br />')}</div>`);
-          currentItems = [];
-        }
-        
-        // Add the new section header
-        currentSection = line;
-        result.push(`<div className="font-medium mt-2">${line}</div>`);
-        return;
-      }
-      
-      // Handle property with value (contains colon but not at the end)
-      if (line.includes(':')) {
-        const [key, value] = line.split(':').map(part => part.trim());
-        currentItems.push(`<span className="font-medium">${key}:</span> ${value}`);
-      } else {
-        // Regular item under a section
-        currentItems.push(line);
-      }
-    });
-  
-    // Add any remaining items
-    if (currentItems.length > 0) {
-      result.push(`<div className="pl-3">${currentItems.join('<br />')}</div>`);
-    }
-  
-    return (
-      <div className="space-y-1 text-sm sm:text-base">
-        {result.map((item, index) => (
-          <div
-            key={index}
-            dangerouslySetInnerHTML={{ __html: item }}
-          />
-        ))}
-      </div>
-    );
-  };
- 
   const sliderSettings = {
     dots: true,
     infinite: true,
