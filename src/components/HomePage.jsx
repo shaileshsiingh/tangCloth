@@ -81,7 +81,7 @@ function HomePage() {
           >
             <span className="bg-gradient-to-r from-[#B2FFFF] to-[#8EEAEA] text-transparent bg-clip-text">SALE IS LIVE</span>
             <motion.div 
-              className="absolute -top-4 -right-10 bg-gray-400 text-cyan text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
+              className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -389,7 +389,7 @@ function HomePage() {
                 <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Oops! It's Gone.</span>
               </div>
               <h3 className="text-lg font-medium">Coat</h3>
-              <p className="text-sm text-gray-800">$99.99</p>
+              <p className="text-sm text-gray-800">₹12599</p>
               <div className="flex items-center mt-2">
                 <div className="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mr-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">

@@ -31,6 +31,7 @@ const SaleItems = () => {
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [selectedCondition, setSelectedCondition] = useState('');
   const [priceRange, setPriceRange] = useState([0, 18000]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -172,6 +173,11 @@ const SaleItems = () => {
       );
     }
 
+    // Apply condition filter
+    if (selectedCondition) {
+      filtered = filtered.filter(product => product.condition === selectedCondition);
+    }
+
     // Apply price range filter
     filtered = filtered.filter(product => {
       const price = product.discount_price || product.price;
@@ -190,7 +196,7 @@ const SaleItems = () => {
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
     setCurrentPage(1);
     setDisplayedProducts(filtered.slice(0, itemsPerPage));
-  }, [products, searchTerm, selectedCategory, selectedBrand, selectedSize, selectedColor, priceRange, sortBy]);
+  }, [products, searchTerm, selectedCategory, selectedBrand, selectedSize, selectedColor, selectedCondition, priceRange, sortBy]);
 
   // Update displayed products when page changes
   useEffect(() => {
@@ -575,6 +581,21 @@ const SaleItems = () => {
                 {popularColors.map((color) => (
                   <option key={color} value={color}>{color}</option>
                 ))}
+              </select>
+
+              {/* Condition */}
+              <select
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/50"
+                value={selectedCondition}
+                onChange={(e) => setSelectedCondition(e.target.value)}
+              >
+                <option value="">All Conditions</option>
+                <option value="pristine">Pristine Condition</option>
+                <option value="good">Good Condition</option>
+                <option value="new_with_tags">New with tags</option>
+                <option value="new_without_tags">New without tags</option>
+                <option value="gently_used">Gently used</option>
+                <option value="used_fairly_well">Used fairly well</option>
               </select>
             </div>
           </motion.div>

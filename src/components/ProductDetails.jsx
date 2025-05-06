@@ -263,6 +263,48 @@ function ReviewForm({ productId, onReviewAdded }) {
   );
 }
 
+function DescriptionBlock({ description }) {
+  if (!description) return null;
+  // Split by lines and parse sections
+  const lines = description.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const sections = [];
+  let currentSection = null;
+  let currentItems = [];
+  lines.forEach(line => {
+    if (/^[A-Z ]+:$/.test(line)) {
+      if (currentSection) {
+        sections.push({ title: currentSection, items: currentItems });
+        currentItems = [];
+      }
+      currentSection = line.replace(':', '');
+    } else if (/^[A-Z]+:/.test(line)) {
+      const [key, ...rest] = line.split(':');
+      currentItems.push({ key: key.trim(), value: rest.join(':').trim() });
+    } else {
+      currentItems.push({ value: line });
+    }
+  });
+  if (currentSection) {
+    sections.push({ title: currentSection, items: currentItems });
+  }
+  return (
+    <div className="space-y-4">
+      {sections.map((section, idx) => (
+        <div key={idx}>
+          <div className="font-bold text-gray-800 mb-1">{section.title}</div>
+          <ul className="ml-4 list-disc">
+            {section.items.map((item, i) => (
+              <li key={i} className="text-gray-700">
+                {item.key ? <span className="font-semibold">{item.key}: </span> : null}{item.value}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ProductDetails() {
   const { id } = useParams();
   const location = useLocation();
@@ -1074,9 +1116,7 @@ function ProductDetails() {
                 <div className="prose max-w-none">
                   <div className="bg-gray-50 p-5 rounded-lg border border-gray-100 shadow-sm mb-8">
                     <h3 className="text-xl font-medium mb-4">Product Description</h3>
-                    <p className="leading-relaxed">
-                      {formatDescription(product.description?.toUpperCase())}
-                    </p>
+                    <DescriptionBlock description={product.description} />
                   </div>
                 
                   <h3 className="text-xl font-medium mb-4">Product Specifications</h3>
