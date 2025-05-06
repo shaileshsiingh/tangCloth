@@ -76,10 +76,10 @@ function HomePage() {
         <div className="flex justify-center items-center mb-8 mt-0">
           <motion.h2 
             className="text-5xl font-bold text-center relative inline-block my-12"
-            animate={{ rotate: rotate ? 360 : 0 }}
+            animate={{ rotate: rotate ? 0 : 0 }}
             transition={{ duration: 1, ease: "easeInOut" }}
           >
-            <span className="bg-gradient-to-r from-[#B2FFFF] to-[#8EEAEA] text-transparent bg-clip-text">SALE IS LIVE</span>
+            <span className="bg-gradient-to-r from-[red] to-[blue] text-transparent bg-clip-text">SALE IS LIVE</span>
             <motion.div 
               className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}

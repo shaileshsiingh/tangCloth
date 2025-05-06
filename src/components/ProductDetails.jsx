@@ -287,6 +287,10 @@ function DescriptionBlock({ description }) {
   if (currentSection) {
     sections.push({ title: currentSection, items: currentItems });
   }
+  // If no sections found, just render the description as a paragraph
+  if (sections.length === 0 && description) {
+    return <p className="text-gray-700 whitespace-pre-line">{description}</p>;
+  }
   return (
     <div className="space-y-4">
       {sections.map((section, idx) => (
