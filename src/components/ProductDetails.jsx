@@ -283,16 +283,15 @@ function formatDescription(text) {
         <span key={`header-${i}`} className="font-bold">{header}</span>
       );
       result.push(<br key={`brh2-${i}`} />);
-      // Show the next line as normal text if it exists and is not another header
-      if (i + 1 < lines.length && lines[i + 1].trim() && !lines[i + 1].includes(':')) {
+      // Show all subsequent lines as uppercase but normal text until the next header or end
+      i++;
+      while (i < lines.length && !lines[i].toUpperCase().match(/^(EXTERIOR|INTERIOR):?$/)) {
         result.push(
-          <span key={`content-${i + 1}`}>{lines[i + 1]}</span>
+          <span key={`content-${i}`}>{lines[i].toUpperCase()}</span>
         );
         result.push(<br key={`brh3-${i}`} />);
-        i += 2;
-        continue;
+        i++;
       }
-      i++;
       continue;
     }
     // Default logic for other lines
