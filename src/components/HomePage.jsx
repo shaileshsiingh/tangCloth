@@ -324,7 +324,7 @@ function HomePage() {
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
-                <div className="absolute top-2 right-2 bg-gray-400 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
                   SALE
                 </div>
               </div>
