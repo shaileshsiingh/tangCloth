@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
+import sellwithus from '../assets/SELL WITH US.jpeg';
 
 const SellOnBanner = () => {
   const navigate = useNavigate();
@@ -224,7 +225,7 @@ const SellOnBanner = () => {
               className="rounded-lg overflow-hidden"
             >
               <img
-                src="https://wamani.vercel.app/wp-content/uploads/2023/06/Home-8-Spacer-Bg.png"
+                src={sellwithus}
                 alt="Luxury Fashion Items"
                 className="rounded-lg w-full h-full object-cover"
               />

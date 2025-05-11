@@ -250,7 +250,7 @@ function Categories2() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsToShow = 4;
+  const itemsToShow = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 4;
 
   // Category ID mapping
   const categoryIds = {
@@ -331,42 +331,29 @@ function Categories2() {
   };
 
   return (
-    <div ref={ref} className="container mx-auto px-4 py-8 md:py-16" style={{backgroundColor:'#FAF9F6'}}>
-      <div className="text-center mb-8 md:mb-12">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3 md:mb-4 tracking-tight">
+    <div ref={ref} className="container mx-auto px-2 sm:px-4 py-4 md:py-8" style={{backgroundColor:'#FAF9F6'}}>
+      <div className="text-center mb-4 md:mb-8">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-2 md:mb-3 tracking-tight">
           Shop By Category
         </h2>
-        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
+        <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto px-2 md:px-4">
           Discover our carefully curated collections designed for every style and age.
         </p>
       </div>
       {loading ? (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500"></div>
+        <div className="flex justify-center items-center py-8 md:py-12">
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-t-2 border-blue-500"></div>
         </div>
       ) : error ? (
-        <div className="text-center py-12">
-          <p className="text-red-600 text-lg font-semibold">{error}</p>
+        <div className="text-center py-8 md:py-12">
+          <p className="text-red-600 text-base md:text-lg font-semibold">{error}</p>
         </div>
       ) : (
-        <div className="relative" style={{ minHeight: 380 }}>
-          {/* Carousel Row */}
-          <div className="flex items-center justify-center relative" style={{ minHeight: 340 }}>
-            {/* Left Arrow */}
-            {/* <button
-              onClick={goToPrevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full w-12 h-12 flex items-center justify-center shadow-lg z-20 hover:bg-opacity-100 transition-all duration-300 hover:scale-110"
-              aria-label="Previous slide"
-              style={{ transform: 'translateY(-50%)' }}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button> */}
-            {/* Carousel Items */}
-            <div className="flex justify-center items-center w-full" style={{ minHeight: 340 }}>
+        <div className="relative" style={{ minHeight: '280px' }}>
+          <div className="flex items-center justify-center relative" style={{ minHeight: '280px' }}>
+            <div className="flex justify-center items-center w-full overflow-x-auto" style={{ minHeight: '280px' }}>
               {getVisibleCategories().map((category) => (
-                <div key={category._id} className="w-[300px] h-[340px] flex-shrink-0 mx-4 flex flex-col justify-center">
+                <div key={category._id} className="w-[280px] sm:w-[300px] h-[280px] sm:h-[340px] flex-shrink-0 mx-2 sm:mx-4 flex flex-col justify-center">
                   <motion.div
                     className="group text-center h-full"
                     initial={{ opacity: 0, y: 50 }}
@@ -379,14 +366,14 @@ function Categories2() {
                       onClick={() => handleCategoryClick(category)}
                       className="cursor-pointer flex flex-col items-center p-2 h-full"
                     >
-                      <div className="w-full h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
+                      <div className="w-full h-[260px] sm:h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
                         <img
                           src={category.image}
                           alt={category.name.toUpperCase()}
                           className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
                         />
                       </div>
-                      <h3 className="text-sm md:text-base font-semibold tracking-wider text-gray-800 transition-colors duration-300 mt-4 group-hover:text-blue-600 uppercase">
+                      <h3 className="text-sm md:text-base font-semibold tracking-wider text-gray-800 transition-colors duration-300 mt-2 md:mt-4 group-hover:text-blue-600 uppercase">
                         {category.name.toUpperCase()}
                       </h3>
                     </div>
@@ -394,17 +381,6 @@ function Categories2() {
                 </div>
               ))}
             </div>
-            {/* Right Arrow */}
-            {/* <button
-              onClick={goToNextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 rounded-full w-12 h-12 flex items-center justify-center shadow-lg z-20 hover:bg-opacity-100 transition-all duration-300 hover:scale-110"
-              aria-label="Next slide"
-              style={{ transform: 'translateY(-50%)' }}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button> */}
           </div>
         </div>
       )}
