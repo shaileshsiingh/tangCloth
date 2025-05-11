@@ -212,7 +212,7 @@ export function CartProvider({ children }) {
                             alt={item?.name}
                             className="w-full h-full object-cover rounded-md"
                           />
-                          <div className="absolute -top-2 -right-2 bg-orange-200 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                          <div className="absolute -top-2 -right-2 bg-red-200 text-black text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
                             {item.quantity}
                           </div>
                         </div>
