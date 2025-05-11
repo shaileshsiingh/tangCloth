@@ -7,7 +7,8 @@ import img2 from '../assets/img2.jpg';
 import img3 from '../assets/img3.jpg';
 import img4 from '../assets/img4.jpg';
 import img5 from '../assets/img5.jpg';
-import img6 from '../assets/img5.jpg';
+import img6 from '../assets/img6.png';
+import img7 from '../assets/img7.png';
 
 const influencerVideos = [
   {
@@ -46,7 +47,7 @@ const influencerVideos = [
     id: 5,
     title: "Luxury Fashion Tips",
     influencer: "@fashion_expert",
-    thumbnail: img1,
+    thumbnail: img7,
     videoUrl: "https://www.instagram.com/reel/Cy-38mbSYwl/?igsh=OWhidXE3bDhjcGho",
     description: "Expert tips on styling Tangerine Luxury's collection"
   },
@@ -54,8 +55,16 @@ const influencerVideos = [
     id: 6,
     title: "Fashion Haul & Review",
     influencer: "@ishitasapraa",
-    thumbnail: img6,
+    thumbnail: img5,
     videoUrl: "https://www.instagram.com/reel/CzJA0_Sy1ml/?igsh=MWQwdXRoaWozZ2F6cw==",
+    description: "Complete haul and review of Tangerine Luxury's new arrivals"
+  },
+  {
+    id: 7,
+    title: "Fashion Haul & Review",
+    influencer: "@ishitasapraa",
+    thumbnail: img6,
+    videoUrl: "https://www.instagram.com/reel/DHOFqG2ykb7/?igsh=ZmVzZXo0NnFqbHh6",
     description: "Complete haul and review of Tangerine Luxury's new arrivals"
   }
 ];
