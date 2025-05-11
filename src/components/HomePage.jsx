@@ -19,8 +19,8 @@ function HomePage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${API_URL}/product/list`);
-        // const response = await fetch(`http://91.203.135.152:2001/api/product/list`)
+        // const response = await fetch(`${API_URL}/product/list`);
+        const response = await fetch(`http://91.203.135.152:2001/api/product/list`)
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -74,225 +74,46 @@ function HomePage() {
   return (
     <div ref={ref} className="container mx-auto px-4 py-12"  style={{backgroundColor:'#FAF9F6'}}>
       <section >
-        <div className="flex justify-center items-center mb-8 mt-0">
-          <motion.h2 
-            className="text-5xl font-bold text-center relative inline-block my-12"
-            animate={{ rotate: rotate ? 0 : 0 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
+        <div className="flex justify-center items-center mb-12 mt-0">
+          <motion.div 
+            className="relative"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <span className="bg-gradient-to-r from-[red] to-[orange] text-transparent bg-clip-text">SALE IS LIVE</span>
-            {/* <motion.div 
-              className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+            <motion.h2 
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-center relative inline-block my-12"
+              animate={{ 
+                scale: [1, 1.02, 1],
+              }}
+              transition={{ 
+                duration: 2,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
             >
-              SALE
-            </motion.div> */}
-          </motion.h2>
+              <span className="bg-gradient-to-r from-red-600 via-orange-500 to-red-600 text-transparent bg-clip-text animate-gradient-x">
+                SALE IS LIVE
+              </span>
+            </motion.h2>
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-red-500/10 blur-3xl -z-10"
+              animate={{ 
+                opacity: [0.3, 0.5, 0.3],
+                scale: [1, 1.05, 1]
+              }}
+              transition={{ 
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.div>
         </div>
-        
-       
-        
-        {/* <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-          initial={{ opacity: 0, y: -50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
-        >
-          {products.slice(0, 4).map((product) => (
-            <motion.div
-              key={product._id}
-              className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
-              whileHover={{ y: -5 }}
-              onClick={() => handleProductClick(product)}
-              style={{backgroundColor:'white'}}
-            >
-              <div className="relative pb-[120%] w-full">
-                <img 
-                  src={product.images?.[0] || 'https://via.placeholder.com/400'}
-                  alt={product.product_name}
-                  className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
-                />
-                {product.condition && (
-                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1 rounded shadow-md`}>
-                    {product.condition.toUpperCase()}
-                  </span>
-                )}
-                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <span className="absolute top-10 left-2 bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded shadow-md">
-                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
-                  </span>
-                )}
-                <div className="absolute top-2 right-2 bg-[#B2FFFF] text-gray-800 text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
-                  SALE
-                </div>
-                <div className="absolute right-2 top-14 flex flex-col gap-2">
-                  <motion.button 
-                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addTowishlist(product);
-                    }}
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      strokeWidth={1.5} 
-                      stroke="currentColor" 
-                      className="w-5 h-5"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                    </svg>
-                  </motion.button>
-                  <motion.button 
-                    className="bg-black text-white rounded-full p-2 shadow-md hover:bg-gray-800"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProductClick(product);
-                    }}
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      strokeWidth={1.5} 
-                      stroke="currentColor" 
-                      className="w-5 h-5"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-                    </svg>
-                  </motion.button>
-                </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 transform transition-all duration-300 group-hover:bg-opacity-90 backdrop-blur-sm flex items-center justify-center h-16 opacity-0 group-hover:opacity-100">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full py-4 text-white font-medium tracking-wide text-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleProductClick(product);
-                  }}
-                >
-                  SHOP NOW
-                </motion.button>
-              </div>
-              <div className="p-5 bg-white">
-                <h3 className="text-base font-medium mb-1 truncate transition-all duration-200 group-hover:text-black group-hover:font-bold">
-                  {product.product_name.toUpperCase()}
-                </h3>
-                <div className="mt-2">
-                  {product.estimated_price ? (
-                    <div className="flex flex-col items-center">
-                      <span className="text-gray-500 text-xs">Estimated Retail Price</span>
-                      <span className="text-gray-500 line-through mb-1">₹{product.estimated_price.toLocaleString()}</span>
-                      <span className="text-xs text-gray-700">Our Price</span>
-                      <span className="text-gray-900 font-medium">
-                        ₹{(product.discount_price || product.price).toLocaleString()}
-                      </span>
-                    </div>
-                  ) : (
-                    <p className="text-gray-900 font-medium">₹{typeof product.price === 'number' ? product.price.toLocaleString() : product.price?.toFixed(2) || 0}</p>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div> */}
-         {/* Show more button */}
-         {/* <div className="flex justify-center mb-12 mt-8">
-          <motion.button
-            className="bg-[#B2FFFF] hover:bg-[#8EEAEA] text-gray-800 font-medium px-8 py-3 rounded-lg shadow-md transition-all duration-300 flex items-center"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              window.scrollTo(0, 0);
-              navigate('/shop');
-            }}
-          >
-            Show more
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </motion.button>
-        </div> */}
-      </section>
-      
-      {/* Comment out Sale Containers */}
-      {/* <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 mt-10 text-center">Sale Items</h2>
-        <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-          initial={{ opacity: 0, y: -50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
-        >
-          {products.slice(0, 4).map((product) => (
-            <motion.div
-              key={product._id}
-              className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
-              whileHover={{ y: -5 }}
-              onClick={() => handleProductClick(product)}
-              style={{backgroundColor:'white'}}
-            >
-              <div className="relative pb-[120%] w-full">
-                <img 
-                  src={product.images?.[0] || 'https://via.placeholder.com/400'}
-                  alt={product.product_name}
-                  className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
-                />
-                {product.condition && (
-                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-white text-xs font-semibold px-2 py-1 rounded shadow-md`}>
-                    {product.condition.toUpperCase()}
-                  </span>
-                )}
-                {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <span className="absolute top-10 left-2 bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded shadow-md">
-                    {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
-                  </span>
-                )}
-              </div>
-              <div className="p-5 bg-white">
-                <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
-                <div className="mt-3 space-y-1.5">
-                  {product.estimated_price ? (
-                    <div className="flex flex-col">
-                      <span className="text-gray-500 text-sm">
-                        Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
-                      </span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-gray-900 font-medium">
-                          Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
-                        </span>
-                        {product.estimated_price > (product.discount_price || product.price) && (
-                          <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
-                            {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section> */}
 
-      {/* Trending Apparels Section */}
-      <section className="mb-16">
-        {/* <h2 className="text-3xl font-bold mb-8 mt-10 text-center">Sale Items</h2> */}
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
           initial={{ opacity: 0, y: -50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, ease: 'easeOut' }}
@@ -303,12 +124,13 @@ function HomePage() {
             .map((product) => (
             <motion.div
               key={product._id}
-              className="w-full bg-[#fafafa] overflow-hidden cursor-pointer group relative rounded-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
+              className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
               whileHover={{ y: -5 }}
               style={{backgroundColor:'white'}}
               onClick={() => handleProductClick(product)}
             >
               <div className="relative pb-[120%] w-full">
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300 z-10" />
                 <img 
                   src={product.images?.[0] || 'https://via.placeholder.com/400'}
                   alt={product.product_name}
@@ -316,22 +138,29 @@ function HomePage() {
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
                 {product.condition && (
-                  <span className={`absolute top-2 left-2 ${getConditionBadgeColor(product.condition)} text-black text-xs font-semibold px-2 py-1 rounded shadow-md`}>
+                  <span className={`absolute top-3 left-3 ${getConditionBadgeColor(product.condition)} text-black text-xs font-medium px-3 py-1.5 rounded-full shadow-sm`}>
                     {product.condition.toUpperCase()}
                   </span>
                 )}
                 {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <span className="absolute bottom-0 left-2 bg-gray-200 backdrop-blur-sm text-black text-xs px-2 py-1 rounded ">
+                  <span className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-black text-xs px-3 py-1.5 rounded-full shadow-sm">
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
-                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12 shadow-md">
+                <motion.div 
+                  className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-all duration-300"
+                  whileHover={{ 
+                    scale: 1.1,
+                    borderRadius: "4px"
+                  }}
+                >
                   SALE
-                </div>
+                </motion.div>
               </div>
-              <div className="p-5 bg-white">
-                
-                <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
+              <div className="p-4 md:p-5">
+                <h2 className="text-base font-medium mb-2 truncate tracking-wide group-hover:text-red-600 transition-colors duration-300">
+                  {product.product_name.toUpperCase()}
+                </h2>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex flex-col">
                     <span className="text-gray-500 text-sm">
@@ -341,7 +170,7 @@ function HomePage() {
                       <span className="text-gray-900 font-medium">
                         Our Price: ₹{product.discount_price.toLocaleString()}
                       </span>
-                      <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
+                      <span className="text-xs px-2 py-1 bg-red-100 text-red-600 rounded-full font-medium">
                         {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
                       </span>
                     </div>
@@ -356,7 +185,7 @@ function HomePage() {
       {/* Show more button */}
       <div className="flex justify-center mb-0 mt-8">
           <motion.button
-            className="bg-[#B2FFFF] hover:bg-[#8EEAEA] text-gray-800 font-medium px-8 py-3 rounded-lg shadow-md transition-all duration-300 flex items-center"
+            className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-medium px-8 py-3 rounded-full shadow-md transition-all duration-300 flex items-center"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
