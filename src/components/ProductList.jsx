@@ -1371,11 +1371,11 @@ function ProductList() {
             </div>
             
       {/* Enhanced Services Section */}
-      <div className="bg-white py-12 rounded-lg shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* <div className="bg-white py-12 rounded-lg shadow-sm"> */}
+        {/* <div className="container mx-auto px-4"> */}
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"> */}
             {/* Feature 2: Secured Payment */}
-            <div className="flex items-center space-x-4 p-4">
+            {/* <div className="flex items-center space-x-4 p-4">
               <img 
                 src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-2.png" 
                 alt="Secured Payment" 
@@ -1385,10 +1385,10 @@ function ProductList() {
                 <h3 className="font-medium text-lg">Secured Payment</h3>
                 <p className="text-gray-600 text-sm">Safe & Secured Payments</p>
               </div>
-            </div>
+            </div> */}
             
             {/* Feature 3: 24/7 Support */}
-            <div className="flex items-center space-x-4 p-4">
+            {/* <div className="flex items-center space-x-4 p-4">
               <img 
                 src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-3.png" 
                 alt="24/7 Support" 
@@ -1398,10 +1398,10 @@ function ProductList() {
                 <h3 className="font-medium text-lg">24/7 Support</h3>
                 <p className="text-gray-600 text-sm">Support Around The Clock</p>
               </div>
-            </div>
+            </div> */}
             
             {/* Feature 4: Surprise Gifts */}
-            <div className="flex items-center space-x-4 p-4">
+            {/* <div className="flex items-center space-x-4 p-4">
               <img 
                 src="https://wamani.vercel.app/wp-content/uploads/2023/06/Icon-Box-4.png" 
                 alt="Surprise Gifts" 
@@ -1411,10 +1411,10 @@ function ProductList() {
                 <h3 className="font-medium text-lg">Surprise Gifts</h3>
                 <p className="text-gray-600 text-sm">Free Gift Cards & Vouchers</p>
               </div>
-            </div>
+            </div> */}
             
             {/* Feature 5: Premium Quality */}
-            <div className="flex items-center space-x-4 p-4">
+            {/* <div className="flex items-center space-x-4 p-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
@@ -1422,10 +1422,10 @@ function ProductList() {
                 <h3 className="font-medium text-lg">Premium Quality</h3>
                 <p className="text-gray-600 text-sm">Only The Best Products</p>
           </div>
-        </div>
-      </div>
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
+        {/* </div> */}
+       {/* </div> */}
       
       {/* Show more products CTA
       <div className="text-center mt-16 mb-12">
