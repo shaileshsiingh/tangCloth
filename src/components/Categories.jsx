@@ -351,7 +351,7 @@ function Categories2() {
       ) : (
         <div className="relative" style={{ minHeight: '280px' }}>
           <div className="flex items-center justify-center relative" style={{ minHeight: '280px' }}>
-            <div className="flex justify-center items-center w-full overflow-x-auto" style={{ minHeight: '280px' }}>
+            <div className="flex justify-center items-center w-full" style={{ minHeight: '280px' }}>
               {getVisibleCategories().map((category) => (
                 <div key={category._id} className="w-[280px] sm:w-[300px] h-[280px] sm:h-[340px] flex-shrink-0 mx-2 sm:mx-4 flex flex-col justify-center">
                   <motion.div
