@@ -1,6 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import Accessories from '../assets/ACCESSORIES.jfif';
+import Clothing from '../assets/CLOTHING.jfif';
+import Footwear from '../assets/FOOTWEAR.jfif';
+import Bags from '../assets/BAGS.jfif';
 
 function CategoryBanner() {
   const navigate = useNavigate();
@@ -34,26 +38,22 @@ function CategoryBanner() {
     {
       id: "accessories",
       title: "Accessories",
-      image:
-        "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+      image: Accessories,
     },
     {
       id: "clothing",
       title: "Clothing",
-      image:
-        "https://images.unsplash.com/photo-1509631179647-0177331693ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+      image: Clothing,
     },
     {
       id: "footwear",
       title: "Footwear",
-      image:
-        "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+      image: Footwear,
     },
     {
       id: "bags",
       title: "Bags",
-      image:
-        "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+      image: Bags,
     },
   ];
 

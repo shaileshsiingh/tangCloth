@@ -1,5 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import BioCleaning from '../assets/BIOCLEANING.jfif';
+import Authentication from '../assets/AUTHENTICATION.jpeg';
+import PrivateViewing from '../assets/PRIVATE VIEW.jpg';
+import RequestProduct from '../assets/REQUEST A PRODUCT.jfif';
 
 function ServicesSection() {
   const navigate = useNavigate();
@@ -8,25 +12,25 @@ function ServicesSection() {
     {
       title: "BIO CLEANING",
       description: "Professional cleaning services for luxury items.",
-      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-01.jpg",
+      imageUrl: BioCleaning,
       link: "/bio-cleaning",
     },
     {
       title: "AUTHENTICATION",
       description: "Verify the authenticity of luxury products.",
-      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-04.jpg",
+      imageUrl: Authentication,
       link: "/authentication",
     },
     {
       title: "PRIVATE VIEWING",
       description: "Exclusive appointments to view premium collections.",
-      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-06.jpg",
+      imageUrl: PrivateViewing,
       link: "/private-viewing",
     },
     {
       title: "REQUEST A PRODUCT",
       description: "Exclusive appointments to view premium collections.",
-      imageUrl: "https://wamani.vercel.app/wp-content/uploads/2023/05/insta-03.jpg",
+      imageUrl: RequestProduct,
       link: "/request-product",
     },
   ];

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
+import Men from '../assets/MEN.jpeg';
+import Women from '../assets/WOMEN.jfif';
+import Kids from '../assets/KIDS.jfif';
 
 // Hero Slider Component
 // function HeroSlider() {
@@ -258,9 +261,9 @@ function Categories2() {
   
   // Updated category images
   const categoryImages = {
-    'women': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-1.png',
-    'men': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-2.png',
-    'kids': 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-6-Img-Gallery-4.png'
+    'women': Women,
+    'men': Men,
+    'kids': Kids
   };
   
   const API_URL = '/api';
@@ -268,8 +271,9 @@ function Categories2() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        setLoading(true);
-        const response = await fetch(`${API_URL}/category/getAllCategory`);
+        setLoading(true); 
+        // const response = await fetch(`${API_URL}/category/getAllCategory`);
+        const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`);
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         const filteredCategories = data.data.category.filter(cat =>
