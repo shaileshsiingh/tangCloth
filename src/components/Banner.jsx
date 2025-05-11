@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import banner1 from '../assets/BANNER1.jpg';
+import banner2 from '../assets/BANNER2.jpg';
+
 
 const slides = [
   {
@@ -14,6 +17,18 @@ const slides = [
     image: 'https://wamani.vercel.app/wp-content/uploads/2023/06/Home-1-Slider-2-1.jpg',
     title: 'Winter Collection',
     subtitle: 'Latest Styles'
+  },
+  {
+    id: 3,
+    image: banner1,
+    title: 'New Collection',
+    subtitle: 'Trending Styles'
+  },
+  {
+    id: 4,
+    image: banner2,
+    title: 'Accesories Collection',
+    subtitle: 'Branded Items'
   }
 ];
 
