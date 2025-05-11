@@ -19,7 +19,8 @@ function HomePage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${API_URL}/product/list`);
+        // const response = await fetch(`${API_URL}/product/list`);
+        const response = await fetch(`http://91.203.135.152:2001/api/product/list`)
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -80,13 +81,13 @@ function HomePage() {
             transition={{ duration: 1, ease: "easeInOut" }}
           >
             <span className="bg-gradient-to-r from-[red] to-[orange] text-transparent bg-clip-text">SALE IS LIVE</span>
-            <motion.div 
+            {/* <motion.div 
               className="absolute -top-4 -right-10 bg-red-600 text-white text-xs font-bold rounded-full w-10 h-10 flex items-center justify-center transform rotate-12"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
               SALE
-            </motion.div>
+            </motion.div> */}
           </motion.h2>
         </div>
         
@@ -320,7 +321,7 @@ function HomePage() {
                   </span>
                 )}
                 {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
-                  <span className="absolute top-10 left-2 bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded shadow-md">
+                  <span className="absolute bottom-0 left-2 bg-gray-200 backdrop-blur-sm text-black text-xs px-2 py-1 rounded ">
                     {(product.brand || (product.brandDetails && product.brandDetails[0]?.name)).toUpperCase()}
                   </span>
                 )}
@@ -329,6 +330,7 @@ function HomePage() {
                 </div>
               </div>
               <div className="p-5 bg-white">
+                
                 <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
                 <div className="mt-3 space-y-1.5">
                   <div className="flex flex-col">
