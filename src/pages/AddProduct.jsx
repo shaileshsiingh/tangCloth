@@ -1204,13 +1204,13 @@ function AddProduct() {
             <div className="flex items-center">
               {formData.estimated_price > 0 ? (
                 <>
-                  {formData.price > 0 && formData.discount_price > 0 ? (
+                  {formData.discount_price > 0 ? (
                     <>
                       <span className="text-gray-500 line-through mr-3">
                         ₹{formData.estimated_price}
                       </span>
                       <span className="font-medium mr-2">
-                        Our Price: ₹{formData.discount_price}
+                        Sale Price: ₹{formData.discount_price}
                       </span>
                       <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                         {Math.round((1 - formData.discount_price / formData.estimated_price) * 100)}% OFF
@@ -1228,32 +1228,18 @@ function AddProduct() {
                         {Math.round((1 - formData.price / formData.estimated_price) * 100)}% OFF
                       </span>
                     </>
-                  ) : formData.discount_price > 0 ? (
-                    <>
-                      <span className="text-gray-500 line-through mr-3">
-                        ₹{formData.estimated_price}
-                      </span>
-                      <span className="font-medium mr-2">
-                        Our Price: ₹{formData.discount_price}
-                      </span>
-                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                        {Math.round((1 - formData.discount_price / formData.estimated_price) * 100)}% OFF
-                      </span>
-                    </>
                   ) : (
                     <span className="font-medium">₹{formData.estimated_price}</span>
                   )}
                 </>
               ) : (
                 <>
-                  {formData.price > 0 && formData.discount_price > 0 ? (
+                  {formData.discount_price > 0 ? (
                     <span className="font-medium">
-                      Our Price: ₹{formData.discount_price}
+                      Sale Price: ₹{formData.discount_price}
                     </span>
                   ) : formData.price > 0 ? (
-                    <span className="font-medium">₹{formData.price}</span>
-                  ) : formData.discount_price > 0 ? (
-                    <span className="font-medium">₹{formData.discount_price}</span>
+                    <span className="font-medium">Our Price: ₹{formData.price}</span>
                   ) : null}
                 </>
               )}
