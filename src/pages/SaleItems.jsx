@@ -96,8 +96,7 @@ const SaleItems = () => {
         
         // Filter products that have a discounted_price
         const saleProducts = data.data.products.filter(product => 
-          product.discount_price || 
-          (product.estimated_price && product.price < product.estimated_price)
+          product.discount_price && product.discount_price > 0
         );
         
         setProducts(saleProducts);
@@ -671,18 +670,18 @@ const SaleItems = () => {
                               Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
                             </span>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-gray-900 font-medium">
-                                Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
+                              <span className="text-red-600 font-bold bg-red-100 px-2 py-1 rounded">
+                                Sale Price: ₹{product.discount_price.toLocaleString()}
                               </span>
-                              {product.estimated_price > (product.discount_price || product.price) && (
+                              {product.estimated_price > product.discount_price && (
                                 <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
-                                  {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
+                                  {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
                                 </span>
                               )}
                             </div>
                           </div>
                         ) : (
-                          <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
+                          <span className="text-red-600 font-bold bg-red-100 px-2 py-1 rounded mt-1 block">Sale Price: ₹{product.discount_price.toLocaleString()}</span>
                         )}
                       </div>
                     </div>
