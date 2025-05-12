@@ -10,10 +10,8 @@ function CategoryBanner() {
   const navigate = useNavigate();
 
   const subcategoryMappings = {
-    accessories: {
-      men: "67d827fd03c676492cbbeb3c",
-      women: "67d8277e03c676492cbbeb39",
-      kids: "67d828d103c676492cbbeb48"
+    bags: {
+      women: "67d826ef03c676492cbbeb2d"
     },
     clothing: {
       men: "67d8282003c676492cbbeb40",
@@ -24,9 +22,11 @@ function CategoryBanner() {
       men: "67d8283003c676492cbbeb44",
       women: "67d8276003c676492cbbeb30"
     },
-    bags: {
-      women: "67d826ef03c676492cbbeb2d"
-    }
+    accessories: {
+      men: "67d827fd03c676492cbbeb3c",
+      women: "67d8277e03c676492cbbeb39",
+      kids: "67d828d103c676492cbbeb48"
+    },
   };
 
   const handleSubcategoryTypeClick = (subcategoryType) => {
