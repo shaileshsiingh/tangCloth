@@ -36,10 +36,11 @@ function CategoryBanner() {
 
   const categories = [
     {
-      id: "accessories",
-      title: "Accessories",
-      image: Accessories,
+      id: "bags",
+      title: "Bags",
+      image: Bags,
     },
+   
     {
       id: "clothing",
       title: "Clothing",
@@ -51,9 +52,9 @@ function CategoryBanner() {
       image: Footwear,
     },
     {
-      id: "bags",
-      title: "Bags",
-      image: Bags,
+      id: "accessories",
+      title: "Accessories",
+      image: Accessories,
     },
   ];
 
