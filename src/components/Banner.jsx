@@ -76,15 +76,27 @@ function Banner() {
               >
                 {slides[currentSlide].title}
               </motion.h1>
-              <motion.button
+              
+              {/* Buttons Container - Horizontal Layout */}
+              <motion.div 
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                onClick={() => navigate('/shop')}
-                className="bg-black text-white px-6 sm:px-10 py-3 sm:py-4 border border-white rounded-lg hover:bg-white hover:text-black hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 ease-in-out text-sm sm:text-base"
+                className="flex flex-row space-x-4 sm:space-x-6"
               >
-                BUY AND SELL
-              </motion.button>
+                <button
+                  onClick={() => navigate('/shop')}
+                  className="bg-black text-white px-6 sm:px-10 py-3 sm:py-4 border border-white rounded-lg hover:bg-white hover:text-black hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 ease-in-out text-sm sm:text-base"
+                >
+                  SHOP NOW
+                </button>
+                <button
+                  onClick={() => navigate('/sell-with-us')}
+                  className="bg-black text-white px-6 sm:px-10 py-3 sm:py-4 border border-white rounded-lg hover:bg-white hover:text-black hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 ease-in-out text-sm sm:text-base"
+                >
+                  SELL WITH US
+                </button>
+              </motion.div>
             </div>
           </div>
         </motion.div>
