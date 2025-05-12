@@ -273,13 +273,18 @@ function Categories2() {
       try {
         setLoading(true); 
         const response = await fetch(`${API_URL}/category/getAllCategory`);
-        // const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`);
+                // const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`);
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         const filteredCategories = data.data.category.filter(cat =>
           ['men', 'women', 'kids'].includes(cat.name.toLowerCase())
         );
-        const categoriesWithUpdatedImages = filteredCategories.map(cat => {
+        // Sort categories: women, men, kids
+        const order = ['women', 'men', 'kids'];
+        const sortedCategories = filteredCategories.sort((a, b) => {
+          return order.indexOf(a.name.toLowerCase()) - order.indexOf(b.name.toLowerCase());
+        });
+        const categoriesWithUpdatedImages = sortedCategories.map(cat => {
           const categoryName = cat.name.toLowerCase();
           return { ...cat, image: categoryImages[categoryName] || cat.image };
         });
@@ -350,15 +355,15 @@ function Categories2() {
         </div>
       ) : (
         <div className="relative" style={{ minHeight: '280px' }}>
-          <div className="flex items-center justify-center relative" style={{ minHeight: '280px' }}>
-            <div className="flex justify-center items-center w-full" style={{ minHeight: '280px' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center relative w-full" style={{ minHeight: '280px' }}>
+            <div className="flex flex-col sm:flex-row justify-center items-center w-full" style={{ minHeight: '280px' }}>
               {getVisibleCategories().map((category) => (
-                <div key={category._id} className="w-[280px] sm:w-[300px] h-[280px] sm:h-[340px] flex-shrink-0 mx-2 sm:mx-4 flex flex-col justify-center">
+                <div key={category._id} className="w-[90vw] sm:w-[280px] md:w-[300px] h-[280px] sm:h-[340px] flex-shrink-0 mx-2 sm:mx-4 flex flex-col justify-center mb-4 sm:mb-0">
                   <motion.div
                     className="group text-center h-full"
                     initial={{ opacity: 0, y: 50 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -366,7 +371,7 @@ function Categories2() {
                       onClick={() => handleCategoryClick(category)}
                       className="cursor-pointer flex flex-col items-center p-2 h-full"
                     >
-                      <div className="w-full h-[260px] sm:h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
+                      <div className="w-full h-[220px] sm:h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
                         <img
                           src={category.image}
                           alt={category.name.toUpperCase()}
