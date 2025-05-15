@@ -871,9 +871,11 @@ function ProductDetails() {
                         </span>
                       </div>
                       <div className="flex flex-col gap-1">
+                      {product.discount_price > 0 && (
                         <span className="text-gray-800 font-medium">
-                          Our Price: <span className="text-xl font-bold text-gray-900">{formatPrice(product.price)}</span>
+                          Our Price: <span className="text-xl font-bold text-gray-900 line-through">{formatPrice(product.price)}</span>
                         </span>
+                         )}
                         {product.discount_price > 0 && (
                           <span className="text-gray-800 font-medium">
                             Sale Price: <span className="text-xl font-bold text-red-600">{formatPrice(product.discount_price)}</span>

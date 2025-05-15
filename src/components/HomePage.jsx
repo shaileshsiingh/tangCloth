@@ -176,9 +176,11 @@ function HomePage() {
                       Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
                     </span>
                     <div className="flex flex-col gap-1 mt-1">
-                      <span className="text-gray-900 font-medium">
-                        Our Price: ₹{product.price.toLocaleString()}
-                      </span>
+                       {product.discount_price > 0 && (
+                          <span className="text-gray-900 font-medium">
+                            Our Price:<span className="line-through"> ₹{product.price?.toLocaleString() || 'N/A'}</span>
+                          </span>
+                          )}
                       {product.discount_price > 0 && (
                         <span className="text-red-600 font-bold">
                           Sale Price: ₹{product.discount_price.toLocaleString()}
