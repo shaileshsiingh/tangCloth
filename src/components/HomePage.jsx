@@ -19,8 +19,8 @@ function HomePage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // const response = await fetch(`${API_URL}/product/list`);
-        const response = await fetch(`http://91.203.135.152:2001/api/product/list`)
+        const response = await fetch(`${API_URL}/product/list`);
+        // const response = await fetch(`http://91.203.135.152:2001/api/product/list`)
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -143,7 +143,7 @@ function HomePage() {
                 />
                 {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
-                    <span className="text-gray text-xl font-bold tracking-wider">SOLD OUT</span>
+                    <span className="text-white text-xl font-bold tracking-wider">SOLD OUT</span>
                   </div>
                 )}
                 {product.condition && (
