@@ -747,13 +747,21 @@ function ProductDetails() {
                                   {product.condition.toUpperCase()}
                                 </span>
                               )}
-                              {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                              {/* {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
                                 <span className="absolute top-12 left-4 bg-gray-800 text-white text-xs font-medium px-2 py-1 rounded-sm shadow-md">
                                   {(typeof product.brand === 'string' ? product.brand : 
                                   (product.brandDetails && product.brandDetails[0]?.name) || 
                                   (product.brand?.name || 'Brand')).toUpperCase()}
                                 </span>
-                              )}
+                              )} */}
+                              {/* Brand Logo/Badge */}
+                    {(product.brand || (product.brandDetails && product.brandDetails.length > 0)) && (
+                      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm shadow-sm rounded-sm px-2.5 py-1.5 text-xs font-medium tracking-wide">
+                        {(typeof product.brand === 'string' ? product.brand : 
+                         (product.brandDetails && product.brandDetails[0]?.name) || 
+                         (product.brand?.name || 'Brand')).toUpperCase()}
+                      </div>
+                    )}
                             </>
                           )}
                         </div>
