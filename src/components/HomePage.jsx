@@ -19,8 +19,8 @@ function HomePage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${API_URL}/product/list`);
-        // const response = await fetch(`http://91.203.135.152:2001/api/product/list`)
+        // const response = await fetch(`${API_URL}/product/list`);
+        const response = await fetch(`http://91.203.135.152:2001/api/product/list`)
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -134,9 +134,18 @@ function HomePage() {
                 <img 
                   src={product.images?.[0] || 'https://via.placeholder.com/400'}
                   alt={product.product_name}
-                  className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+                  className={`absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105 ${
+                    (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) 
+                      ? 'filter blur-[1px]' 
+                      : ''
+                  }`}
                   onError={(e) => { e.target.src = 'https://via.placeholder.com/400'; }}
                 />
+                {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                    <span className="text-gray text-xl font-bold tracking-wider">SOLD OUT</span>
+                  </div>
+                )}
                 {product.condition && (
                   <span className={`absolute top-3 left-3 ${getConditionBadgeColor(product.condition)} text-black text-xs font-medium px-3 py-1.5 rounded-full shadow-sm`}>
                     {product.condition.toUpperCase()}
@@ -166,13 +175,20 @@ function HomePage() {
                     <span className="text-gray-500 text-sm">
                       Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
                     </span>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex flex-col gap-1 mt-1">
                       <span className="text-gray-900 font-medium">
-                        Our Price: ₹{product.discount_price.toLocaleString()}
+                        Our Price: ₹{product.price.toLocaleString()}
                       </span>
-                      <span className="text-xs px-2 py-1 bg-red-100 text-red-600 rounded-full font-medium">
-                        {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
-                      </span>
+                      {product.discount_price > 0 && (
+                        <span className="text-red-600 font-bold">
+                          Sale Price: ₹{product.discount_price.toLocaleString()}
+                        </span>
+                      )}
+                      {product.estimated_price > (product.discount_price || product.price) && (
+                        <span className="text-xs px-2 py-1 bg-red-100 text-red-600 rounded-full font-medium w-fit">
+                          {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

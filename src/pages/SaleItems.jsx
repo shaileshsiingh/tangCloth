@@ -94,7 +94,7 @@ const SaleItems = () => {
         }
         const data = await response.json();
         
-        // Filter products that have a discounted_price
+        // Filter products that have a discount_price
         const saleProducts = data.data.products.filter(product => 
           product.discount_price && product.discount_price > 0
         );
@@ -629,11 +629,21 @@ const SaleItems = () => {
                       <img
                         src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
                         alt={product.product_name}
-                        className="absolute top-0 left-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+                        className={`absolute top-0 left-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700 ${
+                          (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) 
+                            ? 'filter blur-[1px]' 
+                            : ''
+                        }`}
                         onError={(e) => {
                           e.target.src = 'https://via.placeholder.com/300x300';
                         }}
                       />
+                      {/* Sold Out Overlay */}
+                      {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                          <span className="text-white text-xl font-bold tracking-wider">SOLD OUT</span>
+                        </div>
+                      )}
                       {/* Sale Badge */}
                       <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
                         SALE
@@ -664,25 +674,26 @@ const SaleItems = () => {
                     <div className="p-5 bg-white">
                       <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
                       <div className="mt-3 space-y-1.5">
-                        {product.estimated_price ? (
-                          <div className="flex flex-col">
-                            <span className="text-gray-500 text-sm">
-                              Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
+                        <div className="flex flex-col">
+                          <span className="text-gray-500 text-sm">
+                            Estimated Retail Price: <span className="line-through">₹{product.estimated_price?.toLocaleString() || 'N/A'}</span>
+                          </span>
+                          <div className="flex flex-col gap-1 mt-1">
+                            <span className="text-gray-900 font-medium">
+                              Our Price: ₹{product.price?.toLocaleString() || 'N/A'}
                             </span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-red-600 font-bold bg-red-100 px-2 py-1 rounded">
-                                Sale Price: ₹{product.discount_price.toLocaleString()}
+                            {product.discount_price > 0 && (
+                              <span className="text-red-600 font-bold">
+                                Sale Price: ₹{product.discount_price?.toLocaleString() || 'N/A'}
                               </span>
-                              {product.estimated_price > product.discount_price && (
-                                <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
-                                  {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
-                                </span>
-                              )}
-                            </div>
+                            )}
+                            {product.estimated_price > product.discount_price && (
+                              <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm w-fit">
+                                {Math.round((1 - product.discount_price / product.estimated_price) * 100)}% OFF
+                              </span>
+                            )}
                           </div>
-                        ) : (
-                          <span className="text-red-600 font-bold bg-red-100 px-2 py-1 rounded mt-1 block">Sale Price: ₹{product.discount_price.toLocaleString()}</span>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </motion.div>

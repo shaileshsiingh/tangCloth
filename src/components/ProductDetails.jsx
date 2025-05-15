@@ -726,11 +726,20 @@ function ProductDetails() {
                           <img 
                             src={image} 
                             alt={`${formattedProductName} - View ${index + 1}`}
-                            className={`w-full h-auto object-contain transition-transform duration-500 ${isZoomed ? 'scale-125' : 'scale-100'}`}
+                            className={`w-full h-auto object-contain transition-transform duration-500 ${isZoomed ? 'scale-125' : 'scale-100'} ${
+                              (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) 
+                                ? 'filter blur-[1px]' 
+                                : ''
+                            }`}
                             onError={(e) => {
                               e.target.src = 'https://via.placeholder.com/400';
                             }}
                           />
+                          {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) && (
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                              <span className="text-white text-2xl font-bold tracking-wider">SOLD OUT</span>
+                            </div>
+                          )}
                           {index === 0 && (
                             <>
                               {product.condition && (
@@ -859,17 +868,21 @@ function ProductDetails() {
                         <span className="text-gray-600 mr-2">Estimated Retail Price:</span>
                         <span className="text-lg text-gray-500 line-through">
                           {formatPrice(product.estimated_price)}
-                      </span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="text-gray-800 mr-2 font-medium">Our Price:</span>
-                        <span className="text-2xl font-bold text-gray-900">
-                          {formatPrice(product.discount_price || product.price)}
                         </span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-gray-800 font-medium">
+                          Our Price: <span className="text-xl font-bold text-gray-900">{formatPrice(product.price)}</span>
+                        </span>
+                        {product.discount_price > 0 && (
+                          <span className="text-gray-800 font-medium">
+                            Sale Price: <span className="text-xl font-bold text-red-600">{formatPrice(product.discount_price)}</span>
+                          </span>
+                        )}
                         {product.estimated_price > (product.discount_price || product.price) && (
-                      <span className="ml-3 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                          <span className="mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded w-fit">
                             {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
-                      </span>
+                          </span>
                         )}
                       </div>
                     </>
@@ -984,21 +997,31 @@ function ProductDetails() {
               {/* Enhanced CTA Buttons */}
               <div className="flex flex-wrap gap-4 mb-8">
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="px-8 py-3 bg-black text-white font-medium rounded hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
-                  onClick={handleAddToCart}
+                  whileHover={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? {} : { scale: 1.02 }}
+                  whileTap={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? {} : { scale: 0.98 }}
+                  className={`px-8 py-3 font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors ${
+                    (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) 
+                      ? 'bg-gray-400 text-white cursor-not-allowed' 
+                      : 'bg-black text-white hover:bg-gray-900'
+                  }`}
+                  onClick={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? undefined : handleAddToCart}
+                  disabled={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1))}
                 >
-                  Add to Cart
+                  {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? 'Sold Out' : 'Add to Cart'}
                 </motion.button>
                 
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="px-8 py-3 border border-black text-black font-medium rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
-                  onClick={handleBuyNow}
+                  whileHover={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? {} : { scale: 1.02 }}
+                  whileTap={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? {} : { scale: 0.98 }}
+                  className={`px-8 py-3 border font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors ${
+                    (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) 
+                      ? 'border-gray-300 text-gray-400 cursor-not-allowed' 
+                      : 'border-black text-black hover:bg-gray-100'
+                  }`}
+                  onClick={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? undefined : handleBuyNow}
+                  disabled={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1))}
                 >
-                  Buy Now
+                  {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? 'Sold Out' : 'Buy Now'}
                 </motion.button>
 
                 {/* Quote Your Price Button */}

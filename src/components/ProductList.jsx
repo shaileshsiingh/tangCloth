@@ -1242,11 +1242,21 @@ function ProductList() {
                     <img
                       src={product.images?.[0] || 'https://via.placeholder.com/300x300'}
                       alt={product.product_name}
-                      className="absolute top-0 left-0 w-full h-full object-contain p-4"
+                      className={`absolute top-0 left-0 w-full h-full object-contain p-4 ${
+                        (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) 
+                          ? 'filter blur-[1px]' 
+                          : ''
+                      }`}
                       onError={(e) => {
                         e.target.src = 'https://via.placeholder.com/300x300';
                       }}
                     />
+                    {/* Sold Out Overlay */}
+                    {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                        <span className="text-white text-xl font-bold tracking-wider">SOLD OUT</span>
+                      </div>
+                    )}
                     {product.condition && (
                       <span className="absolute top-3 left-3 bg-gray-200 bg-opacity-80 backdrop-blur-sm text-black text-xs font-medium px-2 py-1 rounded-sm">
                         {product.condition.replace(/_/g, ' ').toUpperCase()}
@@ -1287,39 +1297,49 @@ function ProductList() {
                   
                   <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-90 backdrop-blur-sm transform transition-transform duration-500 translate-y-full group-hover:translate-y-0 z-10">
                     <button 
-                      className="w-full py-4 text-white font-medium tracking-wide letter-spacing transition-colors"
+                      className={`w-full py-4 text-white font-medium tracking-wide letter-spacing transition-colors ${
+                        (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) 
+                          ? 'opacity-50 cursor-not-allowed' 
+                          : ''
+                      }`}
                       onClick={(e) => {
+                        if (!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) {
+                          e.stopPropagation();
+                          return;
+                        }
                         window.scrollTo(0, 0);
                         e.stopPropagation();
                         navigate(`/product/${product._id}`, { state: { product } });
                       }}
+                      title={(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? 'This item is sold out' : 'Shop Now'}
                     >
-                      SHOP NOW
+                      {(!product.sizes || product.sizes.length === 0 || product.sizes.every(size => size.quantity < 1)) ? 'SOLD OUT' : 'SHOP NOW'}
                     </button>
                   </div>
                   
                   <div className="p-5 bg-white">
                     <h2 className="text-base font-medium mb-2 truncate tracking-wide">{product.product_name.toUpperCase()}</h2>
                     <div className="mt-3 space-y-1.5">
-                      {product.estimated_price ? (
-                        <div className="flex flex-col">
-                          <span className="text-gray-500 text-sm">
-                            Estimated Retail Price: <span className="line-through">₹{product.estimated_price.toLocaleString()}</span>
+                      <div className="flex flex-col">
+                        <span className="text-gray-500 text-sm">
+                          Estimated Retail Price: <span className="line-through">₹{product.estimated_price?.toLocaleString() || 'N/A'}</span>
+                        </span>
+                        <div className="flex flex-col gap-1 mt-1">
+                          <span className="text-gray-900 font-medium">
+                            Our Price: ₹{product.price?.toLocaleString() || 'N/A'}
                           </span>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-gray-900 font-medium">
-                              Our Price: ₹{(product.discount_price || product.price).toLocaleString()}
+                          {product.discount_price > 0 && (
+                            <span className="text-red-600 font-bold">
+                              Sale Price: ₹{product.discount_price?.toLocaleString() || 'N/A'}
                             </span>
-                            {product.estimated_price > (product.discount_price || product.price) && (
-                              <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm">
-                                {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
-                              </span>
-                            )}
+                          )}
+                          {product.estimated_price > (product.discount_price || product.price) && (
+                            <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm w-fit">
+                              {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
+                            </span>
+                          )}
                         </div>
-                        </div>
-                      ) : (
-                        <p className="text-gray-900 font-medium mt-1">₹{product.price.toLocaleString()}</p>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
