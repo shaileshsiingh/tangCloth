@@ -550,25 +550,28 @@ function Navbar() {
     };
   }, []);
 
-  // Close dropdown when clicking outside
+  // Use this to close mobile menu when user clicks outside or resizes window
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen({
-          women: false,
-          men: false,
-          kids: false,
-          services: false
-        });
-        setSubcategoryDropdown('');
+    const handleResize = () => {
+      if (window.innerWidth >= 1024 && mobileMenuOpen) {
+        setMobileMenuOpen(false);
       }
-    }
+    };
 
+    const handleClickOutside = (e) => {
+      if (mobileMenuOpen && e.target.closest('.mobile-menu-container') === null) {
+        setMobileMenuOpen(false);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
     document.addEventListener('mousedown', handleClickOutside);
+    
     return () => {
+      window.removeEventListener('resize', handleResize);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [mobileMenuOpen]);
 
   // Toggle dropdown
   const toggleDropdown = (category) => {
@@ -704,11 +707,34 @@ function Navbar() {
     }
   };
 
+  // Add window resize listener for responsive adjustments
+  useEffect(() => {
+    // Function to handle navbar height calculations
+    const updateNavbarHeight = () => {
+      const navbar = document.querySelector('.navbar-main');
+      if (navbar) {
+        const height = navbar.offsetHeight;
+        document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      }
+    };
+    
+    // Call once on mount
+    updateNavbarHeight();
+    
+    // Add resize listener
+    window.addEventListener('resize', updateNavbarHeight);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', updateNavbarHeight);
+    };
+  }, []);
+
   return (
     <>
       <TopBar />
       <motion.nav 
-        className={`bg-white sticky top-0 z-40 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
+        className={`bg-white sticky top-0 z-40 ${scrolled ? 'shadow-md' : 'shadow-sm'} navbar-main`}
         style={{backgroundColor:'#FAF9F6'}}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -1105,7 +1131,7 @@ function Navbar() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div 
-              className="lg:hidden fixed inset-0 bg-white z-50 overflow-y-auto pt-16"
+              className="lg:hidden fixed inset-0 bg-white z-50 overflow-y-auto pt-16 mobile-menu-container"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -1113,7 +1139,7 @@ function Navbar() {
             >
               <div className="p-4">
                 <button 
-                  className="absolute top-4 right-4 text-black" 
+                  className="absolute top-4 right-4 text-black p-2 hover:bg-gray-100 rounded-full" 
                   onClick={handleToggleMobileMenu}
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1122,7 +1148,10 @@ function Navbar() {
                 </button>
                 
                 <div className="space-y-4 mt-4">
-                  <form onSubmit={handleSearchSubmit} className="mb-6">
+                  <form onSubmit={(e) => {
+                    handleSearchSubmit(e);
+                    handleToggleMobileMenu(); // Close menu after search
+                  }} className="mb-6">
                     <div className="relative">
                       <input
                         type="text"
@@ -1140,44 +1169,71 @@ function Navbar() {
                     </div>
                   </form>
                   
-                  <Link to="/" className="block py-2 font-medium">Home</Link>
-                  <Link to="/shop" className="block py-2 font-medium">Just In</Link>
+                  <Link to="/" className="block py-3 px-2 font-medium border-b border-gray-100 hover:bg-gray-50" onClick={handleToggleMobileMenu}>Home</Link>
+                  <Link to="/shop" className="block py-3 px-2 font-medium border-b border-gray-100 hover:bg-gray-50" onClick={handleToggleMobileMenu}>Just In</Link>
                   
                   {Object.keys(menuItems).map((menuKey) => (
-                    <div key={menuKey} className="py-2">
-                      <div className="font-medium">{menuItems[menuKey].title}</div>
-                      <div className="pl-4 mt-2 space-y-2">
-                        {menuItems[menuKey].sections.map((section, idx) => (
-                          <div key={idx} className="space-y-1">
-                            <div className="font-medium text-sm">{section.title}</div>
-                            {section.items.map((item, i) => (
-                              <Link 
-                                key={i}
-                                to="#"
-                                className="block py-1 text-base text-gray-600"
-                                onClick={(e) => {
-                                  e.preventDefault(); // Prevent default link behavior
-                                  handleItemClick(menuKey, section.title, item.name);
-                                }}
-                              >
-                                {item.name}
-                              </Link>
-                            ))}
-                          </div>
-                        ))}
+                    <div key={menuKey} className="py-2 border-b border-gray-100">
+                      <div 
+                        className="font-medium py-2 px-2 flex justify-between items-center cursor-pointer hover:bg-gray-50"
+                        onClick={() => {
+                          // Toggle dropdown open/close for this category
+                          setDropdownOpen(prev => ({
+                            ...prev,
+                            [menuKey]: !prev[menuKey]
+                          }));
+                        }}
+                      >
+                        <span>{menuItems[menuKey].title}</span>
+                        <ChevronDown 
+                          className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen[menuKey] ? 'transform rotate-180' : ''}`} 
+                        />
                       </div>
+                      
+                      {dropdownOpen[menuKey] && (
+                        <div className="pl-4 mt-2 space-y-2">
+                          {menuItems[menuKey].sections.map((section, idx) => (
+                            <div key={idx} className="space-y-1 mb-3">
+                              <div className="font-medium text-sm text-gray-800 py-1">{section.title}</div>
+                              <div className="border-l-2 border-gray-200 pl-2">
+                                {section.items.map((item, i) => (
+                                  <Link 
+                                    key={i}
+                                    to="#"
+                                    className="block py-2 text-sm text-gray-600 hover:text-orange-400"
+                                    onClick={(e) => {
+                                      e.preventDefault(); // Prevent default link behavior
+                                      handleItemClick(menuKey, section.title, item.name);
+                                      handleToggleMobileMenu(); // Close menu after click
+                                    }}
+                                  >
+                                    {item.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
-                  <Link to="/shop" className="block py-2 font-medium">Sale</Link>
-                  <Link to="/contact" className="block py-2 font-medium">Contact</Link>
-                  <Link to="/sell-with-us" className="block py-2 font-medium">Sell With Us</Link>
                   
-                  <div className="flex space-x-4 mt-4">
-                    <Link to="/wishlist" className="flex items-center" onClick={handleToggleMobileMenu}>
+                  <Link to="/sale-items" className="block py-3 px-2 font-medium border-b border-gray-100 text-yellow-600 hover:bg-gray-50" onClick={handleToggleMobileMenu}>SALE</Link>
+                  <Link to="/contact" className="block py-3 px-2 font-medium border-b border-gray-100 hover:bg-gray-50" onClick={handleToggleMobileMenu}>Contact</Link>
+                  <Link to="/sell-with-us" className="block py-3 px-2 font-medium border-b border-gray-100 hover:bg-gray-50" onClick={handleToggleMobileMenu}>Sell With Us</Link>
+                  
+                  <div className="flex mt-6 pt-4 border-t border-gray-200">
+                    <Link to="/wishlist" className="flex items-center justify-center w-1/2 px-4 py-3 bg-gray-100 rounded-l-lg" onClick={handleToggleMobileMenu}>
                       <Heart className="w-5 h-5 mr-2" />
                       <span>Wishlist ({wishlist.length})</span>
                     </Link>
-                    <button onClick={() => { handleUserClick(); handleToggleMobileMenu(); }} className="flex items-center">
+                    <button 
+                      onClick={() => { 
+                        handleUserClick(); 
+                        handleToggleMobileMenu(); 
+                      }} 
+                      className="flex items-center justify-center w-1/2 px-4 py-3 bg-black text-white rounded-r-lg"
+                    >
                       <User className="w-5 h-5 mr-2" />
                       <span>{isAuthenticated ? 'Account' : 'Sign In'}</span>
                     </button>
