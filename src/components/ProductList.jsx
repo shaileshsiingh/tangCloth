@@ -1325,16 +1325,14 @@ function ProductList() {
                           Estimated Retail Price: <span className="line-through">₹{product.estimated_price?.toLocaleString() || 'N/A'}</span>
                         </span>
                         <div className="flex flex-col gap-1 mt-1">
-                        {product.discount_price > 0 && (
-                          <span className="text-gray-900 font-medium">
-                            Our Price:<span className="line-through"> ₹{product.price?.toLocaleString() || 'N/A'}</span>
-                          </span>
-                          )}
-                          {product.discount_price > 0 && (
-                            <span className="text-red-600 font-bold">
-                              Sale Price: ₹{product.discount_price?.toLocaleString() || 'N/A'}
-                            </span>
-                          )}
+                        <span className="text-gray-900 font-medium">
+                        Our Price: {product.discount_price ? <span className="line-through">₹{product.price.toLocaleString()}</span> : <span>₹{product.price.toLocaleString()}</span>}
+                      </span>
+                      {product.discount_price > 0 && (
+                        <span className="text-red-600 font-bold">
+                          Sale Price: ₹{product.discount_price.toLocaleString()}
+                        </span>
+                      )}
                           {product.estimated_price > (product.discount_price || product.price) && (
                             <span className="text-xs px-1.5 py-0.5 bg-black text-white rounded-sm w-fit">
                               {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF

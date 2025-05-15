@@ -871,16 +871,14 @@ function ProductDetails() {
                         </span>
                       </div>
                       <div className="flex flex-col gap-1">
+                      <span className="text-gray-900 font-medium">
+                        Our Price: {product.discount_price ? <span className="line-through">₹{product.price.toLocaleString()}</span> : <span>₹{product.price.toLocaleString()}</span>}
+                      </span>
                       {product.discount_price > 0 && (
-                        <span className="text-gray-800 font-medium">
-                          Our Price: <span className="text-xl font-bold text-gray-900 line-through">{formatPrice(product.price)}</span>
+                        <span className="text-red-600 font-bold">
+                          Sale Price: ₹{product.discount_price.toLocaleString()}
                         </span>
-                         )}
-                        {product.discount_price > 0 && (
-                          <span className="text-gray-800 font-medium">
-                            Sale Price: <span className="text-xl font-bold text-red-600">{formatPrice(product.discount_price)}</span>
-                          </span>
-                        )}
+                      )}
                         {product.estimated_price > (product.discount_price || product.price) && (
                           <span className="mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded w-fit">
                             {Math.round((1 - (product.discount_price || product.price) / product.estimated_price) * 100)}% OFF
