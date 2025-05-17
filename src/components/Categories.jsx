@@ -272,8 +272,8 @@ function Categories2() {
     async function fetchCategories() {
       try {
         setLoading(true); 
-        // const response = await fetch(`${API_URL}/category/getAllCategory`);
-                const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`);
+        const response = await fetch(`${API_URL}/category/getAllCategory`);
+                // const response = await fetch(`http://91.203.135.152:2001/api/category/getAllCategory`);
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         const filteredCategories = data.data.category.filter(cat =>
@@ -371,13 +371,19 @@ function Categories2() {
                       onClick={() => handleCategoryClick(category)}
                       className="cursor-pointer flex flex-col items-center p-2 h-full"
                     >
-                      <div className="w-full h-full sm:h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
+                      <div className="w-full h-full object-cover sm:h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
                         <img
                           src={category.image}
                           alt={category.name.toUpperCase()}
                           className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
                         />
                       </div>
+                      {/* <motion.img
+            src={category.image}
+            alt={category.title}
+            className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
+            whileHover={{ scale: 1.05 }}
+          /> */}
                       <h3 className="text-sm md:text-base font-semibold tracking-wider text-gray-800 transition-colors duration-300 mt-2 md:mt-4 group-hover:text-blue-600 uppercase">
                         {category.name.toUpperCase()}
                       </h3>
