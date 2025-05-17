@@ -371,7 +371,7 @@ function Categories2() {
                       onClick={() => handleCategoryClick(category)}
                       className="cursor-pointer flex flex-col items-center p-2 h-full"
                     >
-                      <div className="w-full h-full object-cover sm:h-[320px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
+                      <div className="w-full h-full object-cover sm:h-[330px] aspect-square rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:ring-4 group-hover:ring-blue-500/30">
                         <img
                           src={category.image}
                           alt={category.name.toUpperCase()}
