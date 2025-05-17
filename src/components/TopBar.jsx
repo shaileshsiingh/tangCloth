@@ -13,7 +13,7 @@ function TopBar() {
           <span>|</span>
           <div className="flex items-center space-x-2">
             <a href="#" className="hover:text-gray-300">IN</a>
-            <a href="#" className="hover:text-gray-300">FR</a>
+            {/* <a href="#" className="hover:text-gray-300">FR</a> */}
             <a href="#" className="hover:text-gray-300">US</a>
           </div>
         </div>

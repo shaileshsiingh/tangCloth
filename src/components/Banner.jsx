@@ -44,7 +44,7 @@ function Banner() {
   }, []);
 
   return (
-    <div className="relative h-[280px] sm:h-[500px] md:h-[600px] lg:h-[700px] w-full overflow-hidden">
+    <div className="relative h-[250px] sm:h-[500px] md:h-[600px] lg:h-[700px] w-full overflow-hidden">
       <AnimatePresence initial={false}>
         <motion.div
           key={currentSlide}
