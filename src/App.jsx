@@ -57,7 +57,7 @@ function App() {
   return (
     <CartProvider>
       <WishlistProvider>
-      {/* <Layout>
+      <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<ProductList />} />
@@ -105,7 +105,7 @@ function App() {
         </Routes>
         <ToastContainer />
         <AbandonedCartReminder />
-      </Layout> */}
+      </Layout>
       </WishlistProvider>
 
     </CartProvider>
